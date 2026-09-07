@@ -512,6 +512,10 @@ button {
   cursor: crosshair;
 }
 
+.chart-canvas[data-tool='pan'] {
+  cursor: grab;
+}
+
 .chart-canvas.panning {
   cursor: grabbing;
 }

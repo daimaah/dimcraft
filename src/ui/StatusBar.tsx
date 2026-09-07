@@ -31,11 +31,13 @@ export function StatusBar() {
       ? `Placing ${armed ?? '—'} — R rotate · [ ] scale · Esc done`
       : tool === 'line'
         ? 'Backstitch: drag from one stitch to the next — ends snap to anchors'
-        : tool.startsWith('guide-')
-          ? 'Drag on canvas to draw the guide'
-          : tool === 'bracket'
-            ? 'Click the first stitch, then the last stitch of the repeat'
-            : ''
+        : tool === 'pan'
+          ? 'Drag to pan · wheel scrolls · Ctrl+wheel zooms'
+          : tool.startsWith('guide-')
+            ? 'Drag on canvas to draw the guide'
+            : tool === 'bracket'
+              ? 'Click the first stitch, then the last stitch of the repeat'
+              : ''
 
   return (
     <footer className="statusbar">

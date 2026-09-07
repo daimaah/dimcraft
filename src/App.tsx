@@ -183,6 +183,9 @@ export default function App() {
         case 'l':
           st.setTool('line')
           return
+        case 'h':
+          st.setTool(st.tool === 'pan' ? 'select' : 'pan')
+          return
         case 't':
           st.setTool('text')
           return

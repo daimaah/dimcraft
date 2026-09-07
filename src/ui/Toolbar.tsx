@@ -10,6 +10,7 @@ const TOOLS: { id: string; icon: IconName; label: string; key: string }[] = [
   { id: 'guide-spiral', icon: 'guide-spiral', label: 'Spiral guide', key: '3' },
   { id: 'guide-line', icon: 'guide-line', label: 'Line guide', key: '4' },
   { id: 'guide-polygon', icon: 'guide-polygon', label: 'Polygon guide', key: '5' },
+  { id: 'pan', icon: 'hand', label: 'Pan view', key: 'H' },
   { id: 'bracket', icon: 'bracket', label: 'Repeat bracket', key: 'B' },
   { id: 'text', icon: 'text', label: 'Text label', key: 'T' },
 ]

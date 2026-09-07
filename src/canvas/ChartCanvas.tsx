@@ -70,6 +70,7 @@ export function ChartCanvas() {
   const [linePreview, setLinePreview] = useState<{ a: Vec; b: Vec } | null>(null)
   const [snapDot, setSnapDot] = useState<{ pos: Vec; kind: SnapKind } | null>(null)
   const [spaceDown, setSpaceDown] = useState(false)
+  const [panning, setPanning] = useState(false)
 
   const defMap = useMemo(() => getDefMap(doc), [doc])
   const ink = doc.ink
@@ -147,8 +148,9 @@ export function ChartCanvas() {
     const local = localScreen(e)
     const world = screenToWorld(local)
 
-    if (e.button === 1 || spaceRef.current) {
+    if (e.button === 1 || spaceRef.current || st.tool === 'pan') {
       e.preventDefault()
+      setPanning(true)
       dragRef.current = { kind: 'pan', startClient: { x: e.clientX, y: e.clientY }, vp: st.viewport }
       return
     }
@@ -321,6 +323,7 @@ export function ChartCanvas() {
     const d = dragRef.current
     dragRef.current = null
     setSnapDot(null)
+    setPanning(false)
     if (!d) return
 
     switch (d.kind) {
@@ -380,15 +383,27 @@ export function ChartCanvas() {
     }
   }
 
-  // ---- wheel zoom (non-passive) ------------------------------------------
+  // ---- wheel: scroll pans, Ctrl/Cmd+wheel zooms ---------------------------
   useEffect(() => {
     const el = svgRef.current
     if (!el) return
     const onWheel = (e: WheelEvent) => {
       e.preventDefault()
       const rect = el.getBoundingClientRect()
-      const factor = Math.exp(-e.deltaY * 0.0012)
-      useStore.getState().zoomAt(factor, e.clientX - rect.left, e.clientY - rect.top)
+      if (e.ctrlKey || e.metaKey) {
+        // also covers trackpad pinch gestures
+        const factor = Math.exp(-e.deltaY * 0.0012)
+        useStore.getState().zoomAt(factor, e.clientX - rect.left, e.clientY - rect.top)
+      } else {
+        const st = useStore.getState()
+        const dx = e.shiftKey ? e.deltaY : e.deltaX
+        const dy = e.shiftKey ? 0 : e.deltaY
+        st.setViewport({
+          zoom: st.viewport.zoom,
+          x: st.viewport.x - dx,
+          y: st.viewport.y - dy,
+        })
+      }
     }
     el.addEventListener('wheel', onWheel, { passive: false })
     return () => el.removeEventListener('wheel', onWheel)
@@ -433,7 +448,7 @@ export function ChartCanvas() {
   return (
     <svg
       ref={svgRef}
-      className={`chart-canvas${spaceDown ? ' panning' : ''}`}
+      className={`chart-canvas${spaceDown || panning ? ' panning' : ''}`}
       data-tool={tool}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}

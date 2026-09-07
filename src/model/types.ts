@@ -163,6 +163,7 @@ export type Tool =
   | 'select'
   | 'place'
   | 'line'
+  | 'pan'
   | 'guide-circle'
   | 'guide-arc'
   | 'guide-spiral'

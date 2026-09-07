@@ -79,7 +79,7 @@ docker compose up -d --build   # build & run on http://localhost:8080
 
 | Keys | Action |
 | --- | --- |
-| `V` `P` `L` `B` `T` | Select · Place symbol · Backstitch line · Repeat bracket · Text |
+| `V` `P` `L` `H` `B` `T` | Select · Place symbol · Backstitch line · Pan view · Repeat bracket · Text |
 | `1`–`5` | Circle · Arc · Spiral · Line · Polygon guide |
 | `R`, `Shift+R` | Rotate placed symbol ±15° (while in place mode) |
 | `[` `]` | Scale placed symbol down/up |
@@ -89,7 +89,9 @@ docker compose up -d --build   # build & run on http://localhost:8080
 | `Ctrl+E` | Export dialog |
 | Arrows (+`Shift`) | Nudge selection by 1 (10) units |
 | `Ctrl +` `Ctrl-` `Ctrl+0` | Zoom in · out · fit |
-| Space-drag / middle-drag / wheel | Pan · zoom |
+| Space-drag / middle-drag / hand tool | Pan the view |
+| Wheel / two-finger scroll | Pan (Shift+wheel: horizontal) |
+| Ctrl/Cmd + wheel or pinch | Zoom |
 | `Delete` | Delete selection |
 
 ## Tips for round charts
