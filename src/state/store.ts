@@ -1,0 +1,731 @@
+import { create } from 'zustand'
+import type {
+  ChartDoc,
+  EvenPlaceOptions,
+  Guide,
+  GuideKind,
+  ProjectRecord,
+  SymbolDef,
+  Tool,
+  Vec,
+} from '../model/types'
+import { createEmptyDoc, sanitizeDoc, uid } from '../model/doc'
+import { guideCenter, guideSample } from '../geometry/guides'
+import { placeEvenly } from '../geometry/placeEvenly'
+import { legendItems } from '../geometry/legend'
+import { contentBBox } from '../geometry/bounds'
+import {
+  bboxCenter,
+  cornersBBox,
+  distributeCentres,
+  duplicatePlacements,
+  mirrorPlacement,
+  placementCorners,
+  rotatePointAround,
+  unionBBox,
+} from '../geometry/transform'
+import { getDefMap } from '../symbols/registry'
+
+export interface Viewport {
+  x: number
+  y: number
+  zoom: number
+}
+
+export type DialogKind = 'place-evenly' | 'export' | null
+
+export interface DragPositions {
+  placements: { id: string; x: number; y: number }[]
+  texts: { id: string; x: number; y: number }[]
+  brackets: { id: string; x1: number; y1: number; x2: number; y2: number }[]
+}
+
+const HISTORY_LIMIT = 100
+const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
+
+interface EditorState {
+  projectId: string | null
+  projectName: string
+  createdAt: number | null
+  doc: ChartDoc
+  past: ChartDoc[]
+  future: ChartDoc[]
+  savedAt: number | null
+
+  tool: Tool
+  armedSymbolId: string | null
+  placingRotation: number
+  placingScale: number
+  polygonSides: number
+
+  selPlacements: string[]
+  selGuides: string[]
+  selBrackets: string[]
+  selTexts: string[]
+
+  viewport: Viewport
+  snapEnabled: boolean
+  gridVisible: boolean
+  guidesVisible: boolean
+
+  dialog: DialogKind
+  placeEvenlyGuideId: string | null
+  dragBase: ChartDoc | null
+  cursor: Vec | null
+  bracketStart: Vec | null
+
+  setTool: (t: Tool) => void
+  armSymbol: (symbolId: string) => void
+  setPlacingRotation: (deg: number) => void
+  setPlacingScale: (s: number) => void
+  setPolygonSides: (n: number) => void
+  setCursor: (p: Vec | null) => void
+  setSelection: (part: Partial<Pick<EditorState, 'selPlacements' | 'selGuides' | 'selBrackets' | 'selTexts'>>) => void
+  setBracketStart: (p: Vec | null) => void
+
+  stampPlacement: (x: number, y: number) => void
+  updatePlacements: (ids: string[], patch: Partial<{ symbolId: string; rotation: number; scale: number; flip: boolean; x: number; y: number }>) => void
+
+  beginDrag: () => void
+  applyDragPositions: (payload: DragPositions) => void
+  endDrag: () => void
+
+  clearSelection: () => void
+  deleteSelection: () => void
+  duplicateSelection: () => void
+  groupSelection: () => void
+  ungroupSelection: () => void
+  mirrorSelection: (axis: 'h' | 'v') => void
+  distributeSelection: (axis: 'x' | 'y') => void
+  rotateSelection: (deltaDeg: number) => void
+  nudge: (dx: number, dy: number) => void
+
+  addGuideDrawn: (kind: GuideKind, a: Vec, b: Vec, snap45: boolean) => void
+  updateGuide: (id: string, patch: Partial<Guide>) => void
+  updateGuideLive: (id: string, patch: Partial<Guide>) => void
+  deleteGuide: (id: string) => void
+  toggleGuideVisible: (id: string) => void
+  placeEvenlyOnGuide: (guideId: string, symbolId: string, opts: EvenPlaceOptions) => void
+
+  addBracketFromPoints: (a: Vec, b: Vec) => void
+  updateBracket: (id: string, patch: Partial<{ count: number; label: string | undefined; side: 1 | -1 }>) => void
+  deleteBracket: (id: string) => void
+  setLegendLive: (patch: Partial<ChartDoc['legend']>) => void
+
+  addTextAt: (x: number, y: number) => void
+  updateText: (id: string, patch: Partial<{ content: string; size: number; rotation: number }>) => void
+  deleteText: (id: string) => void
+
+  addCustomSymbol: (def: SymbolDef) => void
+  removeCustomSymbol: (id: string) => void
+  setLabelOverride: (symbolId: string, label: string) => void
+  setLegend: (patch: Partial<ChartDoc['legend']>) => void
+  setInk: (ink: string) => void
+
+  undo: () => void
+  redo: () => void
+
+  setViewport: (vp: Viewport) => void
+  zoomAt: (factor: number, screenX: number, screenY: number) => void
+  fitView: (width: number, height: number) => void
+
+  setSnap: (v: boolean) => void
+  setGrid: (v: boolean) => void
+  setGuidesVisible: (v: boolean) => void
+
+  openDialog: (kind: DialogKind, guideId?: string) => void
+  closeDialog: () => void
+
+  openProject: (rec: ProjectRecord) => void
+  newProject: (name: string, doc?: ChartDoc) => string
+  closeProject: () => void
+  markSaved: (at: number) => void
+}
+
+function mutateDoc(state: EditorState, next: Partial<EditorState> & { doc: ChartDoc }) {
+  return {
+    ...next,
+    past: [...state.past.slice(-(HISTORY_LIMIT - 1)), state.doc],
+    future: [] as ChartDoc[],
+  }
+}
+
+export const useStore = create<EditorState>()((set, get) => {
+  /** apply a mutation to a cloned doc, pushing history */
+  const commit = (mut: (d: ChartDoc) => void, extra: Partial<EditorState> = {}) =>
+    set((st) => {
+      const doc = structuredClone(st.doc)
+      mut(doc)
+      return mutateDoc(st, { ...extra, doc })
+    })
+
+  /** apply a mutation without touching history (live drag updates) */
+  const live = (mut: (d: ChartDoc) => void) =>
+    set((st) => {
+      const doc = structuredClone(st.doc)
+      mut(doc)
+      return { doc }
+    })
+
+  const clearSel = {
+    selPlacements: [] as string[],
+    selGuides: [] as string[],
+    selBrackets: [] as string[],
+    selTexts: [] as string[],
+  }
+
+  return {
+    projectId: null,
+    projectName: 'Untitled chart',
+    createdAt: null,
+    doc: createEmptyDoc(),
+    past: [],
+    future: [],
+    savedAt: null,
+
+    tool: 'select',
+    armedSymbolId: 'dc',
+    placingRotation: 0,
+    placingScale: 1,
+    polygonSides: 4,
+
+    selPlacements: [],
+    selGuides: [],
+    selBrackets: [],
+    selTexts: [],
+
+    viewport: { x: 0, y: 0, zoom: 1 },
+    snapEnabled: true,
+    gridVisible: true,
+    guidesVisible: true,
+
+    dialog: null,
+    placeEvenlyGuideId: null,
+    dragBase: null,
+    cursor: null,
+    bracketStart: null,
+
+    setTool: (t) => set({ tool: t }),
+    armSymbol: (symbolId) => set({ armedSymbolId: symbolId, tool: 'place' }),
+    setPlacingRotation: (deg) => set({ placingRotation: ((deg % 360) + 360) % 360 }),
+    setPlacingScale: (s) => set({ placingScale: clamp(s, 0.2, 8) }),
+    setPolygonSides: (n) => set({ polygonSides: clamp(Math.round(n), 3, 24) }),
+    setCursor: (p) => set({ cursor: p }),
+    setSelection: (part) => set(part),
+    setBracketStart: (p) => set({ bracketStart: p }),
+
+    stampPlacement: (x, y) =>
+      set((st) => {
+        const symbolId = st.armedSymbolId
+        if (!symbolId) return {}
+        const placement = {
+          id: uid('p'),
+          symbolId,
+          x,
+          y,
+          rotation: st.placingRotation,
+          scale: st.placingScale,
+          flip: false,
+        }
+        return mutateDoc(st, {
+          doc: { ...st.doc, placements: [...st.doc.placements, placement] },
+          selPlacements: [placement.id],
+          selGuides: [],
+          selBrackets: [],
+          selTexts: [],
+        })
+      }),
+
+    updatePlacements: (ids, patch) =>
+      commit((d) => {
+        const idSet = new Set(ids)
+        d.placements = d.placements.map((p) => (idSet.has(p.id) ? { ...p, ...patch } : p))
+      }),
+
+    beginDrag: () => set({ dragBase: get().doc }),
+
+    applyDragPositions: (payload) =>
+      live((d) => {
+        const pm = new Map(payload.placements.map((e) => [e.id, e]))
+        d.placements = d.placements.map((p) => {
+          const e = pm.get(p.id)
+          return e ? { ...p, x: e.x, y: e.y } : p
+        })
+        const tm = new Map(payload.texts.map((e) => [e.id, e]))
+        d.texts = d.texts.map((t) => {
+          const e = tm.get(t.id)
+          return e ? { ...t, x: e.x, y: e.y } : t
+        })
+        const bm = new Map(payload.brackets.map((e) => [e.id, e]))
+        d.brackets = d.brackets.map((b) => {
+          const e = bm.get(b.id)
+          return e ? { ...b, x1: e.x1, y1: e.y1, x2: e.x2, y2: e.y2 } : b
+        })
+      }),
+
+    endDrag: () =>
+      set((st) => {
+        if (!st.dragBase || st.dragBase === st.doc) return { dragBase: null }
+        return {
+          past: [...st.past.slice(-(HISTORY_LIMIT - 1)), st.dragBase],
+          future: [],
+          dragBase: null,
+        }
+      }),
+
+    clearSelection: () => set({ ...clearSel }),
+
+    deleteSelection: () =>
+      set((st) => {
+        const { selPlacements, selGuides, selBrackets, selTexts } = st
+        if (!selPlacements.length && !selGuides.length && !selBrackets.length && !selTexts.length) return {}
+        const doc = structuredClone(st.doc)
+        const ps = new Set(selPlacements)
+        const gs = new Set(selGuides)
+        const bs = new Set(selBrackets)
+        const ts = new Set(selTexts)
+        doc.placements = doc.placements.filter((p) => !ps.has(p.id))
+        doc.guides = doc.guides.filter((g) => !gs.has(g.id))
+        doc.brackets = doc.brackets.filter((b) => !bs.has(b.id))
+        doc.texts = doc.texts.filter((t) => !ts.has(t.id))
+        return mutateDoc(st, { doc, ...clearSel })
+      }),
+
+    duplicateSelection: () =>
+      set((st) => {
+        const sel = new Set(st.selPlacements)
+        if (!sel.size) return {}
+        const copies = duplicatePlacements(st.doc.placements.filter((p) => sel.has(p.id)))
+        return mutateDoc(st, {
+          doc: { ...st.doc, placements: [...st.doc.placements, ...copies] },
+          selPlacements: copies.map((c) => c.id),
+        })
+      }),
+
+    groupSelection: () =>
+      set((st) => {
+        const sel = new Set(st.selPlacements)
+        if (sel.size < 2) return {}
+        const groupId = uid('g')
+        return mutateDoc(st, {
+          doc: {
+            ...st.doc,
+            placements: st.doc.placements.map((p) => (sel.has(p.id) ? { ...p, groupId } : p)),
+          },
+        })
+      }),
+
+    ungroupSelection: () =>
+      set((st) => {
+        const sel = new Set(st.selPlacements)
+        if (!sel.size) return {}
+        return mutateDoc(st, {
+          doc: {
+            ...st.doc,
+            placements: st.doc.placements.map((p) => (sel.has(p.id) ? { ...p, groupId: undefined } : p)),
+          },
+        })
+      }),
+
+    mirrorSelection: (axis) =>
+      set((st) => {
+        const sel = st.doc.placements.filter((p) => st.selPlacements.includes(p.id))
+        if (!sel.length) return {}
+        const defMap = getDefMap(st.doc)
+        const boxes = sel
+          .map((p) => {
+            const def = defMap.get(p.symbolId)
+            return def ? cornersBBox(placementCorners(p, def)) : null
+          })
+          .filter((b): b is NonNullable<typeof b> => b !== null)
+        const center = bboxCenter(unionBBox(boxes) ?? { x: sel[0].x, y: sel[0].y, w: 0, h: 0 })
+        return mutateDoc(st, {
+          doc: {
+            ...st.doc,
+            placements: st.doc.placements.map((p) =>
+              st.selPlacements.includes(p.id) ? { ...p, ...mirrorPlacement(p, axis, center) } : p,
+            ),
+          },
+        })
+      }),
+
+    distributeSelection: (axis) =>
+      set((st) => {
+        const sel = st.doc.placements.filter((p) => st.selPlacements.includes(p.id))
+        if (sel.length < 3) return {}
+        const values = sel.map((p) => (axis === 'x' ? p.x : p.y))
+        const targets = distributeCentres(values, axis)
+        const targetMap = new Map(sel.map((p, i) => [p.id, targets[i]]))
+        return mutateDoc(st, {
+          doc: {
+            ...st.doc,
+            placements: st.doc.placements.map((p) => {
+              const t = targetMap.get(p.id)
+              if (t === undefined) return p
+              return axis === 'x' ? { ...p, x: t } : { ...p, y: t }
+            }),
+          },
+        })
+      }),
+
+    rotateSelection: (deltaDeg) =>
+      set((st) => {
+        const sel = st.doc.placements.filter((p) => st.selPlacements.includes(p.id))
+        if (!sel.length) return {}
+        const xs = sel.map((p) => p.x)
+        const ys = sel.map((p) => p.y)
+        const c = { x: xs.reduce((a, b) => a + b, 0) / xs.length, y: ys.reduce((a, b) => a + b, 0) / ys.length }
+        return mutateDoc(st, {
+          doc: {
+            ...st.doc,
+            placements: st.doc.placements.map((p) => {
+              if (!st.selPlacements.includes(p.id)) return p
+              const np = rotatePointAround(p, c, deltaDeg)
+              return { ...p, x: np.x, y: np.y, rotation: ((p.rotation + deltaDeg) % 360 + 360) % 360 }
+            }),
+          },
+        })
+      }),
+
+    nudge: (dx, dy) =>
+      set((st) => {
+        const sel = new Set([...st.selPlacements, ...st.selTexts])
+        if (!sel.size) return {}
+        const doc = structuredClone(st.doc)
+        doc.placements = doc.placements.map((p) => (sel.has(p.id) ? { ...p, x: p.x + dx, y: p.y + dy } : p))
+        doc.texts = doc.texts.map((t) => (sel.has(t.id) ? { ...t, x: t.x + dx, y: t.y + dy } : t))
+        return mutateDoc(st, { doc })
+      }),
+
+    addGuideDrawn: (kind, a, b, snap45) => {
+      const st = get()
+      let guide: Guide
+      const dist = Math.hypot(b.x - a.x, b.y - a.y)
+      const ang = (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI
+      switch (kind) {
+        case 'circle':
+          guide = { id: uid('g'), kind: 'circle', cx: a.x, cy: a.y, r: Math.max(2, dist), visible: true }
+          break
+        case 'polygon':
+          guide = {
+            id: uid('g'),
+            kind: 'polygon',
+            cx: a.x,
+            cy: a.y,
+            r: Math.max(2, dist),
+            n: st.polygonSides,
+            rot: ang,
+            visible: true,
+          }
+          break
+        case 'arc':
+          guide = {
+            id: uid('g'),
+            kind: 'arc',
+            cx: a.x,
+            cy: a.y,
+            r: Math.max(2, dist),
+            a0: -210,
+            a1: 30,
+            visible: true,
+          }
+          break
+        case 'spiral':
+          guide = {
+            id: uid('g'),
+            kind: 'spiral',
+            cx: a.x,
+            cy: a.y,
+            r0: Math.max(2, dist * 0.12),
+            r1: Math.max(4, dist),
+            turns: 3,
+            a0: ang,
+            visible: true,
+          }
+          break
+        case 'line': {
+          let end = { x: b.x, y: b.y }
+          if (snap45) {
+            const len = Math.hypot(b.x - a.x, b.y - a.y)
+            const step = Math.PI / 4
+            const snapped = Math.round(Math.atan2(b.y - a.y, b.x - a.x) / step) * step
+            end = { x: a.x + len * Math.cos(snapped), y: a.y + len * Math.sin(snapped) }
+          }
+          guide = { id: uid('g'), kind: 'line', x1: a.x, y1: a.y, x2: end.x, y2: end.y, visible: true }
+          break
+        }
+      }
+      set((s2) =>
+        mutateDoc(s2, {
+          doc: { ...s2.doc, guides: [...s2.doc.guides, guide] },
+          selGuides: [guide.id],
+          selPlacements: [],
+          selBrackets: [],
+          selTexts: [],
+        }),
+      )
+    },
+
+    updateGuide: (id, patch) =>
+      commit((d) => {
+        d.guides = d.guides.map((g) => (g.id === id ? ({ ...g, ...patch } as Guide) : g))
+      }),
+
+    updateGuideLive: (id, patch) =>
+      live((d) => {
+        d.guides = d.guides.map((g) => (g.id === id ? ({ ...g, ...patch } as Guide) : g))
+      }),
+
+    deleteGuide: (id) =>
+      commit((d) => {
+        d.guides = d.guides.filter((g) => g.id !== id)
+      }),
+
+    toggleGuideVisible: (id) =>
+      commit((d) => {
+        d.guides = d.guides.map((g) => (g.id === id ? { ...g, visible: !g.visible } : g))
+      }),
+
+    placeEvenlyOnGuide: (guideId, symbolId, opts) =>
+      set((st) => {
+        const guide = st.doc.guides.find((g) => g.id === guideId)
+        if (!guide) return {}
+        const sample = guideSample(guide)
+        const spots = placeEvenly(sample, {
+          count: opts.count,
+          startOffset: opts.startOffset,
+          rotationMode: opts.rotationMode,
+          center: guideCenter(guide),
+        })
+        const kept = opts.mode === 'replace' ? st.doc.placements.filter((p) => p.guideTag !== guideId) : st.doc.placements
+        const added = spots.map((s) => ({
+          id: uid('p'),
+          symbolId,
+          x: s.pos.x,
+          y: s.pos.y,
+          rotation: s.angle,
+          scale: opts.scale,
+          flip: false,
+          guideTag: guideId,
+        }))
+        return mutateDoc(st, {
+          doc: { ...st.doc, placements: [...kept, ...added] },
+          selPlacements: added.map((a) => a.id),
+          selGuides: [],
+          selBrackets: [],
+          selTexts: [],
+        })
+      }),
+
+    addBracketFromPoints: (a, b) =>
+      set((st) => {
+        // auto-count stitches lying near the chord
+        const minx = Math.min(a.x, b.x) - 14
+        const maxx = Math.max(a.x, b.x) + 14
+        const miny = Math.min(a.y, b.y) - 14
+        const maxy = Math.max(a.y, b.y) + 14
+        const near = st.doc.placements.filter((p) => p.x >= minx && p.x <= maxx && p.y >= miny && p.y <= maxy)
+        const count = Math.max(2, near.length)
+        const bracket = {
+          id: uid('b'),
+          x1: a.x,
+          y1: a.y,
+          x2: b.x,
+          y2: b.y,
+          side: 1 as const,
+          count,
+        }
+        return mutateDoc(st, {
+          doc: { ...st.doc, brackets: [...st.doc.brackets, bracket] },
+          selBrackets: [bracket.id],
+          selPlacements: [],
+          selGuides: [],
+          selTexts: [],
+        })
+      }),
+
+    updateBracket: (id, patch) =>
+      commit((d) => {
+        d.brackets = d.brackets.map((b) => (b.id === id ? { ...b, ...patch } : b))
+      }),
+
+    deleteBracket: (id) =>
+      commit((d) => {
+        d.brackets = d.brackets.filter((b) => b.id !== id)
+      }),
+
+    setLegendLive: (patch) =>
+      live((d) => {
+        d.legend = { ...d.legend, ...patch }
+      }),
+
+    addTextAt: (x, y) =>
+      set((st) => {
+        const t = { id: uid('t'), x, y, content: 'Round 1', size: 16, rotation: 0 }
+        return mutateDoc(st, {
+          doc: { ...st.doc, texts: [...st.doc.texts, t] },
+          selTexts: [t.id],
+          selPlacements: [],
+          selGuides: [],
+          selBrackets: [],
+        })
+      }),
+
+    updateText: (id, patch) =>
+      commit((d) => {
+        d.texts = d.texts.map((t) => (t.id === id ? { ...t, ...patch } : t))
+      }),
+
+    deleteText: (id) =>
+      commit((d) => {
+        d.texts = d.texts.filter((t) => t.id !== id)
+      }),
+
+    addCustomSymbol: (def) =>
+      commit((d) => {
+        d.customSymbols = [...d.customSymbols, def]
+      }),
+
+    removeCustomSymbol: (id) =>
+      commit((d) => {
+        if (d.placements.some((p) => p.symbolId === id)) return
+        d.customSymbols = d.customSymbols.filter((s) => s.id !== id)
+        delete d.labelOverrides[id]
+      }),
+
+    setLabelOverride: (symbolId, label) =>
+      commit((d) => {
+        if (label.trim()) d.labelOverrides[symbolId] = label.trim()
+        else delete d.labelOverrides[symbolId]
+      }),
+
+    setLegend: (patch) =>
+      commit((d) => {
+        d.legend = { ...d.legend, ...patch }
+      }),
+
+    setInk: (ink) =>
+      commit((d) => {
+        d.ink = ink
+      }),
+
+    undo: () =>
+      set((st) => {
+        if (!st.past.length) return {}
+        const prev = st.past[st.past.length - 1]
+        return {
+          doc: prev,
+          past: st.past.slice(0, -1),
+          future: [st.doc, ...st.future.slice(0, HISTORY_LIMIT - 1)],
+        }
+      }),
+
+    redo: () =>
+      set((st) => {
+        if (!st.future.length) return {}
+        const next = st.future[0]
+        return {
+          doc: next,
+          past: [...st.past.slice(-(HISTORY_LIMIT - 1)), st.doc],
+          future: st.future.slice(1),
+        }
+      }),
+
+    setViewport: (vp) => set({ viewport: vp }),
+
+    zoomAt: (factor, sx, sy) =>
+      set((st) => {
+        const nz = clamp(st.viewport.zoom * factor, 0.04, 24)
+        const k = nz / st.viewport.zoom
+        return {
+          viewport: {
+            zoom: nz,
+            x: sx - (sx - st.viewport.x) * k,
+            y: sy - (sy - st.viewport.y) * k,
+          },
+        }
+      }),
+
+    fitView: (width, height) =>
+      set((st) => {
+        const defMap = getDefMap(st.doc)
+        const bbox = contentBBox(st.doc, defMap, { includeGuides: true, includeInvisibleGuides: true })
+        if (!bbox || bbox.w <= 0 || bbox.h <= 0) {
+          return { viewport: { x: width / 2, y: height / 2, zoom: 1 } }
+        }
+        const zoom = clamp(Math.min((width - 140) / bbox.w, (height - 140) / bbox.h), 0.04, 2.5)
+        return {
+          viewport: {
+            zoom,
+            x: width / 2 - (bbox.x + bbox.w / 2) * zoom,
+            y: height / 2 - (bbox.y + bbox.h / 2) * zoom,
+          },
+        }
+      }),
+
+    setSnap: (v) => set({ snapEnabled: v }),
+    setGrid: (v) => set({ gridVisible: v }),
+    setGuidesVisible: (v) => set({ guidesVisible: v }),
+
+    openDialog: (kind, guideId) => set({ dialog: kind, placeEvenlyGuideId: guideId ?? null }),
+    closeDialog: () => set({ dialog: null }),
+
+    openProject: (rec) =>
+      set({
+        projectId: rec.id,
+        projectName: rec.name,
+        createdAt: rec.createdAt ?? Date.now(),
+        doc: rec.doc,
+        past: [],
+        future: [],
+        savedAt: rec.updatedAt,
+        ...clearSel,
+        dialog: null,
+      }),
+
+    newProject: (name, doc) => {
+      const id = uid('proj')
+      set({
+        projectId: id,
+        projectName: name,
+        createdAt: Date.now(),
+        doc: doc ?? createEmptyDoc(name),
+        past: [],
+        future: [],
+        savedAt: null,
+        ...clearSel,
+        dialog: null,
+      })
+      return id
+    },
+
+    closeProject: () =>
+      set({
+        projectId: null,
+        projectName: 'Untitled chart',
+        createdAt: null,
+        ...clearSel,
+        dialog: null,
+        bracketStart: null,
+      }),
+
+    markSaved: (at) => set({ savedAt: at }),
+  }
+})
+
+export function legendRowCount(doc: ChartDoc): number {
+  return legendItems(doc, getDefMap(doc)).length
+}
+
+export function sanitizeProjectFile(text: string): { name: string; doc: ChartDoc } | null {
+  try {
+    const parsed = JSON.parse(text) as { name?: string; doc?: unknown } | unknown
+    const docInput = (parsed as { doc?: unknown })?.doc ?? parsed
+    const doc = sanitizeDoc(docInput)
+    if (!doc) return null
+    const name = (parsed as { name?: string }).name ?? doc.title
+    return { name: name || 'Imported chart', doc }
+  } catch {
+    return null
+  }
+}

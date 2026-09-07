@@ -1,0 +1,15 @@
+# DimCrochet — deployable as a Portainer stack (Stacks → Add stack → Repository,
+# pointing at this repo) or locally with: docker compose up -d --build
+#
+# The container is stateless: charts live in each user's browser (IndexedDB),
+# so upgrading is just a redeploy and there is nothing to back up on the host.
+
+services:
+  dimcrochet:
+    build: .
+    image: dimcrochet:latest
+    container_name: dimcrochet
+    restart: unless-stopped
+    ports:
+      # change the host port in Portainer's environment editor (DIMCROCHET_PORT)
+      - "${DIMCROCHET_PORT:-8080}:80"
