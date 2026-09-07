@@ -9,6 +9,7 @@
 - **Guides**: circle, arc, spiral, line and regular polygon — drawn on canvas, edited numerically or by dragging handles
 - **“Place N stitches evenly along a guide”** with true arc-length spacing and three stitch orientations (radiate out / follow path / upright)
 - **Backstitch lines**: draw chart line-work (surface/backstitch rows) from stitch to stitch with anchor snapping; reshape by dragging point handles, insert/remove points, close into loops; exported as solid strokes and listed in the legend
+- **2D fabric preview**: see the motif as simulated crocheted fabric — yarn-styled stitches with a sheen, optional handmade jitter, yarn & background colours, one-click PNG download
 - **Editing**: marquee + shift multi-select, move/rotate/scale, nudge, duplicate, group, mirror H/V, distribute, align edges/centers (left/center/right/top/middle/bottom), snapping to guide points & anchors, full undo/redo
 - **Repeat brackets** with automatic “× N” counts and an **automatic legend** (symbol swatch, editable labels, stitch counts)
 - **Export**: standalone SVG (tight viewBox, editor chrome stripped), transparent PNG at 2×/4×, vector PDF (A4/Letter, portrait/landscape), and project `.json` files for backup/sharing

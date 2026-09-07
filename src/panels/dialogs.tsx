@@ -3,6 +3,7 @@ import { useStore } from '../state/store'
 import { getDefMap } from '../symbols/registry'
 import { guideSample } from '../geometry/guides'
 import { exportProjectFile, readProjectFile } from '../export/projectFile'
+import { PreviewDialog } from './PreviewDialog'
 import type { RotationMode } from '../model/types'
 import type { SvgExportOptions } from '../export/svg'
 import type { PaperFormat, PageOrientation } from '../export/pdf'
@@ -291,5 +292,6 @@ export function Dialogs() {
   const dialog = useStore((s) => s.dialog)
   if (dialog === 'place-evenly') return <PlaceEvenlyDialog />
   if (dialog === 'export') return <ExportDialog />
+  if (dialog === 'preview') return <PreviewDialog />
   return null
 }

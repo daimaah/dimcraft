@@ -126,6 +126,9 @@ export function Toolbar() {
         </button>
       </div>
 
+      <button className="btn" onClick={() => st.getState().openDialog('preview')} title="2D fabric preview">
+        <Icon name="eye" /> Preview
+      </button>
       <button className="btn accent" onClick={() => st.getState().openDialog('export')}>
         <Icon name="export" /> Export
       </button>

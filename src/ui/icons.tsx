@@ -18,6 +18,7 @@ const ICONS: Record<string, React.ReactNode> = {
   fit: <path d="M3 7 V3 H7 M13 3 H17 V7 M17 13 V17 H13 M7 17 H3 V13" />,
   trash: <path d="M4 6 H16 M7.5 6 V4 H12.5 V6 M6 6 L7 17 H13 L14 6" />,
   plus: <path d="M10 4 V16 M4 10 H16" />,
+  eye: <path d="M2.5 10 C 5 5.5 8 4 10 4 C 12 4 15 5.5 17.5 10 C 15 14.5 12 16 10 16 C 8 16 5 14.5 2.5 10 Z M 10 7.4 A 2.6 2.6 0 1 0 10 12.6 A 2.6 2.6 0 1 0 10 7.4" />,
 }
 
 export type IconName = keyof typeof ICONS
