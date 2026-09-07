@@ -340,7 +340,7 @@ export function ChartCanvas() {
           w: Math.abs(a.x - b.x),
           h: Math.abs(a.y - b.y),
         }
-        const hits = st.doc.placements.filter((p) => {
+        const hits = st.doc.placements.filter((p) => p.visible !== false).filter((p) => {
           const def = defMap.get(p.symbolId)
           if (!def) return false
           return bboxesIntersect(cornersBBox(placementCorners(p, def)), worldRect)
@@ -506,7 +506,7 @@ export function ChartCanvas() {
 
         {/* stitches */}
         <g className="layer-stitches">
-          {doc.placements.map((p) => {
+          {doc.placements.filter((p) => p.visible !== false).map((p) => {
             const def = defMap.get(p.symbolId)
             if (!def) {
               return (

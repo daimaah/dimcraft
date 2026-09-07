@@ -15,6 +15,7 @@ export function collectSnapTargets(doc: ChartDoc): SnapTarget[] {
     for (const e of guideEndpoints(g)) targets.push({ pos: e, kind: 'guide-end' })
   }
   for (const p of doc.placements) {
+    if (p.visible === false) continue
     targets.push({ pos: { x: p.x, y: p.y }, kind: 'anchor' })
   }
   return targets

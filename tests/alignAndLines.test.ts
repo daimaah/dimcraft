@@ -111,6 +111,28 @@ describe('backstitch lines', () => {
     expect(useStore.getState().doc.lines[0].points).toHaveLength(2)
   })
 
+  it('hiding placements removes them from exports, legend and bounds', async () => {
+    const st = useStore.getState()
+    st.stampPlacement(0, 0)
+    st.stampPlacement(100, 100)
+    const doc = useStore.getState().doc
+    const hide = doc.placements[1].id
+    useStore.getState().setPlacementsVisible([hide], false)
+
+    const after = useStore.getState().doc
+    expect(after.placements).toHaveLength(2) // still in the document
+    expect(after.placements[1].visible).toBe(false)
+
+    const { buildExportSvg } = await import('../src/export/svg')
+    const { svg } = buildExportSvg(after, { includeLegend: false })
+    expect((svg.match(/<g transform="translate\(/g) ?? []).length).toBe(1)
+
+    const { contentBBox } = await import('../src/geometry/bounds')
+    const { getDefMap } = await import('../src/symbols/registry')
+    const bbox = contentBBox(after, getDefMap(after), { includeLegend: false })
+    expect(bbox!.w).toBeLessThan(50) // only the stitch at the origin remains
+  })
+
   it('deletes via selection and undo restores it', () => {
     useStore.getState().addLineFromPoints({ x: 0, y: 0 }, { x: 10, y: 0 })
     const id = useStore.getState().doc.lines[0].id

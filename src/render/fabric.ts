@@ -146,6 +146,7 @@ export function buildFabricSvg(doc: ChartDoc, opts: FabricPreviewOptions): { svg
 
   const boxes: BBox[] = []
   for (const p of doc.placements) {
+    if (p.visible === false) continue
     const def = defs.get(p.symbolId)
     if (!def) continue
     const fat = { ...def, bbox: paddedBBox(def.bbox, 2.5) }
@@ -180,6 +181,7 @@ export function buildFabricSvg(doc: ChartDoc, opts: FabricPreviewOptions): { svg
   }
 
   const stitches = doc.placements
+    .filter((p) => p.visible !== false)
     .map((p) => {
       const def = defs.get(p.symbolId)
       const glyph = fabricGlyph(p.symbolId, def, opts.yarn)

@@ -41,6 +41,8 @@ export interface Placement {
   /** set when the stitch was created by "place evenly along guide" */
   guideTag?: string
   groupId?: string
+  /** editing aid: hidden groups are skipped on canvas and in exports */
+  visible?: boolean
 }
 
 // ---- Guides --------------------------------------------------------------
@@ -153,6 +155,8 @@ export interface ChartDoc {
   labelOverrides: Record<string, string>
   legend: LegendState
   ink: string
+  /** gauge: how many chart units span 10 cm of finished fabric (for true-scale PDF) */
+  unitsPer10cm?: number | null
 }
 
 /** Legend key under which backstitch lines are listed. */

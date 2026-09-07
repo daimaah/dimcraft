@@ -1,6 +1,7 @@
 import { useStore } from '../state/store'
 import { getDefMap } from '../symbols/registry'
 import { legendItems } from '../geometry/legend'
+import { contentBBox } from '../geometry/bounds'
 import type { Guide } from '../model/types'
 
 function NumField(props: {
@@ -275,6 +276,13 @@ export function Inspector() {
 
   // ---- nothing selected: document settings ----
   const items = legendItems(doc, defMap)
+  const gauge = doc.unitsPer10cm ?? null
+  const sizeHint = gauge
+    ? (() => {
+        const bbox = contentBBox(doc, defMap, { includeLegend: true })
+        return bbox ? `≈ ${((bbox.w / gauge) * 10).toFixed(1)} × ${((bbox.h / gauge) * 10).toFixed(1)} cm` : null
+      })()
+    : null
   return (
     <>
       <div className="panel-title">Chart</div>
@@ -283,7 +291,17 @@ export function Inspector() {
           <span>Ink colour</span>
           <input type="color" value={doc.ink} onChange={(e) => st.getState().setInk(e.target.value)} />
         </label>
+        <NumField
+          label="Units / 10 cm"
+          value={doc.unitsPer10cm ?? 0}
+          onChange={(v) => st.getState().setGauge(v > 0 ? v : null)}
+        />
       </Row>
+      <p className="hint">
+        {gauge
+          ? `Gauge set — chart${sizeHint ? ` ${sizeHint}` : ''}. Enable “True scale” in the PDF export to print at this size.`
+          : 'Optional gauge: how many chart units span 10 cm. Enables true-scale PDF printing.'}
+      </p>
       <div className="panel-title">Legend</div>
       <Row>
         <label className="check">

@@ -52,5 +52,6 @@ export function sanitizeDoc(input: unknown): ChartDoc | null {
     labelOverrides: d.labelOverrides && typeof d.labelOverrides === 'object' ? d.labelOverrides : {},
     legend: { ...DEFAULT_LEGEND, ...(d.legend ?? {}) },
     ink: typeof d.ink === 'string' ? d.ink : base.ink,
+    unitsPer10cm: typeof d.unitsPer10cm === 'number' && Number.isFinite(d.unitsPer10cm) ? d.unitsPer10cm : null,
   }
 }

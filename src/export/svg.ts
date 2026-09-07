@@ -63,6 +63,7 @@ export function buildExportSvg(doc: ChartDoc, options: SvgExportOptions = {}): B
   }
 
   const stitches = doc.placements
+    .filter((p) => p.visible !== false)
     .map((p) => {
       const def = defMap.get(p.symbolId)
       if (!def) return ''

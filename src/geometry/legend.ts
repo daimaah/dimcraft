@@ -15,6 +15,7 @@ export function legendItems(doc: ChartDoc, defMap: Map<string, SymbolDef>): Lege
   const order: string[] = []
   const counts = new Map<string, number>()
   for (const p of doc.placements) {
+    if (p.visible === false) continue
     const c = counts.get(p.symbolId) ?? 0
     if (c === 0) order.push(p.symbolId)
     counts.set(p.symbolId, c + 1)

@@ -33,7 +33,7 @@ export interface Viewport {
   zoom: number
 }
 
-export type DialogKind = 'place-evenly' | 'export' | 'preview' | null
+export type DialogKind = 'place-evenly' | 'export' | 'preview' | 'instructions' | null
 
 export interface DragPositions {
   placements: { id: string; x: number; y: number }[]
@@ -123,7 +123,9 @@ interface EditorState {
   addBracketFromPoints: (a: Vec, b: Vec) => void
   updateBracket: (id: string, patch: Partial<{ count: number; label: string | undefined; side: 1 | -1 }>) => void
   deleteBracket: (id: string) => void
+  setPlacementsVisible: (ids: string[], visible: boolean) => void
   setLegendLive: (patch: Partial<ChartDoc['legend']>) => void
+  setGauge: (unitsPer10cm: number | null) => void
 
   addTextAt: (x: number, y: number) => void
   updateText: (id: string, patch: Partial<{ content: string; size: number; rotation: number }>) => void
@@ -660,6 +662,17 @@ export const useStore = create<EditorState>()((set, get) => {
     setLegendLive: (patch) =>
       live((d) => {
         d.legend = { ...d.legend, ...patch }
+      }),
+
+    setPlacementsVisible: (ids, visible) =>
+      commit((d) => {
+        const set = new Set(ids)
+        d.placements = d.placements.map((p) => (set.has(p.id) ? { ...p, visible } : p))
+      }),
+
+    setGauge: (unitsPer10cm) =>
+      commit((d) => {
+        d.unitsPer10cm = unitsPer10cm && unitsPer10cm > 0 ? unitsPer10cm : null
       }),
 
     addTextAt: (x, y) =>

@@ -127,6 +127,9 @@ export function Toolbar() {
         </button>
       </div>
 
+      <button className="btn" onClick={() => st.getState().openDialog('instructions')} title="Written round-by-round instructions">
+        <Icon name="list" /> Rounds
+      </button>
       <button className="btn" onClick={() => st.getState().openDialog('preview')} title="2D fabric preview">
         <Icon name="eye" /> Preview
       </button>

@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { useStore } from '../state/store'
 import { getDefMap } from '../symbols/registry'
 import { guideSample } from '../geometry/guides'
+import { contentBBox } from '../geometry/bounds'
 import { exportProjectFile, readProjectFile } from '../export/projectFile'
 import { PreviewDialog } from './PreviewDialog'
+import { InstructionsDialog } from './InstructionsDialog'
 import type { RotationMode } from '../model/types'
 import type { SvgExportOptions } from '../export/svg'
 import type { PaperFormat, PageOrientation } from '../export/pdf'
@@ -135,6 +137,14 @@ function Row2({ label, children }: { label: string; children: React.ReactNode })
   )
 }
 
+function trueSizeLabel(doc: ReturnType<typeof useStore.getState>['doc'], gauge: number): string {
+  const bbox = contentBBox(doc, getDefMap(doc), { includeLegend: true })
+  if (!bbox) return '—'
+  const w = (bbox.w / gauge) * 10
+  const h = (bbox.h / gauge) * 10
+  return `${w.toFixed(1)} × ${h.toFixed(1)} cm`
+}
+
 export function ExportDialog() {
   const doc = useStore((s) => s.doc)
   const projectName = useStore((s) => s.projectName)
@@ -144,7 +154,10 @@ export function ExportDialog() {
   const [pngScale, setPngScale] = useState(2)
   const [pdfFormat, setPdfFormat] = useState<PaperFormat>('a4')
   const [orientation, setOrientation] = useState<PageOrientation>('portrait')
+  const [trueScale, setTrueScale] = useState(false)
   const [busy, setBusy] = useState(false)
+
+  const gauge = doc.unitsPer10cm ?? null
 
   const run = async () => {
     setBusy(true)
@@ -163,7 +176,7 @@ export function ExportDialog() {
         await exportPng(doc, projectName, { ...opts, scale: pngScale })
       } else {
         const { exportPdf } = await import('../export/pdf')
-        await exportPdf(doc, projectName, { ...opts, format: pdfFormat, orientation })
+        await exportPdf(doc, projectName, { ...opts, format: pdfFormat, orientation, trueScale, unitsPer10cm: gauge })
       }
       useStore.getState().closeDialog()
     } catch (err) {
@@ -224,6 +237,15 @@ export function ExportDialog() {
                 </button>
               </div>
             </Row2>
+            <label className="check" title={gauge ? 'Print at the gauge-derived true size' : 'Set a gauge in the inspector first'}>
+              <input
+                type="checkbox"
+                checked={trueScale && !!gauge}
+                disabled={!gauge}
+                onChange={(e) => setTrueScale(e.target.checked)}
+              />
+              <span>True scale{gauge ? ` (≈ ${trueSizeLabel(doc, gauge)})` : ' — set gauge first'}</span>
+            </label>
           </>
         )}
 
@@ -293,5 +315,6 @@ export function Dialogs() {
   if (dialog === 'place-evenly') return <PlaceEvenlyDialog />
   if (dialog === 'export') return <ExportDialog />
   if (dialog === 'preview') return <PreviewDialog />
+  if (dialog === 'instructions') return <InstructionsDialog />
   return null
 }

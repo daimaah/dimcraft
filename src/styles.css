@@ -619,6 +619,27 @@ button {
   display: block;
 }
 
+.instructions-text {
+  background: var(--bg-inset);
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-family: Consolas, 'Cascadia Mono', monospace;
+  font-size: 12.5px;
+  line-height: 1.55;
+  resize: vertical;
+  width: 100%;
+}
+
+.instructions-text:focus {
+  outline: 1px solid var(--accent);
+}
+
+.layers li.hidden-group {
+  opacity: 0.5;
+}
+
 .modal-head {
   display: flex;
   align-items: center;

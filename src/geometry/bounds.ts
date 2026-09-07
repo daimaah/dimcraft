@@ -22,6 +22,7 @@ export interface BoundsOptions {
 export function contentBBox(doc: ChartDoc, defMap: Map<string, SymbolDef>, opts: BoundsOptions = {}): BBox | null {
   const boxes: BBox[] = []
   for (const p of doc.placements) {
+    if (p.visible === false) continue
     const def = defMap.get(p.symbolId)
     if (def) boxes.push(cornersBBox(placementCorners(p, def)))
   }
