@@ -80,6 +80,35 @@ extension; older v1 files keep importing forever via the existing
   alignment marks.
 - **Stitch-count validation** — heuristic warnings when a round's stitch count
   doesn't fit the previous round (CrochetPARADE-style structural checks).
-- **Community symbol packs** — once packs ship, curate/verify contributed
-  national sets (Nordic, Japanese, Russian traditions) instead of inventing
-  them ourselves.
+- **Community symbol packs** — see sourcing notes below.
+
+### Community symbol packs — sourcing notes (researched)
+
+There is no single canonical open database, but three real open sources exist:
+
+1. **Wikimedia Commons — [Category:Crochet symbols](https://commons.wikimedia.org/wiki/Category:Crochet_symbols)** —
+   ~76 SVGs, explicitly "international **and variant** symbols", mostly **CC BY-SA 4.0**.
+   Best candidate for a first curated pack (European/regional variants). Requires extending
+   the pack schema with `license` + `attribution` + `sourceUrl` fields (Share-Alike must
+   travel with the artwork).
+2. **[Neon22/Crochet-Charts-replacement-stitches](https://github.com/Neon22/Crochet-Charts-replacement-stitches)** (GitHub, GPL-3.0) —
+   small set (Tunisian, direction arrows, sc variants) in the Crochet Charts 1.2 app format
+   (SVG + XML). Users can import these as packs freely; *bundling* them in this repo would
+   require GPL-compatibility for those assets.
+3. **Open-source app libraries** — [iPenguin/CrochetCharts](https://github.com/iPenguin/CrochetCharts) (GPLv3),
+   [CrochetPARADE](https://github.com/crochetparade/CrochetPARADE), [CrochetProject/CrochetCraze](https://github.com/CrochetProject/CrochetCraze)
+   (SVG stitch symbols + animations). Formats are app-specific; a converter per format is the work.
+
+**Not usable as sources:** Craft Yarn Council's official symbol chart (copyrighted — we already
+draw our own CYC-*style* set), Japanese JIS standard (paywalled), Nordic yarn-company glossaries
+(Novita/Sandnes/Sandra PDFs are copyrighted).
+
+**Nordic reality check:** published Nordic charts use the standard international symbol shapes —
+the regional difference is *terminology*, which the built-in sv/no/da/fi presets already cover
+(cross-check source: [lalylala multilingual crochet terms](https://lalylala.com/blogs/lalylala-blog-2/multilingual-crochet-terms)).
+A distinct Nordic *glyph* pack has low value; a Nordic **terminology-verified standard pack**
+is the deliverable. The Commons "variant symbols" are where real glyph differences live.
+
+**Plan:** when community packs ship — extend pack schema with license/attribution, build a
+one-off Commons importer (fetch → normalize viewBox → @INK@ tokens → pack JSON), and start a
+`packs/` folder in the repo as the distribution channel (works with Portainer/Git Hub, no backend).
