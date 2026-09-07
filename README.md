@@ -2,6 +2,8 @@
 
 **Crochet round & motif chart composer** — draw granny squares, doilies, lace motifs and circular crochet charts in the browser, then export a clean SVG, transparent PNG or print-ready PDF. No account, no uploads: every chart lives in your browser's local storage.
 
+See [ROADMAP.md](ROADMAP.md) for what's planned next — including optional shareable links and a unified chart/symbol-pack file format.
+
 ## Features
 
 - **Vector canvas** with pan/zoom, grid, and keyboard-first editing (`V` select, `P` place, `B` bracket, `T` text, `1–5` guides)
