@@ -24,6 +24,7 @@ export function Toolbar() {
   const gridVisible = useStore((s) => s.gridVisible)
   const guidesVisible = useStore((s) => s.guidesVisible)
   const viewport = useStore((s) => s.viewport)
+  const followActive = useStore((s) => s.followActive)
 
   const st = useStore
   const zoomPct = Math.round(viewport.zoom * 100)
@@ -127,6 +128,13 @@ export function Toolbar() {
         </button>
       </div>
 
+      <button
+        className={`btn${followActive ? ' accent' : ''}`}
+        title="Follow mode — step through the chart round by round (F)"
+        onClick={() => st.getState().setFollow(!followActive)}
+      >
+        <Icon name="play" /> Follow
+      </button>
       <button className="btn" onClick={() => st.getState().openDialog('instructions')} title="Written round-by-round instructions">
         <Icon name="list" /> Rounds
       </button>

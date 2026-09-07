@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { ChartCanvas } from './canvas/ChartCanvas'
 import { Gallery } from './gallery/Gallery'
+import { FollowBar } from './panels/FollowBar'
 import { Inspector } from './panels/Inspector'
 import { LayersPanel } from './panels/LayersPanel'
 import { Dialogs } from './panels/dialogs'
@@ -27,6 +28,7 @@ function fitCenter() {
 
 export default function App() {
   const projectId = useStore((s) => s.projectId)
+  const followActive = useStore((s) => s.followActive)
 
   // centre the view on the chart whenever a project opens
   useEffect(() => {
@@ -186,6 +188,9 @@ export default function App() {
         case 'h':
           st.setTool(st.tool === 'pan' ? 'select' : 'pan')
           return
+        case 'f':
+          st.setFollow(!st.followActive)
+          return
         case 't':
           st.setTool('text')
           return
@@ -231,6 +236,7 @@ export default function App() {
         <SymbolPalette />
         <div className="canvas-wrap">
           <ChartCanvas />
+          {followActive && <FollowBar />}
         </div>
         <div className="right-col">
           <section className="panel inspector-panel">

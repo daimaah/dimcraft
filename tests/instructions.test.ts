@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { generateInstructions, groupRounds } from '../src/geometry/instructions'
+import { followSteps, generateInstructions, groupRounds } from '../src/geometry/instructions'
 import { createStarterDoc } from '../src/model/starter'
 import { createEmptyDoc, uid } from '../src/model/doc'
 import type { CircleGuide, Placement } from '../src/model/types'
@@ -80,5 +80,37 @@ describe('written instructions', () => {
 
   it('handles an empty chart gracefully', () => {
     expect(generateInstructions(createEmptyDoc())).toContain('No stitches yet')
+  })
+})
+
+describe('follow steps', () => {
+  it('splits the starter into a magic-ring step and one round step with highlight ids', () => {
+    const doc = createStarterDoc()
+    const steps = followSteps(doc)
+    expect(steps).toHaveLength(2)
+    expect(steps[0].label).toBe('Start')
+    expect(steps[0].text).toBe('Start with a magic ring.')
+    expect(steps[0].ids).toHaveLength(1)
+    expect(steps[1].label).toBe('R1')
+    expect(steps[1].text).toBe('R1: [3 dc, ch 2] × 4')
+    expect(steps[1].ids).toHaveLength(20)
+  })
+
+  it('emits one step per detected round for concentric charts', () => {
+    const doc = createEmptyDoc()
+    doc.guides.push(circle(100))
+    doc.placements.push(...ring('sc', 8, 55))
+    doc.placements.push(...ring('dc', 16, 110))
+    const steps = followSteps(doc)
+    expect(steps.map((s) => s.text)).toEqual(['R1: 8 sc', 'R2: 16 dc'])
+    expect(steps[0].ids).toHaveLength(8)
+    expect(steps[1].ids).toHaveLength(16)
+  })
+
+  it('keeps written instructions and follow steps in sync', () => {
+    const doc = createStarterDoc()
+    const steps = followSteps(doc)
+    const text = generateInstructions(doc)
+    for (const s of steps) expect(text).toContain(s.text)
   })
 })

@@ -123,6 +123,13 @@ interface EditorState {
   addBracketFromPoints: (a: Vec, b: Vec) => void
   updateBracket: (id: string, patch: Partial<{ count: number; label: string | undefined; side: 1 | -1 }>) => void
   deleteBracket: (id: string) => void
+  followActive: boolean
+  followRound: number
+  followTolerance: number
+  setFollow: (active: boolean) => void
+  setFollowRound: (n: number) => void
+  setFollowTolerance: (t: number) => void
+
   setPlacementsVisible: (ids: string[], visible: boolean) => void
   setLegendLive: (patch: Partial<ChartDoc['legend']>) => void
   setGauge: (unitsPer10cm: number | null) => void
@@ -668,6 +675,38 @@ export const useStore = create<EditorState>()((set, get) => {
       commit((d) => {
         const set = new Set(ids)
         d.placements = d.placements.map((p) => (set.has(p.id) ? { ...p, visible } : p))
+      }),
+
+    // follow mode: progress + tolerance live in the doc (autosaved) but are
+    // navigation, so they deliberately bypass undo history
+    followActive: false,
+    followRound: 0,
+    followTolerance: 18,
+
+    setFollow: (active) =>
+      set((st) => {
+        if (!active) return { followActive: false }
+        const f = st.doc.follow
+        return {
+          followActive: true,
+          followRound: f?.round ?? 0,
+          followTolerance: f?.tolerance ?? 18,
+        }
+      }),
+
+    setFollowRound: (n) =>
+      set((st) => {
+        const round = Math.max(0, n)
+        const doc = structuredClone(st.doc)
+        doc.follow = { round, tolerance: st.followTolerance }
+        return { followRound: round, doc }
+      }),
+
+    setFollowTolerance: (t) =>
+      set((st) => {
+        const doc = structuredClone(st.doc)
+        doc.follow = { round: st.followRound, tolerance: t }
+        return { followTolerance: t, doc }
       }),
 
     setGauge: (unitsPer10cm) =>

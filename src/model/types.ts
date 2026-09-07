@@ -157,6 +157,8 @@ export interface ChartDoc {
   ink: string
   /** gauge: how many chart units span 10 cm of finished fabric (for true-scale PDF) */
   unitsPer10cm?: number | null
+  /** follow mode progress: which round is current, and the grouping tolerance */
+  follow?: { round: number; tolerance: number } | null
 }
 
 /** Legend key under which backstitch lines are listed. */

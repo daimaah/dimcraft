@@ -9,6 +9,7 @@ import { guideSvgPath } from '../geometry/guides'
 import { legendSize } from '../geometry/bounds'
 import { bracketSvg, legendSvgPlaced, lineSvg, textSvg } from '../render/markup'
 import { applyLineHandle } from '../geometry/handles'
+import { followSteps } from '../geometry/instructions'
 import type { DragPositions } from '../state/store'
 
 const GRID = 24
@@ -438,6 +439,17 @@ export function ChartCanvas() {
   const selBracketSet = useMemo(() => new Set(selBrackets), [selBrackets])
   const selTextSet = useMemo(() => new Set(selTexts), [selTexts])
   const selLineSet = useMemo(() => new Set(selLines), [selLines])
+  const followActive = useStore((s) => s.followActive)
+  const followRound = useStore((s) => s.followRound)
+  const followTolerance = useStore((s) => s.followTolerance)
+
+  // follow mode: the current round's stitches stay at full ink, the rest fade
+  const followHighlight = useMemo(() => {
+    if (!followActive) return null
+    const steps = followSteps(doc, followTolerance)
+    if (steps.length === 0) return null
+    return new Set(steps[Math.min(followRound, steps.length - 1)].ids)
+  }, [doc, followActive, followRound, followTolerance])
   const selectedGuide = selGuides.length === 1 ? doc.guides.find((g) => g.id === selGuides[0]) : undefined
   const handles = selectedGuide ? guideHandles(selectedGuide) : []
   const legendBox = legendSize(doc, defMap)
@@ -523,7 +535,15 @@ export function ChartCanvas() {
                 data-kind="placement"
                 data-id={p.id}
                 transform={placementTransform(p)}
-                opacity={selected ? 1 : undefined}
+                opacity={
+                  selected
+                    ? 1
+                    : followHighlight
+                      ? followHighlight.has(p.id)
+                        ? 1
+                        : 0.15
+                      : undefined
+                }
               >
                 <g dangerouslySetInnerHTML={{ __html: symbolInner(def, ink) }} />
                 <rect

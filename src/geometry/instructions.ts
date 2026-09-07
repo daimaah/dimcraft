@@ -76,21 +76,21 @@ function smallestPeriod(runs: Run[]): number {
   return 0
 }
 
-/** Generate the full written-instructions text for a chart. */
-export function generateInstructions(doc: ChartDoc, tolerance = 18): string {
+export interface FollowStep {
+  label: string
+  text: string
+  ids: string[]
+  radius: number | null
+}
+
+/** Round-by-round steps for follow mode: each step's text plus its stitch ids for highlighting. */
+export function followSteps(doc: ChartDoc, tolerance = 18): FollowStep[] {
   const defMap: Map<string, SymbolDef> = getDefMap(doc)
-  const lines: string[] = []
-  lines.push(doc.title || 'Chart')
-  lines.push('')
+  const steps: FollowStep[] = []
 
-  if (doc.placements.filter((p) => p.visible !== false).length === 0) {
-    lines.push('No stitches yet — place stitches on the canvas first.')
-    return lines.join('\n')
-  }
-
-  if (doc.placements.some((p) => p.symbolId === 'magicring')) {
-    lines.push('Start with a magic ring.')
-    lines.push('')
+  const ring = doc.placements.filter((p) => p.symbolId === 'magicring' && p.visible !== false)
+  if (ring.length) {
+    steps.push({ label: 'Start', text: 'Start with a magic ring.', ids: ring.map((p) => p.id), radius: 0 })
   }
 
   const { rounds } = groupRounds(doc, tolerance)
@@ -108,7 +108,8 @@ export function generateInstructions(doc: ChartDoc, tolerance = 18): string {
       runs[0].count += runs[runs.length - 1].count
       runs.pop()
     }
-    const period = smallestPeriod(runs)    // conventional order starts the repeat at a stitch rather than a chain
+    const period = smallestPeriod(runs)
+    // conventional order starts the repeat at a stitch rather than a chain
     let start = 0
     if (period > 0) {
       for (let i = 0; i < period; i++) {
@@ -121,12 +122,32 @@ export function generateInstructions(doc: ChartDoc, tolerance = 18): string {
     const ordered = [...runs.slice(start), ...runs.slice(0, start)]
     const body =
       period > 0 ? `[${renderRuns(ordered.slice(0, period))}] × ${runs.length / period}` : renderRuns(ordered)
-    lines.push(`R${i + 1}: ${body}`)
+    steps.push({
+      label: `R${i + 1}`,
+      text: `R${i + 1}: ${body}`,
+      ids: round.items.map((it) => it.p.id),
+      radius: round.meanRadius,
+    })
   })
+  return steps
+}
 
-  if (rounds.length > 0) {
-    lines.push('')
-    lines.push('Fasten off.')
+/** Generate the full written-instructions text for a chart. */
+export function generateInstructions(doc: ChartDoc, tolerance = 18): string {
+  const lines: string[] = []
+  lines.push(doc.title || 'Chart')
+  lines.push('')
+
+  if (doc.placements.filter((p) => p.visible !== false).length === 0) {
+    lines.push('No stitches yet — place stitches on the canvas first.')
+    return lines.join('\n')
   }
+
+  const steps = followSteps(doc, tolerance)
+  for (const s of steps) {
+    lines.push(s.text)
+    lines.push('')
+  }
+  if (steps.length > 0) lines.push('Fasten off.')
   return lines.join('\n')
 }
