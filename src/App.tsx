@@ -28,6 +28,13 @@ function fitCenter() {
 export default function App() {
   const projectId = useStore((s) => s.projectId)
 
+  // centre the view on the chart whenever a project opens
+  useEffect(() => {
+    if (!projectId) return
+    const t = setTimeout(fitCenter, 60)
+    return () => clearTimeout(t)
+  }, [projectId])
+
   // restore last project + preferences
   useEffect(() => {
     try {
