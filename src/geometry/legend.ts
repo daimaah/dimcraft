@@ -1,4 +1,4 @@
-import type { ChartDoc, SymbolDef } from '../model/types'
+import { LINE_LEGEND_ID, type ChartDoc, type SymbolDef } from '../model/types'
 
 export interface LegendItem {
   symbolId: string
@@ -8,7 +8,8 @@ export interface LegendItem {
 
 /**
  * Aggregate used symbols for the legend, ordered by first appearance in the
- * placement list. Label precedence: doc override → symbol def label.
+ * placement list, then one entry for backstitch lines if any exist.
+ * Label precedence: doc override → symbol def label.
  */
 export function legendItems(doc: ChartDoc, defMap: Map<string, SymbolDef>): LegendItem[] {
   const order: string[] = []
@@ -18,11 +19,19 @@ export function legendItems(doc: ChartDoc, defMap: Map<string, SymbolDef>): Lege
     if (c === 0) order.push(p.symbolId)
     counts.set(p.symbolId, c + 1)
   }
-  return order
+  const items = order
     .filter((id) => defMap.has(id))
     .map((symbolId) => ({
       symbolId,
       label: doc.labelOverrides[symbolId] ?? defMap.get(symbolId)!.label,
       count: counts.get(symbolId) ?? 0,
     }))
+  if (doc.lines.length > 0) {
+    items.push({
+      symbolId: LINE_LEGEND_ID,
+      label: doc.labelOverrides[LINE_LEGEND_ID] ?? 'backstitch',
+      count: doc.lines.length,
+    })
+  }
+  return items
 }

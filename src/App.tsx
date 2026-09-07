@@ -180,6 +180,9 @@ export default function App() {
         case 'b':
           st.setTool('bracket')
           return
+        case 'l':
+          st.setTool('line')
+          return
         case 't':
           st.setTool('text')
           return

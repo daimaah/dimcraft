@@ -7,7 +7,8 @@ import { applySnap, collectSnapTargets, type SnapKind } from '../geometry/snap'
 import { guideHandles, applyGuideHandle } from '../geometry/handles'
 import { guideSvgPath } from '../geometry/guides'
 import { legendSize } from '../geometry/bounds'
-import { bracketSvg, legendSvgPlaced, textSvg } from '../render/markup'
+import { bracketSvg, legendSvgPlaced, lineSvg, textSvg } from '../render/markup'
+import { applyLineHandle } from '../geometry/handles'
 import type { DragPositions } from '../state/store'
 
 const GRID = 24
@@ -17,6 +18,7 @@ type DragState =
   | { kind: 'marquee'; startScreen: Vec }
   | { kind: 'move'; startWorld: Vec; moved: boolean; orig: DragPositions }
   | { kind: 'guide-draw'; tool: string; a: Vec; b: Vec }
+  | { kind: 'line-draw'; a: Vec; b: Vec }
   | { kind: 'handle'; guideId: string; handleId: string }
   | { kind: 'legend'; startWorld: Vec; orig: { x: number; y: number } }
 
@@ -43,6 +45,7 @@ const SEL_KEY = {
   bracket: 'selBrackets',
   text: 'selTexts',
   guide: 'selGuides',
+  line: 'selLines',
 } as const
 
 export function ChartCanvas() {
@@ -59,10 +62,12 @@ export function ChartCanvas() {
   const selGuides = useStore((s) => s.selGuides)
   const selBrackets = useStore((s) => s.selBrackets)
   const selTexts = useStore((s) => s.selTexts)
+  const selLines = useStore((s) => s.selLines)
   const bracketStart = useStore((s) => s.bracketStart)
 
   const [marquee, setMarquee] = useState<Rect | null>(null)
   const [guidePreview, setGuidePreview] = useState<{ a: Vec; b: Vec } | null>(null)
+  const [linePreview, setLinePreview] = useState<{ a: Vec; b: Vec } | null>(null)
   const [snapDot, setSnapDot] = useState<{ pos: Vec; kind: SnapKind } | null>(null)
   const [spaceDown, setSpaceDown] = useState(false)
 
@@ -112,6 +117,7 @@ export function ChartCanvas() {
         selGuides: [],
         selBrackets: [],
         selTexts: [],
+        selLines: [],
         [key]: ids,
       })
     }
@@ -122,12 +128,14 @@ export function ChartCanvas() {
     const sp = new Set(st.selPlacements)
     const stx = new Set(st.selTexts)
     const sb = new Set(st.selBrackets)
+    const sl = new Set(st.selLines)
     return {
       placements: st.doc.placements.filter((p) => sp.has(p.id)).map((p) => ({ id: p.id, x: p.x, y: p.y })),
       texts: st.doc.texts.filter((t) => stx.has(t.id)).map((t) => ({ id: t.id, x: t.x, y: t.y })),
       brackets: st.doc.brackets
         .filter((b) => sb.has(b.id))
         .map((b) => ({ id: b.id, x1: b.x1, y1: b.y1, x2: b.x2, y2: b.y2 })),
+      lines: st.doc.lines.filter((l) => sl.has(l.id)).map((l) => ({ id: l.id, points: l.points.map((p) => ({ ...p })) })),
     }
   }
 
@@ -165,6 +173,12 @@ export function ChartCanvas() {
       }
       return
     }
+    if (st.tool === 'line') {
+      const a = snapPoint(world).pos
+      dragRef.current = { kind: 'line-draw', a, b: a }
+      setLinePreview({ a, b: a })
+      return
+    }
     if (st.tool.startsWith('guide-')) {
       const a = snapPoint(world).pos
       dragRef.current = { kind: 'guide-draw', tool: st.tool, a, b: a }
@@ -193,7 +207,7 @@ export function ChartCanvas() {
       }
       const id = target.getAttribute('data-id')!
       selectOnDown(kind, id, e.shiftKey)
-      if (kind === 'placement' || kind === 'text' || kind === 'bracket') {
+      if (kind === 'placement' || kind === 'text' || kind === 'bracket' || kind === 'line') {
         useStore.getState().beginDrag()
         dragRef.current = { kind: 'move', startWorld: world, moved: false, orig: captureMoveOriginals() }
       }
@@ -238,6 +252,7 @@ export function ChartCanvas() {
         if (d.orig.placements[0]) base = { x: d.orig.placements[0].x, y: d.orig.placements[0].y }
         else if (d.orig.texts[0]) base = { x: d.orig.texts[0].x, y: d.orig.texts[0].y }
         else if (d.orig.brackets[0]) base = { x: d.orig.brackets[0].x1, y: d.orig.brackets[0].y1 }
+        else if (d.orig.lines[0]) base = d.orig.lines[0].points[0] ?? null
         if (st.snapEnabled && base) {
           const s = applySnap(
             { x: base.x + dx, y: base.y + dy },
@@ -261,7 +276,17 @@ export function ChartCanvas() {
             x2: o.x2 + dx,
             y2: o.y2 + dy,
           })),
+          lines: d.orig.lines.map((o) => ({
+            id: o.id,
+            points: o.points.map((p) => ({ x: p.x + dx, y: p.y + dy })),
+          })),
         })
+        break
+      }
+      case 'line-draw': {
+        const b = snapPoint(world).pos
+        d.b = b
+        setLinePreview({ a: d.a, b })
         break
       }
       case 'guide-draw': {
@@ -275,6 +300,12 @@ export function ChartCanvas() {
         if (guide) {
           const ng = applyGuideHandle(guide, d.handleId, world, st.snapEnabled)
           st.updateGuideLive(d.guideId, ng)
+        } else {
+          const line = st.doc.lines.find((l) => l.id === d.guideId)
+          if (line && d.handleId.startsWith('pt-')) {
+            const idx = parseInt(d.handleId.slice(3), 10)
+            if (Number.isFinite(idx)) st.updateLineLive(d.guideId, { points: applyLineHandle(line, idx, world).points })
+          }
         }
         break
       }
@@ -317,6 +348,7 @@ export function ChartCanvas() {
           selGuides: [],
           selBrackets: [],
           selTexts: [],
+          selLines: [],
         })
         break
       }
@@ -328,6 +360,14 @@ export function ChartCanvas() {
         const dist = Math.hypot(d.b.x - d.a.x, d.b.y - d.a.y)
         if (dist > 4 / st.viewport.zoom) {
           st.addGuideDrawn(d.tool.replace('guide-', '') as GuideKind, d.a, d.b, st.snapEnabled)
+        }
+        break
+      }
+      case 'line-draw': {
+        setLinePreview(null)
+        const dist = Math.hypot(d.b.x - d.a.x, d.b.y - d.a.y)
+        if (dist > 3 / st.viewport.zoom) {
+          st.addLineFromPoints(d.a, d.b)
         }
         break
       }
@@ -382,6 +422,7 @@ export function ChartCanvas() {
   const selGuideSet = useMemo(() => new Set(selGuides), [selGuides])
   const selBracketSet = useMemo(() => new Set(selBrackets), [selBrackets])
   const selTextSet = useMemo(() => new Set(selTexts), [selTexts])
+  const selLineSet = useMemo(() => new Set(selLines), [selLines])
   const selectedGuide = selGuides.length === 1 ? doc.guides.find((g) => g.id === selGuides[0]) : undefined
   const handles = selectedGuide ? guideHandles(selectedGuide) : []
   const legendBox = legendSize(doc, defMap)
@@ -484,6 +525,26 @@ export function ChartCanvas() {
           })}
         </g>
 
+        {/* chart line-work (backstitch) — drawn over the stitches */}
+        <g className="layer-lines">
+          {doc.lines.map((l) => {
+            const selected = selLineSet.has(l.id)
+            return (
+              <g
+                key={l.id}
+                data-kind="line"
+                data-id={l.id}
+                dangerouslySetInnerHTML={{
+                  __html:
+                    (selected
+                      ? `<path d="${linePathD(l)}" fill="none" stroke="#d96f4e" stroke-width="${l.width + 6 / vp.zoom}" opacity="0.3" stroke-linecap="round" stroke-linejoin="round"/>`
+                      : '') + lineSvg(l, ink, { interactive: true }),
+                }}
+              />
+            )
+          })}
+        </g>
+
         {/* free text */}
         <g className="layer-texts">
           {doc.texts.map((t) => (
@@ -544,6 +605,26 @@ export function ChartCanvas() {
           </g>
         )}
 
+        {/* backstitch line point handles */}
+        {selLines.length === 1 && (
+          <g className="layer-line-handles">
+            {(doc.lines.find((l) => l.id === selLines[0])?.points ?? []).map((p, i) => (
+              <rect
+                key={i}
+                data-kind="handle"
+                data-guide={selLines[0]}
+                data-handle={`pt-${i}`}
+                x={p.x - 5 / vp.zoom}
+                y={p.y - 5 / vp.zoom}
+                width={10 / vp.zoom}
+                height={10 / vp.zoom}
+                className="guide-handle"
+                style={{ cursor: 'move' }}
+              />
+            ))}
+          </g>
+        )}
+
         {/* tool previews */}
         <g className="layer-preview" pointerEvents="none">
           {guidePreview && (
@@ -580,6 +661,18 @@ export function ChartCanvas() {
               strokeDasharray="5 4"
             />
           )}
+          {linePreview && (
+            <line
+              x1={linePreview.a.x}
+              y1={linePreview.a.y}
+              x2={linePreview.b.x}
+              y2={linePreview.b.y}
+              stroke={ink}
+              strokeWidth={2.2}
+              strokeLinecap="round"
+              opacity={0.75}
+            />
+          )}
           {snapDot && (
             <circle
               cx={snapDot.pos.x}
@@ -608,6 +701,13 @@ function PolygonOutline({ pts, zoom }: { pts: Vec[]; zoom: number }) {
       strokeDasharray="4 3"
     />
   )
+}
+
+function linePathD(l: { points: Vec[]; closed: boolean }): string {
+  if (l.points.length === 0) return ''
+  let d = 'M ' + l.points.map((p) => `${p.x} ${p.y}`).join(' L ')
+  if (l.closed) d += ' Z'
+  return d
 }
 
 function textOutlineCorners(t: { x: number; y: number; size: number; content: string; rotation: number }): Vec[] {

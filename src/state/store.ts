@@ -24,6 +24,7 @@ import {
   rotatePointAround,
   unionBBox,
 } from '../geometry/transform'
+import { longestSegment } from '../geometry/handles'
 import { getDefMap } from '../symbols/registry'
 
 export interface Viewport {
@@ -38,6 +39,7 @@ export interface DragPositions {
   placements: { id: string; x: number; y: number }[]
   texts: { id: string; x: number; y: number }[]
   brackets: { id: string; x1: number; y1: number; x2: number; y2: number }[]
+  lines: { id: string; points: Vec[] }[]
 }
 
 const HISTORY_LIMIT = 100
@@ -62,6 +64,7 @@ interface EditorState {
   selGuides: string[]
   selBrackets: string[]
   selTexts: string[]
+  selLines: string[]
 
   viewport: Viewport
   snapEnabled: boolean
@@ -80,7 +83,9 @@ interface EditorState {
   setPlacingScale: (s: number) => void
   setPolygonSides: (n: number) => void
   setCursor: (p: Vec | null) => void
-  setSelection: (part: Partial<Pick<EditorState, 'selPlacements' | 'selGuides' | 'selBrackets' | 'selTexts'>>) => void
+  setSelection: (
+    part: Partial<Pick<EditorState, 'selPlacements' | 'selGuides' | 'selBrackets' | 'selTexts' | 'selLines'>>,
+  ) => void
   setBracketStart: (p: Vec | null) => void
 
   stampPlacement: (x: number, y: number) => void
@@ -97,8 +102,16 @@ interface EditorState {
   ungroupSelection: () => void
   mirrorSelection: (axis: 'h' | 'v') => void
   distributeSelection: (axis: 'x' | 'y') => void
+  alignSelection: (axis: 'x' | 'y', mode: 'min' | 'center' | 'max') => void
   rotateSelection: (deltaDeg: number) => void
   nudge: (dx: number, dy: number) => void
+
+  addLineFromPoints: (a: Vec, b: Vec) => void
+  updateLine: (id: string, patch: Partial<{ closed: boolean; width: number }>) => void
+  updateLineLive: (id: string, patch: Partial<{ points: Vec[]; closed: boolean; width: number }>) => void
+  deleteLine: (id: string) => void
+  insertLinePoint: (id: string) => void
+  removeLastLinePoint: (id: string) => void
 
   addGuideDrawn: (kind: GuideKind, a: Vec, b: Vec, snap45: boolean) => void
   updateGuide: (id: string, patch: Partial<Guide>) => void
@@ -172,6 +185,7 @@ export const useStore = create<EditorState>()((set, get) => {
     selGuides: [] as string[],
     selBrackets: [] as string[],
     selTexts: [] as string[],
+    selLines: [] as string[],
   }
 
   return {
@@ -193,6 +207,7 @@ export const useStore = create<EditorState>()((set, get) => {
     selGuides: [],
     selBrackets: [],
     selTexts: [],
+    selLines: [],
 
     viewport: { x: 0, y: 0, zoom: 1 },
     snapEnabled: true,
@@ -261,6 +276,11 @@ export const useStore = create<EditorState>()((set, get) => {
           const e = bm.get(b.id)
           return e ? { ...b, x1: e.x1, y1: e.y1, x2: e.x2, y2: e.y2 } : b
         })
+        const lm = new Map(payload.lines.map((e) => [e.id, e]))
+        d.lines = d.lines.map((l) => {
+          const e = lm.get(l.id)
+          return e ? { ...l, points: e.points } : l
+        })
       }),
 
     endDrag: () =>
@@ -277,17 +297,20 @@ export const useStore = create<EditorState>()((set, get) => {
 
     deleteSelection: () =>
       set((st) => {
-        const { selPlacements, selGuides, selBrackets, selTexts } = st
-        if (!selPlacements.length && !selGuides.length && !selBrackets.length && !selTexts.length) return {}
+        const { selPlacements, selGuides, selBrackets, selTexts, selLines } = st
+        if (!selPlacements.length && !selGuides.length && !selBrackets.length && !selTexts.length && !selLines.length)
+          return {}
         const doc = structuredClone(st.doc)
         const ps = new Set(selPlacements)
         const gs = new Set(selGuides)
         const bs = new Set(selBrackets)
         const ts = new Set(selTexts)
+        const ls = new Set(selLines)
         doc.placements = doc.placements.filter((p) => !ps.has(p.id))
         doc.guides = doc.guides.filter((g) => !gs.has(g.id))
         doc.brackets = doc.brackets.filter((b) => !bs.has(b.id))
         doc.texts = doc.texts.filter((t) => !ts.has(t.id))
+        doc.lines = doc.lines.filter((l) => !ls.has(l.id))
         return mutateDoc(st, { doc, ...clearSel })
       }),
 
@@ -347,6 +370,86 @@ export const useStore = create<EditorState>()((set, get) => {
             ),
           },
         })
+      }),
+
+    alignSelection: (axis, mode) =>
+      set((st) => {
+        const sel = st.doc.placements.filter((p) => st.selPlacements.includes(p.id))
+        if (sel.length < 2) return {}
+        const defMap = getDefMap(st.doc)
+        const boxes = new Map<string, import('../geometry/transform').BBox>()
+        for (const p of sel) {
+          const def = defMap.get(p.symbolId)
+          if (def) boxes.set(p.id, cornersBBox(placementCorners(p, def)))
+        }
+        const all = [...boxes.values()]
+        if (all.length < 2) return {}
+        const overall = unionBBox(all)!
+        const targetMin = axis === 'x' ? overall.x : overall.y
+        const targetCenter = axis === 'x' ? overall.x + overall.w / 2 : overall.y + overall.h / 2
+        const targetMax = axis === 'x' ? overall.x + overall.w : overall.y + overall.h
+        return mutateDoc(st, {
+          doc: {
+            ...st.doc,
+            placements: st.doc.placements.map((p) => {
+              const b = boxes.get(p.id)
+              if (!b) return p
+              const curMin = axis === 'x' ? b.x : b.y
+              const curCenter = axis === 'x' ? b.x + b.w / 2 : b.y + b.h / 2
+              const curMax = axis === 'x' ? b.x + b.w : b.y + b.h
+              const delta =
+                mode === 'min' ? targetMin - curMin : mode === 'center' ? targetCenter - curCenter : targetMax - curMax
+              return axis === 'x' ? { ...p, x: p.x + delta } : { ...p, y: p.y + delta }
+            }),
+          },
+        })
+      }),
+
+    addLineFromPoints: (a, b) =>
+      set((st) => {
+        const line = { id: uid('l'), points: [a, b], closed: false, width: 2.2 }
+        return mutateDoc(st, {
+          doc: { ...st.doc, lines: [...st.doc.lines, line] },
+          selLines: [line.id],
+          selPlacements: [],
+          selGuides: [],
+          selBrackets: [],
+          selTexts: [],
+        })
+      }),
+
+    updateLine: (id, patch) =>
+      commit((d) => {
+        d.lines = d.lines.map((l) => (l.id === id ? { ...l, ...patch } : l))
+      }),
+
+    updateLineLive: (id, patch) =>
+      live((d) => {
+        d.lines = d.lines.map((l) => (l.id === id ? { ...l, ...patch } : l))
+      }),
+
+    deleteLine: (id) =>
+      commit((d) => {
+        d.lines = d.lines.filter((l) => l.id !== id)
+      }),
+
+    insertLinePoint: (id) =>
+      commit((d) => {
+        const line = d.lines.find((l) => l.id === id)
+        if (!line || line.points.length < 2) return
+        const bestIdx = longestSegment(line)
+        if (bestIdx < 0) return
+        const a = line.points[bestIdx]
+        const b = line.points[(bestIdx + 1) % line.points.length]
+        const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }
+        line.points = [...line.points.slice(0, bestIdx + 1), mid, ...line.points.slice(bestIdx + 1)]
+      }),
+
+    removeLastLinePoint: (id) =>
+      commit((d) => {
+        const line = d.lines.find((l) => l.id === id)
+        if (!line || line.points.length <= 2) return
+        line.points = line.points.slice(0, -1)
       }),
 
     distributeSelection: (axis) =>
@@ -670,18 +773,23 @@ export const useStore = create<EditorState>()((set, get) => {
     openDialog: (kind, guideId) => set({ dialog: kind, placeEvenlyGuideId: guideId ?? null }),
     closeDialog: () => set({ dialog: null }),
 
-    openProject: (rec) =>
+    openProject: (rec) => {
+      // migrate docs saved by older versions (missing fields, bad shapes)
+      const doc = sanitizeDoc(rec.doc) ?? createEmptyDoc(rec.name || 'Recovered chart')
+      doc.title = doc.title || rec.name
       set({
         projectId: rec.id,
         projectName: rec.name,
         createdAt: rec.createdAt ?? Date.now(),
-        doc: rec.doc,
+        doc,
         past: [],
         future: [],
         savedAt: rec.updatedAt,
         ...clearSel,
         dialog: null,
-      }),
+        bracketStart: null,
+      })
+    },
 
     newProject: (name, doc) => {
       const id = uid('proj')

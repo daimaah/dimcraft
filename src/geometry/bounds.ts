@@ -26,6 +26,18 @@ export function contentBBox(doc: ChartDoc, defMap: Map<string, SymbolDef>, opts:
     if (def) boxes.push(cornersBBox(placementCorners(p, def)))
   }
   for (const t of doc.texts) boxes.push(cornersBBox(textCorners(t)))
+  for (const l of doc.lines) {
+    if (l.points.length === 0) continue
+    const xs = l.points.map((p) => p.x)
+    const ys = l.points.map((p) => p.y)
+    const pad = l.width
+    boxes.push({
+      x: Math.min(...xs) - pad,
+      y: Math.min(...ys) - pad,
+      w: Math.max(...xs) - Math.min(...xs) + pad * 2,
+      h: Math.max(...ys) - Math.min(...ys) + pad * 2,
+    })
+  }
   for (const b of doc.brackets) {
     boxes.push({
       x: Math.min(b.x1, b.x2) - 8,

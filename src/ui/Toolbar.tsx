@@ -4,6 +4,7 @@ import { Icon, type IconName } from './icons'
 const TOOLS: { id: string; icon: IconName; label: string; key: string }[] = [
   { id: 'select', icon: 'select', label: 'Select & move', key: 'V' },
   { id: 'place', icon: 'place', label: 'Place symbol', key: 'P' },
+  { id: 'line', icon: 'guide-line', label: 'Backstitch line', key: 'L' },
   { id: 'guide-circle', icon: 'guide-circle', label: 'Circle guide', key: '1' },
   { id: 'guide-arc', icon: 'guide-arc', label: 'Arc guide', key: '2' },
   { id: 'guide-spiral', icon: 'guide-spiral', label: 'Spiral guide', key: '3' },

@@ -8,7 +8,8 @@
 - **19 standard crochet symbols** (chain → triple treble, clusters, popcorn/puff/bobble, picot, shell, crossed dc, front/back post, magic ring) drawn as crisp stroke paths, plus **custom SVG symbol import**
 - **Guides**: circle, arc, spiral, line and regular polygon — drawn on canvas, edited numerically or by dragging handles
 - **“Place N stitches evenly along a guide”** with true arc-length spacing and three stitch orientations (radiate out / follow path / upright)
-- **Editing**: marquee + shift multi-select, move/rotate/scale, nudge, duplicate, group, mirror H/V, distribute, snapping to guide points & anchors, full undo/redo
+- **Backstitch lines**: draw chart line-work (surface/backstitch rows) from stitch to stitch with anchor snapping; reshape by dragging point handles, insert/remove points, close into loops; exported as solid strokes and listed in the legend
+- **Editing**: marquee + shift multi-select, move/rotate/scale, nudge, duplicate, group, mirror H/V, distribute, align edges/centers (left/center/right/top/middle/bottom), snapping to guide points & anchors, full undo/redo
 - **Repeat brackets** with automatic “× N” counts and an **automatic legend** (symbol swatch, editable labels, stitch counts)
 - **Export**: standalone SVG (tight viewBox, editor chrome stripped), transparent PNG at 2×/4×, vector PDF (A4/Letter, portrait/landscape), and project `.json` files for backup/sharing
 - **Local projects**: gallery with rename/duplicate/delete, debounced autosave to IndexedDB, bundled granny-square starter chart
@@ -77,7 +78,7 @@ docker compose up -d --build   # build & run on http://localhost:8080
 
 | Keys | Action |
 | --- | --- |
-| `V` `P` `B` `T` | Select · Place symbol · Repeat bracket · Text |
+| `V` `P` `L` `B` `T` | Select · Place symbol · Backstitch line · Repeat bracket · Text |
 | `1`–`5` | Circle · Arc · Spiral · Line · Polygon guide |
 | `R`, `Shift+R` | Rotate placed symbol ±15° (while in place mode) |
 | `[` `]` | Scale placed symbol down/up |

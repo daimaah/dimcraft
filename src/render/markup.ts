@@ -1,7 +1,26 @@
-import type { ChartDoc, RepeatBracket, SymbolDef, TextElement } from '../model/types'
+import type { ChartDoc, RepeatBracket, StitchLine, SymbolDef, TextElement } from '../model/types'
+import { LINE_LEGEND_ID } from '../model/types'
 import { legendItems } from '../geometry/legend'
 import { LEGEND_HEAD, LEGEND_ROW_H, LEGEND_W } from '../geometry/bounds'
 import { symbolInner } from '../symbols/registry'
+
+const r2 = (v: number) => Math.round(v * 100) / 100
+
+/** Chart line-work (backstitch) as SVG — a solid ink polyline. */
+export function lineSvg(l: StitchLine, ink: string, opts: { interactive?: boolean } = {}): string {
+  if (l.points.length < 2) return ''
+  const d =
+    'M ' + l.points.map((p) => `${r2(p.x)} ${r2(p.y)}`).join(' L ') + (l.closed ? ' Z' : '')
+  const hit = opts.interactive
+    ? `<path d="${d}" fill="none" stroke="transparent" stroke-width="${Math.max(14, l.width * 5)}"/>`
+    : ''
+  return (
+    `<g>` +
+    hit +
+    `<path d="${d}" fill="none" stroke="${ink}" stroke-width="${r2(l.width)}" stroke-linecap="round" stroke-linejoin="round"/>` +
+    `</g>`
+  )
+}
 
 export function escapeXml(s: string): string {
   return s.replace(/[<>&"']/g, (c) =>
@@ -65,14 +84,20 @@ export function legendSvg(doc: ChartDoc, defMap: Map<string, SymbolDef>, ink: st
   )
   items.forEach((item, i) => {
     const rowY = LEGEND_HEAD + i * LEGEND_ROW_H
-    const def = defMap.get(item.symbolId)!
-    const b = def.bbox
-    const k = 18 / Math.max(b.w, b.h)
-    parts.push(
-      `<g transform="translate(2 ${rowY}) scale(${k}) translate(${-(b.x + b.w / 2)} ${-(b.y + b.h / 2)})">` +
-        symbolInner(def, ink) +
-        `</g>`,
-    )
+    if (item.symbolId === LINE_LEGEND_ID) {
+      parts.push(
+        `<g transform="translate(1 ${rowY})"><path d="M 2 9 L 20 -7" fill="none" stroke="${ink}" stroke-width="2" stroke-linecap="round"/></g>`,
+      )
+    } else {
+      const def = defMap.get(item.symbolId)!
+      const b = def.bbox
+      const k = 18 / Math.max(b.w, b.h)
+      parts.push(
+        `<g transform="translate(2 ${rowY}) scale(${k}) translate(${-(b.x + b.w / 2)} ${-(b.y + b.h / 2)})">` +
+          symbolInner(def, ink) +
+          `</g>`,
+      )
+    }
     parts.push(
       `<text x="28" y="${rowY + 5}" fill="${ink}" font-family="${FONT}" font-size="13" stroke="none">${escapeXml(
         item.label,

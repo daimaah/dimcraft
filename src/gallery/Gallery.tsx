@@ -8,6 +8,7 @@ import { getDefMap, symbolInner } from '../symbols/registry'
 import { contentBBox } from '../geometry/bounds'
 import { guideSvgPath } from '../geometry/guides'
 import { placementTransform } from '../geometry/transform'
+import { lineSvg } from '../render/markup'
 
 const LAST_KEY = 'dimcrochet.lastProject'
 
@@ -170,6 +171,9 @@ function MiniChart({ doc }: { doc: ChartDoc }) {
             />
           )
         })}
+        {doc.lines.map((l) => (
+          <g key={l.id} dangerouslySetInnerHTML={{ __html: lineSvg(l, ink) }} />
+        ))}
       </svg>
     </div>
   )

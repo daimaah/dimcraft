@@ -42,4 +42,19 @@ describe('legend aggregation', () => {
     expect(items).toHaveLength(1)
     expect(items[0].symbolId).toBe('sc')
   })
+
+  it('appends a backstitch entry when line-work exists', () => {
+    const doc = createEmptyDoc()
+    doc.placements = [place('sc')]
+    doc.lines = [
+      { id: 'l1', points: [{ x: 0, y: 0 }, { x: 10, y: 0 }], closed: false, width: 2.2 },
+      { id: 'l2', points: [{ x: 0, y: 5 }, { x: 10, y: 5 }], closed: false, width: 2.2 },
+    ]
+    const items = legendItems(doc, getDefMap(doc))
+    expect(items).toHaveLength(2)
+    expect(items[1]).toMatchObject({ symbolId: '__line', label: 'backstitch', count: 2 })
+    // label override applies to the line entry too
+    doc.labelOverrides['__line'] = 'surface slip stitch'
+    expect(legendItems(doc, getDefMap(doc))[1].label).toBe('surface slip stitch')
+  })
 })

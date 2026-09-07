@@ -81,4 +81,21 @@ describe('SVG export', () => {
     expect(svg).not.toContain('<script>')
     expect(svg).toContain('&lt;script&gt;&amp;&quot;')
   })
+
+  it('exports backstitch lines as solid ink strokes and lists them in the legend', () => {
+    const doc = createEmptyDoc()
+    doc.placements = [place({ x: 0, y: 0 })]
+    doc.lines = [
+      { id: 'l1', points: [{ x: 0, y: 0 }, { x: 60, y: 0 }], closed: false, width: 2.2 },
+    ]
+    const { svg } = buildExportSvg(doc)
+    // solid (no dash array on the line itself) and ink-coloured
+    expect(svg).toContain('stroke="#26221f" stroke-width="2.2"')
+    expect(svg).toContain('L 60 0')
+    // legend gains a backstitch row
+    expect(svg).toContain('backstitch')
+    // viewBox expands to include the line work
+    const vb = /viewBox="([^"]+)"/.exec(svg)![1].split(' ').map(Number)
+    expect(vb[2]).toBeGreaterThan(60 + 12)
+  })
 })

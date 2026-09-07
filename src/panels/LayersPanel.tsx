@@ -58,6 +58,7 @@ export function LayersPanel() {
       </ul>
       <div className="layers-summary">
         <span>{doc.placements.length} stitches</span>
+        <span>{doc.lines.length} lines</span>
         <span>{doc.brackets.length} brackets</span>
         <span>{doc.texts.length} texts</span>
       </div>

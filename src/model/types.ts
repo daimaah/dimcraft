@@ -99,6 +99,17 @@ export type Guide = CircleGuide | ArcGuide | SpiralGuide | LineGuide | PolygonGu
 export type GuideKind = Guide['kind']
 
 // ---- Annotations ---------------------------------------------------------
+/**
+ * A polyline of chart line-work (backstitch / surface crochet). Part of the
+ * chart itself: exported as a solid ink stroke, unlike construction guides.
+ */
+export interface StitchLine {
+  id: string
+  points: Vec[]
+  closed: boolean
+  width: number
+}
+
 export interface RepeatBracket {
   id: string
   x1: number
@@ -135,6 +146,7 @@ export interface ChartDoc {
   title: string
   placements: Placement[]
   guides: Guide[]
+  lines: StitchLine[]
   brackets: RepeatBracket[]
   texts: TextElement[]
   customSymbols: SymbolDef[]
@@ -143,10 +155,14 @@ export interface ChartDoc {
   ink: string
 }
 
+/** Legend key under which backstitch lines are listed. */
+export const LINE_LEGEND_ID = '__line'
+
 // ---- Tools & placement options --------------------------------------------
 export type Tool =
   | 'select'
   | 'place'
+  | 'line'
   | 'guide-circle'
   | 'guide-arc'
   | 'guide-spiral'

@@ -1,4 +1,4 @@
-import type { Guide, Vec } from '../model/types'
+import type { Guide, StitchLine, Vec } from '../model/types'
 import { guideCenter, guideEndpoints } from './guides'
 
 const D2R = Math.PI / 180
@@ -101,6 +101,28 @@ function snapLine(fx: number, fy: number, mx: number, my: number): { x2: number;
   const step = Math.PI / 4
   const angle = Math.round(Math.atan2(dy, dx) / step) * step
   return { x2: fx + len * Math.cos(angle), y2: fy + len * Math.sin(angle) }
+}
+
+/** Move one polyline point of a chart line. */
+export function applyLineHandle(l: StitchLine, index: number, world: Vec): StitchLine {
+  return { ...l, points: l.points.map((p, i) => (i === index ? { x: world.x, y: world.y } : p)) }
+}
+
+/** Index of the longest segment; -1 when the line has no segments. */
+export function longestSegment(l: StitchLine): number {
+  let bestIdx = -1
+  let bestLen = -1
+  const segs = l.closed ? l.points.length : l.points.length - 1
+  for (let i = 0; i < segs; i++) {
+    const a = l.points[i]
+    const b = l.points[(i + 1) % l.points.length]
+    const len = Math.hypot(b.x - a.x, b.y - a.y)
+    if (len > bestLen) {
+      bestLen = len
+      bestIdx = i
+    }
+  }
+  return bestIdx
 }
 
 export { guideCenter, guideEndpoints }

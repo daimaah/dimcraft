@@ -503,7 +503,8 @@ button {
 
 .chart-canvas[data-tool='place'],
 .chart-canvas[data-tool='text'],
-.chart-canvas[data-tool='bracket'] {
+.chart-canvas[data-tool='bracket'],
+.chart-canvas[data-tool='line'] {
   cursor: crosshair;
 }
 

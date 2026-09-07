@@ -7,16 +7,18 @@ export function StatusBar() {
   const selGuides = useStore((s) => s.selGuides)
   const selBrackets = useStore((s) => s.selBrackets)
   const selTexts = useStore((s) => s.selTexts)
+  const selLines = useStore((s) => s.selLines)
   const savedAt = useStore((s) => s.savedAt)
   const tool = useStore((s) => s.tool)
   const armed = useStore((s) => s.armedSymbolId)
 
-  const selCount = selPlacements.length + selGuides.length + selBrackets.length + selTexts.length
+  const selCount = selPlacements.length + selGuides.length + selBrackets.length + selTexts.length + selLines.length
   const selSummary =
     selCount === 0
       ? ''
       : [
           selPlacements.length ? `${selPlacements.length} stitches` : '',
+          selLines.length ? `${selLines.length} line${selLines.length > 1 ? 's' : ''}` : '',
           selGuides.length ? `${selGuides.length} guide${selGuides.length > 1 ? 's' : ''}` : '',
           selBrackets.length ? `${selBrackets.length} bracket` : '',
           selTexts.length ? `${selTexts.length} text` : '',
@@ -27,11 +29,13 @@ export function StatusBar() {
   const toolHint =
     tool === 'place'
       ? `Placing ${armed ?? '—'} — R rotate · [ ] scale · Esc done`
-      : tool.startsWith('guide-')
-        ? 'Drag on canvas to draw the guide'
-        : tool === 'bracket'
-          ? 'Click the first stitch, then the last stitch of the repeat'
-          : ''
+      : tool === 'line'
+        ? 'Backstitch: drag from one stitch to the next — ends snap to anchors'
+        : tool.startsWith('guide-')
+          ? 'Drag on canvas to draw the guide'
+          : tool === 'bracket'
+            ? 'Click the first stitch, then the last stitch of the repeat'
+            : ''
 
   return (
     <footer className="statusbar">

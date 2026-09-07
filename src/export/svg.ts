@@ -2,7 +2,7 @@ import type { ChartDoc } from '../model/types'
 import { contentBBox } from '../geometry/bounds'
 import { guideSvgPath } from '../geometry/guides'
 import { placementTransform } from '../geometry/transform'
-import { bracketSvg, legendSvgPlaced, textSvg } from '../render/markup'
+import { bracketSvg, legendSvgPlaced, lineSvg, textSvg } from '../render/markup'
 import { getDefMap, symbolInner } from '../symbols/registry'
 
 export interface SvgExportOptions {
@@ -70,6 +70,10 @@ export function buildExportSvg(doc: ChartDoc, options: SvgExportOptions = {}): B
     })
     .join('')
   if (stitches) parts.push(`<g>${stitches}</g>`)
+
+  if (doc.lines.length) {
+    parts.push(`<g>${doc.lines.map((l) => lineSvg(l, ink)).join('')}</g>`)
+  }
 
   if (doc.texts.length) {
     parts.push(`<g>${doc.texts.map((t) => textSvg(t, ink)).join('')}</g>`)

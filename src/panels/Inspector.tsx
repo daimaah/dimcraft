@@ -37,6 +37,7 @@ export function Inspector() {
   const selGuides = useStore((s) => s.selGuides)
   const selBrackets = useStore((s) => s.selBrackets)
   const selTexts = useStore((s) => s.selTexts)
+  const selLines = useStore((s) => s.selLines)
 
   const defMap = getDefMap(doc)
   const st = useStore
@@ -142,11 +143,78 @@ export function Inspector() {
             </button>
           )}
         </div>
+        {selected.length >= 2 && (
+          <>
+            <div className="panel-title">Align</div>
+            <div className="btn-grid">
+              <button className="btn" onClick={() => st.getState().alignSelection('x', 'min')}>
+                Left
+              </button>
+              <button className="btn" onClick={() => st.getState().alignSelection('x', 'center')}>
+                Center X
+              </button>
+              <button className="btn" onClick={() => st.getState().alignSelection('x', 'max')}>
+                Right
+              </button>
+              <button className="btn" onClick={() => st.getState().alignSelection('y', 'min')}>
+                Top
+              </button>
+              <button className="btn" onClick={() => st.getState().alignSelection('y', 'center')}>
+                Middle
+              </button>
+              <button className="btn" onClick={() => st.getState().alignSelection('y', 'max')}>
+                Bottom
+              </button>
+            </div>
+          </>
+        )}
         <button className="btn danger wide" onClick={() => st.getState().deleteSelection()}>
           Delete
         </button>
       </>
     )
+  }
+
+  if (selLines.length === 1) {
+    const l = doc.lines.find((x) => x.id === selLines[0])
+    if (l)
+      return (
+        <>
+          <div className="panel-title">Backstitch line</div>
+          <Row>
+            <NumField
+              label="Width"
+              step={0.2}
+              value={l.width}
+              onChange={(v) => st.getState().updateLine(l.id, { width: Math.max(0.5, v) })}
+            />
+            <label className="check">
+              <input
+                type="checkbox"
+                checked={l.closed}
+                onChange={(e) => st.getState().updateLine(l.id, { closed: e.target.checked })}
+              />
+              <span>Closed loop</span>
+            </label>
+          </Row>
+          <div className="btn-grid">
+            <button className="btn" onClick={() => st.getState().insertLinePoint(l.id)} title="Insert a point at the middle of the longest segment">
+              + Point
+            </button>
+            <button
+              className="btn"
+              disabled={l.points.length <= 2}
+              onClick={() => st.getState().removeLastLinePoint(l.id)}
+            >
+              − Point
+            </button>
+          </div>
+          <button className="btn danger wide" onClick={() => st.getState().deleteSelection()}>
+            Delete
+          </button>
+          <p className="hint">Drag the square handles to reshape. Snapping pulls ends onto stitch anchors.</p>
+        </>
+      )
   }
 
   if (selBrackets.length === 1) {
@@ -238,6 +306,18 @@ export function Inspector() {
         <NumField label="Y" value={doc.legend.y} onChange={(v) => st.getState().setLegend({ y: v })} />
         <NumField label="Scale" step={0.05} value={doc.legend.scale} onChange={(v) => st.getState().setLegend({ scale: Math.max(0.3, v) })} />
       </Row>
+      {doc.lines.length > 0 && (
+        <Row>
+          <label className="field grow">
+            <span>Backstitch label</span>
+            <input
+              type="text"
+              value={doc.labelOverrides['__line'] ?? 'backstitch'}
+              onChange={(e) => st.getState().setLabelOverride('__line', e.target.value)}
+            />
+          </label>
+        </Row>
+      )}
       {doc.legend.visible && items.length > 0 && (
         <ul className="legend-preview">
           {items.map((i) => (
