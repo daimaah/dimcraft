@@ -130,10 +130,17 @@ describe('store editing operations', () => {
   it('starter doc produces a coherent granny square round', () => {
     const doc = createStarterDoc()
     expect(doc.guides[0]).toMatchObject({ kind: 'polygon', n: 4 })
-    // magic ring + 4 corners × 3 dc + 4 sides × 3 ch
-    expect(doc.placements).toHaveLength(1 + 12 + 12)
+    // magic ring + 4 side clusters × 3 dc + 4 corners × 2 ch  ([3 dc, ch 2] × 4)
+    expect(doc.placements).toHaveLength(1 + 12 + 8)
     expect(doc.brackets).toHaveLength(1)
-    // all stitches sit on or near the square guide ring (r=120, rot=45)
+    // cluster dc stitches are parallel: the top cluster's three dc share one rotation
+    const top = doc.placements.filter((p) => p.y < -100)
+    expect(top).toHaveLength(3)
+    expect(new Set(top.map((p) => p.rotation))).toEqual(new Set([0]))
+    // and they are offset side by side along the side direction
+    const xs = top.map((p) => p.x).sort((a, b) => a - b)
+    expect(xs[1] - xs[0]).toBeCloseTo(14, 6)
+    // all non-ring stitches sit on or near the square guide ring (r=120)
     const onRing = doc.placements.filter((p) => !(p.x === 0 && p.y === 0))
     for (const p of onRing) {
       expect(Math.hypot(p.x, p.y)).toBeGreaterThan(100)

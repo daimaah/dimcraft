@@ -2,13 +2,20 @@ import type { ChartDoc, Placement } from './types'
 import { createEmptyDoc, uid } from './doc'
 
 /**
- * Bundled starter chart: round 1 of a classic granny square — a magic ring,
- * 3-dc clusters at the four corners and chains along each side, drawn on a
- * square guide with a "× 4" repeat bracket.
+ * Bundled starter chart: round 1 of a classic granny square, following the
+ * standard chart convention ([3 dc, ch 2] × 4 into the ring):
+ *  - a magic ring in the centre
+ *  - four 3-dc clusters, one per side (top/right/bottom/left). The three dc
+ *    are drawn parallel, side by side along the side direction, bases on the
+ *    ring — the way granny clusters are drawn on real charts.
+ *  - a ch-2 loop at each of the four diagonal corners
+ *  - a "× 4" repeat bracket over one [3 dc, ch 2] unit
  */
 export function createStarterDoc(): ChartDoc {
   const doc = createEmptyDoc('Granny square — round 1')
   const R = 120
+  const rad = (deg: number) => (deg * Math.PI) / 180
+  const ringPoint = (deg: number, r: number) => ({ x: r * Math.cos(rad(deg)), y: r * Math.sin(rad(deg)) })
 
   doc.guides.push({
     id: 'g-square',
@@ -25,40 +32,42 @@ export function createStarterDoc(): ChartDoc {
   doc.placements.push({ id: uid('p'), symbolId: 'magicring', x: 0, y: 0, rotation: 0, scale: 1, flip: false })
 
   const placements: Placement[] = []
-  for (let k = 0; k < 4; k++) {
-    // corner clusters: 3 dc fanned radially at each corner (45° + k·90°)
-    const cornerDeg = 45 + k * 90
-    const rad = (cornerDeg * Math.PI) / 180
-    const px = R * Math.cos(rad)
-    const py = R * Math.sin(rad)
+
+  // 3-dc clusters on the four side midpoints — dc parallel, offset along the
+  // side (tangent), all pointing radially outward
+  for (const phi of [0, 90, 180, 270]) {
+    const base = ringPoint(phi, R)
+    const rotation = ((phi + 90) % 360 + 360) % 360
+    const tx = -Math.sin(rad(phi))
+    const ty = Math.cos(rad(phi))
     const groupId = uid('grp')
-    for (const off of [-24, 0, 24]) {
+    for (const off of [-14, 0, 14]) {
       placements.push({
         id: uid('p'),
         symbolId: 'dc',
-        x: px,
-        y: py,
-        rotation: cornerDeg + off,
+        x: base.x + tx * off,
+        y: base.y + ty * off,
+        rotation,
         scale: 1,
         flip: false,
         groupId,
       })
     }
-    // side chains: 3 ch along each side, lying tangent to the side
-    const sideDeg = k * 90
-    const srad = (sideDeg * Math.PI) / 180
-    const sx = R * Math.cos(srad)
-    const sy = R * Math.sin(srad)
-    // tangent direction of the side at its midpoint
-    const tx = -Math.sin(srad)
-    const ty = Math.cos(srad)
-    for (const off of [-24, 0, 24]) {
+  }
+
+  // ch-2 corner loops on the four diagonals, lying along the corner bisector
+  for (const phi of [45, 135, 225, 315]) {
+    const base = ringPoint(phi, R)
+    const rotation = ((phi + 90) % 360 + 360) % 360
+    const dx = Math.cos(rad(phi))
+    const dy = Math.sin(rad(phi))
+    for (const off of [-7, 7]) {
       placements.push({
         id: uid('p'),
         symbolId: 'ch',
-        x: sx + tx * off,
-        y: sy + ty * off,
-        rotation: sideDeg,
+        x: base.x + dx * off,
+        y: base.y + dy * off,
+        rotation,
         scale: 1,
         flip: false,
       })
@@ -66,18 +75,18 @@ export function createStarterDoc(): ChartDoc {
   }
   doc.placements.push(...placements)
 
-  // repeat bracket across the right-hand side: corner cluster → corner cluster
+  // repeat bracket across the top cluster: the [3 dc, ch 2] unit repeats 4×
   doc.brackets.push({
     id: uid('b'),
-    x1: R * Math.cos((-45 * Math.PI) / 180),
-    y1: R * Math.sin((-45 * Math.PI) / 180),
-    x2: R * Math.cos((45 * Math.PI) / 180),
-    y2: R * Math.sin((45 * Math.PI) / 180),
+    x1: -14,
+    y1: -R,
+    x2: 14,
+    y2: -R,
     side: -1,
     count: 4,
   })
 
-  doc.texts.push({ id: uid('t'), x: -108, y: -172, content: 'Granny square — round 1', size: 20, rotation: 0 })
+  doc.texts.push({ id: uid('t'), x: -108, y: -218, content: 'Granny square — round 1', size: 20, rotation: 0 })
 
   doc.legend.x = 152
   doc.legend.y = -158
