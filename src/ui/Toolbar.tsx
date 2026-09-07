@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useStore } from '../state/store'
 import { Icon, type IconName } from './icons'
 
@@ -25,6 +26,25 @@ export function Toolbar() {
   const guidesVisible = useStore((s) => s.guidesVisible)
   const viewport = useStore((s) => s.viewport)
   const followActive = useStore((s) => s.followActive)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+
+  // track browser fullscreen so the button can reflect/exit it
+  useEffect(() => {
+    const h = () => setIsFullscreen(document.fullscreenElement != null)
+    document.addEventListener('fullscreenchange', h)
+    return () => document.removeEventListener('fullscreenchange', h)
+  }, [])
+
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) {
+      void document
+        .exitFullscreen()
+        .catch(() => {})
+        .finally(() => setIsFullscreen(document.fullscreenElement != null))
+    } else {
+      document.documentElement.requestFullscreen().catch(() => setIsFullscreen(false))
+    }
+  }
 
   const st = useStore
   const zoomPct = Math.round(viewport.zoom * 100)
@@ -125,6 +145,13 @@ export function Toolbar() {
         </button>
         <button className="tool-btn" title="Fit chart (Ctrl+0)" onClick={fit}>
           <Icon name="fit" />
+        </button>
+        <button
+          className={`tool-btn${isFullscreen ? ' active' : ''}`}
+          title={isFullscreen ? 'Exit full screen' : 'Full screen'}
+          onClick={toggleFullscreen}
+        >
+          <Icon name="expand" />
         </button>
       </div>
 

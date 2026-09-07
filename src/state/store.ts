@@ -71,6 +71,8 @@ interface EditorState {
   snapEnabled: boolean
   gridVisible: boolean
   guidesVisible: boolean
+  leftCollapsed: boolean
+  rightCollapsed: boolean
 
   dialog: DialogKind
   placeEvenlyGuideId: string | null
@@ -158,6 +160,8 @@ interface EditorState {
   setSnap: (v: boolean) => void
   setGrid: (v: boolean) => void
   setGuidesVisible: (v: boolean) => void
+  setLeftCollapsed: (v: boolean) => void
+  setRightCollapsed: (v: boolean) => void
 
   openDialog: (kind: DialogKind, guideId?: string) => void
   closeDialog: () => void
@@ -847,6 +851,10 @@ export const useStore = create<EditorState>()((set, get) => {
     setSnap: (v) => set({ snapEnabled: v }),
     setGrid: (v) => set({ gridVisible: v }),
     setGuidesVisible: (v) => set({ guidesVisible: v }),
+    leftCollapsed: false,
+    rightCollapsed: false,
+    setLeftCollapsed: (v) => set({ leftCollapsed: v }),
+    setRightCollapsed: (v) => set({ rightCollapsed: v }),
 
     openDialog: (kind, guideId) => set({ dialog: kind, placeEvenlyGuideId: guideId ?? null }),
     closeDialog: () => set({ dialog: null }),

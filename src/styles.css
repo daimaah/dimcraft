@@ -640,6 +640,63 @@ button {
   opacity: 0.5;
 }
 
+/* ---- collapsible panels -------------------------------------------------- */
+.palette {
+  position: relative;
+}
+
+.collapse-btn {
+  position: absolute;
+  top: 7px;
+  right: 4px;
+  z-index: 2;
+}
+
+.right-col {
+  position: relative;
+}
+
+.col-head {
+  display: flex;
+  justify-content: flex-end;
+  padding: 3px 6px 0;
+  flex: none;
+}
+
+.edge-tab {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 60px;
+  border: 1px solid var(--line);
+  background: var(--bg-raised);
+  color: var(--text-dim);
+  cursor: pointer;
+  z-index: 5;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edge-tab:hover {
+  color: var(--text);
+  border-color: var(--accent-soft);
+}
+
+.edge-tab.left {
+  left: 0;
+  border-radius: 0 8px 8px 0;
+  border-left: none;
+}
+
+.edge-tab.right {
+  right: 0;
+  border-radius: 8px 0 0 8px;
+  border-right: none;
+}
+
 /* ---- follow mode --------------------------------------------------------- */
 .follow-bar {
   position: absolute;

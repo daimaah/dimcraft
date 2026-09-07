@@ -29,6 +29,8 @@ function fitCenter() {
 export default function App() {
   const projectId = useStore((s) => s.projectId)
   const followActive = useStore((s) => s.followActive)
+  const leftCollapsed = useStore((s) => s.leftCollapsed)
+  const rightCollapsed = useStore((s) => s.rightCollapsed)
 
   // centre the view on the chart whenever a project opens
   useEffect(() => {
@@ -44,6 +46,8 @@ export default function App() {
       if (typeof prefs.snapEnabled === 'boolean') useStore.setState({ snapEnabled: prefs.snapEnabled })
       if (typeof prefs.gridVisible === 'boolean') useStore.setState({ gridVisible: prefs.gridVisible })
       if (typeof prefs.guidesVisible === 'boolean') useStore.setState({ guidesVisible: prefs.guidesVisible })
+      if (typeof prefs.leftCollapsed === 'boolean') useStore.setState({ leftCollapsed: prefs.leftCollapsed })
+      if (typeof prefs.rightCollapsed === 'boolean') useStore.setState({ rightCollapsed: prefs.rightCollapsed })
     } catch {
       /* ignore bad prefs */
     }
@@ -59,10 +63,22 @@ export default function App() {
   // persist preferences
   useEffect(() => {
     const unsub = useStore.subscribe((s, prev) => {
-      if (s.snapEnabled !== prev.snapEnabled || s.gridVisible !== prev.gridVisible || s.guidesVisible !== prev.guidesVisible) {
+      if (
+        s.snapEnabled !== prev.snapEnabled ||
+        s.gridVisible !== prev.gridVisible ||
+        s.guidesVisible !== prev.guidesVisible ||
+        s.leftCollapsed !== prev.leftCollapsed ||
+        s.rightCollapsed !== prev.rightCollapsed
+      ) {
         localStorage.setItem(
           PREFS_KEY,
-          JSON.stringify({ snapEnabled: s.snapEnabled, gridVisible: s.gridVisible, guidesVisible: s.guidesVisible }),
+          JSON.stringify({
+            snapEnabled: s.snapEnabled,
+            gridVisible: s.gridVisible,
+            guidesVisible: s.guidesVisible,
+            leftCollapsed: s.leftCollapsed,
+            rightCollapsed: s.rightCollapsed,
+          }),
         )
       }
     })
@@ -233,17 +249,46 @@ export default function App() {
     <div className="app">
       <Toolbar />
       <div className="main">
-        <SymbolPalette />
+        {!leftCollapsed && <SymbolPalette />}
         <div className="canvas-wrap">
           <ChartCanvas />
+          {leftCollapsed && (
+            <button
+              className="edge-tab left"
+              title="Show symbols"
+              onClick={() => useStore.getState().setLeftCollapsed(false)}
+            >
+              ›
+            </button>
+          )}
+          {rightCollapsed && (
+            <button
+              className="edge-tab right"
+              title="Show inspector"
+              onClick={() => useStore.getState().setRightCollapsed(false)}
+            >
+              ‹
+            </button>
+          )}
           {followActive && <FollowBar />}
         </div>
-        <div className="right-col">
-          <section className="panel inspector-panel">
-            <Inspector />
-          </section>
-          <LayersPanel />
-        </div>
+        {!rightCollapsed && (
+          <div className="right-col">
+            <div className="col-head">
+              <button
+                className="icon-btn"
+                title="Hide inspector & layers"
+                onClick={() => useStore.getState().setRightCollapsed(true)}
+              >
+                ›
+              </button>
+            </div>
+            <section className="panel inspector-panel">
+              <Inspector />
+            </section>
+            <LayersPanel />
+          </div>
+        )}
       </div>
       <StatusBar />
       <Dialogs />
