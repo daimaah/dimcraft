@@ -697,6 +697,39 @@ button {
   border-right: none;
 }
 
+/* ---- licenses ------------------------------------------------------------ */
+.gallery-foot {
+  margin-top: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.licenses-body h3 {
+  font-size: 13px;
+  margin: 14px 0 6px;
+  color: var(--accent-soft);
+}
+
+.licenses-body p {
+  margin: 4px 0;
+  line-height: 1.5;
+}
+
+.licenses-body a {
+  color: var(--accent-soft);
+}
+
+.license-list {
+  margin: 4px 0;
+  padding-left: 18px;
+  line-height: 1.6;
+}
+
 /* ---- follow mode --------------------------------------------------------- */
 .follow-bar {
   position: absolute;

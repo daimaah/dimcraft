@@ -34,7 +34,7 @@ export interface Viewport {
   zoom: number
 }
 
-export type DialogKind = 'place-evenly' | 'export' | 'preview' | 'instructions' | null
+export type DialogKind = 'place-evenly' | 'export' | 'preview' | 'instructions' | 'licenses' | null
 
 export interface DragPositions {
   placements: { id: string; x: number; y: number }[]
@@ -135,7 +135,7 @@ interface EditorState {
 
   setPlacementsVisible: (ids: string[], visible: boolean) => void
   setSymbolSet: (id: string) => void
-  addCustomSet: (set: { id: string; name: string; artwork: Record<string, string> }) => void
+  addCustomSet: (set: { id: string; name: string; artwork: Record<string, string>; license?: string; authors?: string; sourceUrl?: string; notes?: string }) => void
   applyTerminology: (presetId: string) => void
   setLegendLive: (patch: Partial<ChartDoc['legend']>) => void
   setGauge: (unitsPer10cm: number | null) => void

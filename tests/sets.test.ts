@@ -41,6 +41,12 @@ describe('symbol sets', () => {
     // an unknown set id falls back to standard
     expect(resolveSet({ symbolSet: 'nope' }).id).toBe('standard')
   })
+
+  it('bundled sets carry provenance', () => {
+    for (const s of BUILTIN_SETS) {
+      expect(s.license).toContain('MIT')
+    }
+  })
 })
 
 describe('terminology presets', () => {

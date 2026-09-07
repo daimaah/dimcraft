@@ -111,4 +111,4 @@ docker compose up -d --build   # build & run on http://localhost:8080
 
 ## License & symbols
 
-All built-in symbol artwork is original stroke-based artwork following widely published chart conventions (Craft Yarn Council style). Symbols are generic drawing conventions, not copied artwork; label terminology is editable per chart for regional differences (e.g. “tr” vs “dtr” UK/US conventions).
+DimCrochet is released under the **MIT License** (see [LICENSE](LICENSE)). The bundled symbol sets are original artwork created for DimCrochet under the same license — no third-party symbol artwork is bundled. Imported symbol packs keep **their own licenses**; attribution (authors, license, source) travels inside the pack file and is shown in-app under **Licenses & attributions** (ⓘ in the toolbar, or the link on the projects screen). Terminology follows widely published chart conventions; labels are editable per chart for regional differences (e.g. “tr” vs “dtr” UK/US conventions).

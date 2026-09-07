@@ -9,6 +9,7 @@ export interface BuiltinSet {
   id: string
   name: string
   description: string
+  license: string
   artwork: Record<string, string>
 }
 
@@ -22,12 +23,14 @@ export const BUILTIN_SETS: BuiltinSet[] = [
     id: 'standard',
     name: 'Standard (CYC-style)',
     description: 'Craft Yarn Council-style symbols used across Western patterns.',
+    license: 'MIT — original artwork for DimCrochet',
     artwork: {},
   },
   {
     id: 'japanese',
     name: 'Japanese-style',
     description: 'Heavier strokes and filled top dots, inspired by Japanese chart traditions. Community-validated packs may add authentic national sets.',
+    license: 'MIT — original artwork for DimCrochet',
     artwork: {
       ch: `<ellipse cx="12" cy="23" rx="4.8" ry="7.2" ${J}/>`,
       slst: jdot(12, 27, 3.2),
@@ -44,6 +47,7 @@ export const BUILTIN_SETS: BuiltinSet[] = [
     id: 'solid',
     name: 'Solid print',
     description: 'Fat filled strokes for high-contrast printing and low vision.',
+    license: 'MIT — original artwork for DimCrochet',
     artwork: {
       ch: `<ellipse cx="12" cy="23" rx="4.4" ry="6.6" ${S}/>`,
       slst: `<circle cx="12" cy="27" r="3.4" fill="@INK@" stroke="none"/>`,
@@ -63,10 +67,14 @@ export function resolveSet(doc: { symbolSet?: string; customSets?: CustomSet[] }
   id: string
   name: string
   artwork: Record<string, string>
+  license?: string
+  authors?: string
+  sourceUrl?: string
+  notes?: string
 } {
   const id = doc.symbolSet ?? 'standard'
   const custom = doc.customSets?.find((s) => s.id === id)
-  if (custom) return { id: custom.id, name: custom.name, artwork: custom.artwork }
+  if (custom) return { ...custom }
   return BUILTIN_SETS.find((s) => s.id === id) ?? BUILTIN_SETS[0]
 }
 

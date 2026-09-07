@@ -142,6 +142,15 @@ export function Gallery() {
           </article>
         ))}
       </div>
+      <footer className="gallery-foot">
+        <p className="hint">
+          Charts are stored only in this browser. DimCrochet is open source (MIT) — symbol packs keep
+          their own licenses.
+        </p>
+        <button className="btn" onClick={() => useStore.getState().openDialog('licenses')}>
+          Licenses &amp; attributions
+        </button>
+      </footer>
     </div>
   )
 }

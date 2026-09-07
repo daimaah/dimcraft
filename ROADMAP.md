@@ -112,3 +112,10 @@ is the deliverable. The Commons "variant symbols" are where real glyph differenc
 **Plan:** when community packs ship — extend pack schema with license/attribution, build a
 one-off Commons importer (fetch → normalize viewBox → @INK@ tokens → pack JSON), and start a
 `packs/` folder in the repo as the distribution channel (works with Portainer/Git Hub, no backend).
+
+**Licensing decision (recorded):** approved — attribution-based inclusion is acceptable. Done:
+pack files now carry `license` / `authors` / `sourceUrl` / `notes`, provenance survives
+import/export round-trips, and the app has a **Licenses & attributions** dialog (ⓘ toolbar
+button + gallery footer) covering the app license (MIT), bundled sets (original artwork, MIT)
+and imported packs. Remaining for full Commons integration: a curated variants pack drawn/
+normalized from the CC BY-SA category with per-file attribution, shipped in a `packs/` folder.

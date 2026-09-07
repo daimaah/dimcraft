@@ -3,8 +3,8 @@ import { ChartCanvas } from './canvas/ChartCanvas'
 import { Gallery } from './gallery/Gallery'
 import { FollowBar } from './panels/FollowBar'
 import { Inspector } from './panels/Inspector'
-import { LayersPanel } from './panels/LayersPanel'
 import { Dialogs } from './panels/dialogs'
+import { LayersPanel } from './panels/LayersPanel'
 import { SymbolPalette } from './panels/SymbolPalette'
 import { useStore } from './state/store'
 import { loadProject, saveProject } from './storage/db'
@@ -243,7 +243,13 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
-  if (!projectId) return <Gallery />
+  if (!projectId)
+    return (
+      <>
+        <Gallery />
+        <Dialogs />
+      </>
+    )
 
   return (
     <div className="app">

@@ -367,7 +367,14 @@ function SymbolSetSection() {
 
   const importPack = async (file: File) => {
     try {
-      const parsed = JSON.parse(await file.text()) as { name?: string; artwork?: unknown }
+      const parsed = JSON.parse(await file.text()) as {
+        name?: string
+        artwork?: unknown
+        license?: unknown
+        authors?: unknown
+        sourceUrl?: unknown
+        notes?: unknown
+      }
       const artwork = parsed.artwork
       if (!artwork || typeof artwork !== 'object') throw new Error('no artwork map')
       const clean: Record<string, string> = {}
@@ -376,14 +383,32 @@ function SymbolSetSection() {
       }
       if (Object.keys(clean).length === 0) throw new Error('no usable symbol artwork')
       const id = uid('set')
-      st.getState().addCustomSet({ id, name: parsed.name ?? file.name.replace(/\.json$/i, ''), artwork: clean })
+      const str = (v: unknown) => (typeof v === 'string' ? v : undefined)
+      st.getState().addCustomSet({
+        id,
+        name: parsed.name ?? file.name.replace(/\.json$/i, ''),
+        artwork: clean,
+        license: str(parsed.license),
+        authors: str(parsed.authors),
+        sourceUrl: str(parsed.sourceUrl),
+        notes: str(parsed.notes),
+      })
     } catch (err) {
       window.alert(`That symbol pack could not be read: ${err instanceof Error ? err.message : err}`)
     }
   }
 
   const exportPack = () => {
-    const pack = { app: 'dimcrochet-symbol-pack', version: 1, name: current.name, artwork: current.artwork }
+    const pack = {
+      app: 'dimcrochet-symbol-pack',
+      version: 1,
+      name: current.name,
+      artwork: current.artwork,
+      ...(current.license ? { license: current.license } : {}),
+      ...(current.authors ? { authors: current.authors } : {}),
+      ...(current.sourceUrl ? { sourceUrl: current.sourceUrl } : {}),
+      ...(current.notes ? { notes: current.notes } : {}),
+    }
     downloadBlob(
       `${safeFilename(current.name)}.pack.json`,
       new Blob([JSON.stringify(pack, null, 2)], { type: 'application/json' }),

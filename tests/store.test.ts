@@ -127,6 +127,22 @@ describe('store editing operations', () => {
     expect(useStore.getState().doc.guides).toHaveLength(0)
   })
 
+  it('imported packs keep their license provenance', () => {
+    useStore.getState().addCustomSet({
+      id: 'set-commons',
+      name: 'Commons variants',
+      artwork: { dc: '<path d="M 2 2" fill="@INK@" stroke-width="1.6"/>' },
+      license: 'CC BY-SA 4.0',
+      authors: 'Commons contributors',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/Category:Crochet_symbols',
+      notes: 'Variant symbols.',
+    })
+    const doc = useStore.getState().doc
+    expect(doc.customSets?.[0].license).toBe('CC BY-SA 4.0')
+    expect(doc.customSets?.[0].sourceUrl).toContain('commons.wikimedia.org')
+    expect(useStore.getState().doc.symbolSet).toBe('set-commons') // selecting an imported pack activates it
+  })
+
   it('starter doc produces a coherent granny square round', () => {
     const doc = createStarterDoc()
     expect(doc.guides[0]).toMatchObject({ kind: 'polygon', n: 4 })

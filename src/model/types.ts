@@ -148,6 +148,11 @@ export interface CustomSet {
   id: string
   name: string
   artwork: Record<string, string>
+  /** provenance — travels with exported packs and is shown in the Licenses dialog */
+  license?: string
+  authors?: string
+  sourceUrl?: string
+  notes?: string
 }
 
 export interface ChartDoc {

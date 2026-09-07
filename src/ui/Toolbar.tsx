@@ -153,6 +153,13 @@ export function Toolbar() {
         >
           <Icon name="expand" />
         </button>
+        <button
+          className="tool-btn"
+          title="Licenses & attributions"
+          onClick={() => st.getState().openDialog('licenses')}
+        >
+          <Icon name="info" />
+        </button>
       </div>
 
       <button
