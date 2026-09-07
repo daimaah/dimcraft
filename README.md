@@ -10,6 +10,7 @@
 - **“Place N stitches evenly along a guide”** with true arc-length spacing and three stitch orientations (radiate out / follow path / upright)
 - **Backstitch lines**: draw chart line-work (surface/backstitch rows) from stitch to stitch with anchor snapping; reshape by dragging point handles, insert/remove points, close into loops; exported as solid strokes and listed in the legend
 - **Follow mode**: step through the chart round by round — the current round's stitches stay in full ink while the rest fade, the round text shows in a bar on the canvas, and progress is saved with the project (`F`)
+- **Regional symbol sets & terminology**: switch the whole chart between bundled symbol sets (Standard CYC-style, Japanese-style, Solid print) instantly; one-click terminology presets for US/UK English, Svenska, Norsk, Dansk, Suomi, Deutsch, Nederlands, Français, Español, Italiano and Русский; import/export symbol packs as JSON so communities can share authentic national sets
 - **Written instructions**: the Rounds dialog derives round-by-round text from the chart ("R1: [3 dc, ch 2] × 4"), detecting rounds by distance from the centre and collapsing repeating units — copy or download as .txt
 - **Stitch groups**: even-placement rounds, groups and loose stitches appear as toggleable layers (hide/show; hidden stitches are skipped in exports, legend and the fabric preview)
 - **Gauge & true-scale PDF**: set a gauge (units per 10 cm) to see the finished size and print the PDF at true scale

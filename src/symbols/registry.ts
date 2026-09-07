@@ -1,13 +1,21 @@
 import { FRAME, type ChartDoc, type SymbolDef } from '../model/types'
 import { BUILT_IN_MAP } from './definitions'
+import { applySetToDefs, resolveSet } from './sets'
 
 export { BUILT_IN_SYMBOLS, BUILT_IN_MAP } from './definitions'
 
-/** All symbols available in a document: built-ins plus the doc's custom ones. */
+/** Built-in symbols with the document's symbol set applied (for the palette). */
+export function builtInDefsFor(doc: { symbolSet?: string; customSets?: CustomSetLike[] }): SymbolDef[] {
+  return [...applySetToDefs(new Map<string, SymbolDef>(BUILT_IN_MAP), resolveSet(doc).artwork).values()]
+}
+
+type CustomSetLike = { id: string; name: string; artwork: Record<string, string> }
+
+/** All symbols available in a document: set-styled built-ins plus custom symbols. */
 export function getDefMap(doc: ChartDoc): Map<string, SymbolDef> {
   const map = new Map<string, SymbolDef>(BUILT_IN_MAP)
   for (const s of doc.customSymbols) map.set(s.id, s)
-  return map
+  return applySetToDefs(map, resolveSet(doc).artwork)
 }
 
 /** Symbol markup with the ink colour baked in. */

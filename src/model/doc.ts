@@ -1,4 +1,4 @@
-import type { ChartDoc, LegendState } from './types'
+import type { ChartDoc, CustomSet, LegendState } from './types'
 
 export const SCHEMA_VERSION = 1
 
@@ -62,5 +62,17 @@ export function sanitizeDoc(input: unknown): ChartDoc | null {
               : 18,
           }
         : null,
+    symbolSet: typeof d.symbolSet === 'string' ? d.symbolSet : 'standard',
+    customSets: Array.isArray(d.customSets)
+      ? (d.customSets as CustomSet[]).filter(
+          (s) =>
+            !!s &&
+            typeof s === 'object' &&
+            typeof s.id === 'string' &&
+            typeof s.name === 'string' &&
+            typeof s.artwork === 'object' &&
+            s.artwork !== null,
+        )
+      : [],
   }
 }

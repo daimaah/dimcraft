@@ -143,6 +143,13 @@ export interface LegendState {
 }
 
 // ---- Document ------------------------------------------------------------
+/** A user-imported symbol pack: replacement artwork per built-in symbol id. */
+export interface CustomSet {
+  id: string
+  name: string
+  artwork: Record<string, string>
+}
+
 export interface ChartDoc {
   schemaVersion: number
   title: string
@@ -159,6 +166,10 @@ export interface ChartDoc {
   unitsPer10cm?: number | null
   /** follow mode progress: which round is current, and the grouping tolerance */
   follow?: { round: number; tolerance: number } | null
+  /** which bundled/custom symbol set renders the chart's artwork */
+  symbolSet?: string
+  /** user-imported symbol packs */
+  customSets?: CustomSet[]
 }
 
 /** Legend key under which backstitch lines are listed. */

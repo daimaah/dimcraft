@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 import { useStore } from '../state/store'
-import { BUILT_IN_SYMBOLS, normalizeCustomSvg, symbolInner } from '../symbols/registry'
+import { builtInDefsFor, normalizeCustomSvg, symbolInner } from '../symbols/registry'
 import { uid } from '../model/doc'
 
 export function SymbolPalette() {
@@ -10,7 +10,7 @@ export function SymbolPalette() {
   const [query, setQuery] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
-  const all = useMemo(() => [...BUILT_IN_SYMBOLS, ...doc.customSymbols], [doc.customSymbols])
+  const all = useMemo(() => [...builtInDefsFor(doc), ...doc.customSymbols], [doc])
   const filtered = all.filter((s) =>
     `${s.name} ${s.label}`.toLowerCase().includes(query.trim().toLowerCase()),
   )

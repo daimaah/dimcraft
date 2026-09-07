@@ -25,6 +25,7 @@ import {
   unionBBox,
 } from '../geometry/transform'
 import { longestSegment } from '../geometry/handles'
+import { LADDER_IDS, TERMINOLOGY_PRESETS } from '../symbols/terminology'
 import { getDefMap } from '../symbols/registry'
 
 export interface Viewport {
@@ -131,6 +132,9 @@ interface EditorState {
   setFollowTolerance: (t: number) => void
 
   setPlacementsVisible: (ids: string[], visible: boolean) => void
+  setSymbolSet: (id: string) => void
+  addCustomSet: (set: { id: string; name: string; artwork: Record<string, string> }) => void
+  applyTerminology: (presetId: string) => void
   setLegendLive: (patch: Partial<ChartDoc['legend']>) => void
   setGauge: (unitsPer10cm: number | null) => void
 
@@ -712,6 +716,28 @@ export const useStore = create<EditorState>()((set, get) => {
     setGauge: (unitsPer10cm) =>
       commit((d) => {
         d.unitsPer10cm = unitsPer10cm && unitsPer10cm > 0 ? unitsPer10cm : null
+      }),
+
+    setSymbolSet: (id) =>
+      commit((d) => {
+        d.symbolSet = id
+      }),
+
+    addCustomSet: (set) =>
+      commit((d) => {
+        d.customSets = [...(d.customSets ?? []).filter((s) => s.id !== set.id), set]
+        d.symbolSet = set.id
+      }),
+
+    applyTerminology: (presetId) =>
+      commit((d) => {
+        if (presetId === 'us') {
+          for (const k of LADDER_IDS) delete d.labelOverrides[k]
+          return
+        }
+        const preset = TERMINOLOGY_PRESETS.find((p) => p.id === presetId)
+        if (!preset) return
+        for (const [k, v] of Object.entries(preset.labels)) d.labelOverrides[k] = v
       }),
 
     addTextAt: (x, y) =>

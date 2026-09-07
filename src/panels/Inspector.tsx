@@ -1,7 +1,12 @@
+import { useRef } from 'react'
 import { useStore } from '../state/store'
 import { getDefMap } from '../symbols/registry'
+import { BUILTIN_SETS, resolveSet } from '../symbols/sets'
+import { TERMINOLOGY_PRESETS } from '../symbols/terminology'
 import { legendItems } from '../geometry/legend'
 import { contentBBox } from '../geometry/bounds'
+import { uid } from '../model/doc'
+import { downloadBlob, safeFilename } from '../export/download'
 import type { Guide } from '../model/types'
 
 function NumField(props: {
@@ -297,6 +302,7 @@ export function Inspector() {
           onChange={(v) => st.getState().setGauge(v > 0 ? v : null)}
         />
       </Row>
+      <SymbolSetSection />
       <p className="hint">
         {gauge
           ? `Gauge set — chart${sizeHint ? ` ${sizeHint}` : ''}. Enable “True scale” in the PDF export to print at this size.`
@@ -351,8 +357,100 @@ export function Inspector() {
   )
 }
 
-function GuideInspector({ g }: { g: Guide }) {
+/** Symbol set + regional terminology controls (shown when nothing is selected). */
+function SymbolSetSection() {
+  const doc = useStore((s) => s.doc)
   const st = useStore
+  const fileRef = useRef<HTMLInputElement>(null)
+  const currentId = doc.symbolSet ?? 'standard'
+  const current = resolveSet(doc)
+
+  const importPack = async (file: File) => {
+    try {
+      const parsed = JSON.parse(await file.text()) as { name?: string; artwork?: unknown }
+      const artwork = parsed.artwork
+      if (!artwork || typeof artwork !== 'object') throw new Error('no artwork map')
+      const clean: Record<string, string> = {}
+      for (const [k, v] of Object.entries(artwork as Record<string, unknown>)) {
+        if (typeof v === 'string' && v.includes('@INK@')) clean[k] = v
+      }
+      if (Object.keys(clean).length === 0) throw new Error('no usable symbol artwork')
+      const id = uid('set')
+      st.getState().addCustomSet({ id, name: parsed.name ?? file.name.replace(/\.json$/i, ''), artwork: clean })
+    } catch (err) {
+      window.alert(`That symbol pack could not be read: ${err instanceof Error ? err.message : err}`)
+    }
+  }
+
+  const exportPack = () => {
+    const pack = { app: 'dimcrochet-symbol-pack', version: 1, name: current.name, artwork: current.artwork }
+    downloadBlob(
+      `${safeFilename(current.name)}.pack.json`,
+      new Blob([JSON.stringify(pack, null, 2)], { type: 'application/json' }),
+    )
+  }
+
+  return (
+    <>
+      <div className="panel-title">Symbols &amp; region</div>
+      <Row>
+        <label className="field grow">
+          <span>Symbol set</span>
+          <select value={currentId} onChange={(e) => st.getState().setSymbolSet(e.target.value)}>
+            {BUILTIN_SETS.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+            {(doc.customSets ?? []).map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name} (pack)
+              </option>
+            ))}
+          </select>
+        </label>
+      </Row>
+      <Row>
+        <button className="btn" onClick={() => fileRef.current?.click()}>
+          Import pack…
+        </button>
+        <button className="btn" disabled={Object.keys(current.artwork).length === 0} onClick={exportPack}>
+          Export pack
+        </button>
+        <input
+          ref={fileRef}
+          type="file"
+          accept=".json,application/json"
+          hidden
+          onChange={(e) => {
+            const f = e.target.files?.[0]
+            if (f) void importPack(f)
+            e.target.value = ''
+          }}
+        />
+      </Row>
+      <Row>
+        <label className="field grow">
+          <span>Terminology</span>
+          <select defaultValue="" onChange={(e) => e.target.value && st.getState().applyTerminology(e.target.value)}>
+            <option value="">Apply a preset…</option>
+            {TERMINOLOGY_PRESETS.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      </Row>
+      <p className="hint">
+        Sets redraw the symbols on every stitch instantly. Terminology presets relabel the basic stitch
+        ladder (legend + instructions) — e.g. UK dc = US sc.
+      </p>
+    </>
+  )
+}
+
+function GuideInspector({ g }: { g: Guide }) {  const st = useStore
   const up = (patch: Partial<Guide>) => st.getState().updateGuide(g.id, patch)
   return (
     <>

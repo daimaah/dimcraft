@@ -1,0 +1,70 @@
+import { describe, expect, it } from 'vitest'
+import { applySetToDefs, BUILTIN_SETS, resolveSet } from '../src/symbols/sets'
+import { builtInDefsFor, getDefMap } from '../src/symbols/registry'
+import { TERMINOLOGY_PRESETS, LADDER_IDS } from '../src/symbols/terminology'
+import { createEmptyDoc } from '../src/model/doc'
+import type { ChartDoc, CustomSet } from '../src/model/types'
+
+describe('symbol sets', () => {
+  it('ships three bundled sets and standard has no overrides', () => {
+    expect(BUILTIN_SETS.map((s) => s.id)).toEqual(['standard', 'japanese', 'solid'])
+    expect(BUILTIN_SETS[0].artwork).toEqual({})
+    expect(Object.keys(BUILTIN_SETS[1].artwork).length).toBeGreaterThanOrEqual(8)
+  })
+
+  it('applySetToDefs replaces artwork only for known ids', () => {
+    const doc = createEmptyDoc()
+    const defs = getDefMap(doc)
+    const solid = BUILTIN_SETS.find((s) => s.id === 'solid')!
+    const applied = applySetToDefs(defs, solid.artwork)
+    expect(applied.get('dc')!.content).not.toBe(defs.get('dc')!.content)
+    expect(applied.get('dc')!.bbox).toEqual(defs.get('dc')!.bbox) // frame untouched
+    // ids outside the set fall back to standard artwork
+    expect(applied.get('picot')!.content).toBe(defs.get('picot')!.content)
+  })
+
+  it('getDefMap applies the document symbol set', () => {
+    const doc = createEmptyDoc()
+    const before = getDefMap(doc).get('dc')!.content
+    doc.symbolSet = 'japanese'
+    const after = getDefMap(doc).get('dc')!.content
+    expect(after).not.toBe(before)
+    expect(after).toContain('@INK@')
+    expect(builtInDefsFor(doc).find((s) => s.id === 'dc')!.content).toBe(after)
+  })
+
+  it('resolves imported packs over bundled sets', () => {
+    const pack: CustomSet = { id: 'set-1', name: 'Faroese', artwork: { dc: '<path d="M 1 1" fill="@INK@"/>' } }
+    const doc: ChartDoc = { ...createEmptyDoc(), symbolSet: 'set-1', customSets: [pack] }
+    expect(resolveSet(doc).name).toBe('Faroese')
+    expect(getDefMap(doc).get('dc')!.content).toBe('<path d="M 1 1" fill="@INK@"/>')
+    // an unknown set id falls back to standard
+    expect(resolveSet({ symbolSet: 'nope' }).id).toBe('standard')
+  })
+})
+
+describe('terminology presets', () => {
+  it('covers the full basic ladder for every preset', () => {
+    for (const p of TERMINOLOGY_PRESETS) {
+      for (const id of LADDER_IDS) {
+        expect(typeof p.labels[id]).toBe('string')
+        expect(p.labels[id]!.length).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('includes the Nordic languages plus major European markets', () => {
+    const ids = TERMINOLOGY_PRESETS.map((p) => p.id)
+    for (const id of ['uk', 'sv', 'no', 'da', 'fi', 'de', 'nl', 'fr', 'es', 'it', 'ru']) {
+      expect(ids).toContain(id)
+    }
+  })
+
+  it('maps the US↔UK ladder correctly', () => {
+    const uk = TERMINOLOGY_PRESETS.find((p) => p.id === 'uk')!
+    expect(uk.labels.sc).toBe('dc')
+    expect(uk.labels.hdc).toBe('htr')
+    expect(uk.labels.dc).toBe('tr')
+    expect(uk.labels.tr).toBe('dtr')
+  })
+})
