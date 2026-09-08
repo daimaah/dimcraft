@@ -76,8 +76,18 @@ interface EditorState {
   lefty: boolean
   /** animate collapsible bars and the zoom indicator in the design view */
   viewAnimations: boolean
-  /** tool palette layout: 1 = single row, 2 = two stacked rows */
-  paletteRows: 1 | 2
+  /** floating tool palette customization (layout, position, visibility, order) */
+  palette: {
+    rows: 1 | 2
+    pos: { x: number; y: number } | null
+    collapsed: boolean
+    /** button ids in display order; null = default order */
+    order: string[] | null
+    /** hidden button ids */
+    hidden: string[]
+  }
+  /** status bar clock in 24-hour format */
+  clock24h: boolean
   /** symbol id a "show me how" button asked the stitch-motions dialog to open */
   motionRequest: string | null
   leftCollapsed: boolean
@@ -184,7 +194,9 @@ interface EditorState {
   setSnap: (v: boolean) => void
   setLefty: (v: boolean) => void
   setViewAnimations: (v: boolean) => void
-  setPaletteRows: (n: 1 | 2) => void
+  setPalette: (patch: Partial<EditorState['palette']>) => void
+  resetPalette: () => void
+  setClock24h: (v: boolean) => void
   requestMotion: (symbolId: string) => void
   requestMotionDone: () => void
   setGrid: (v: boolean) => void
@@ -261,7 +273,8 @@ export const useStore = create<EditorState>()((set, get) => {
     guidesVisible: true,
     lefty: false,
     viewAnimations: true,
-    paletteRows: 1,
+    palette: { rows: 1, pos: null, collapsed: false, order: null, hidden: [] },
+    clock24h: false,
     motionRequest: null,
 
     dialog: null,
@@ -929,7 +942,10 @@ export const useStore = create<EditorState>()((set, get) => {
     setSnap: (v) => set({ snapEnabled: v }),
     setLefty: (v) => set({ lefty: v }),
     setViewAnimations: (v) => set({ viewAnimations: v }),
-    setPaletteRows: (n) => set({ paletteRows: n }),
+    setPalette: (patch) => set((st) => ({ palette: { ...st.palette, ...patch } })),
+    resetPalette: () =>
+      set({ palette: { rows: 1, pos: null, collapsed: false, order: null, hidden: [] } }),
+    setClock24h: (v) => set({ clock24h: v }),
     requestMotion: (symbolId) => set({ motionRequest: symbolId, dialog: 'stitch-motions' }),
     requestMotionDone: () => set({ motionRequest: null }),
     setGrid: (v) => set({ gridVisible: v }),

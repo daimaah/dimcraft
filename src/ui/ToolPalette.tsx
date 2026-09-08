@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { useStore } from '../state/store'
 import { Icon, type IconName } from './icons'
 
@@ -16,30 +16,37 @@ const TOOLS: { id: string; icon: IconName; label: string; key: string }[] = [
   { id: 'text', icon: 'text', label: 'Text label', key: 'T' },
 ]
 
-const KEY = 'dimcrochet.toolPalette'
-
 /** tools that stay visible even when the palette is collapsed */
 const ESSENTIAL_TOOLS = ['select', 'pan', 'place', 'text']
 
-interface PaletteState {
-  x?: number
-  y?: number
-  collapsed?: boolean
-}
+/** customizable buttons in default display order */
+export const PALETTE_BUTTONS: { id: string; label: string }[] = [
+  ...TOOLS.map((t) => ({ id: t.id, label: t.label })),
+  { id: 'undo', label: 'Undo' },
+  { id: 'redo', label: 'Redo' },
+  { id: 'snap', label: 'Snapping' },
+  { id: 'grid', label: 'Grid' },
+  { id: 'guides', label: 'Show guides' },
+  { id: 'zoom-out', label: 'Zoom out' },
+  { id: 'zoom', label: 'Zoom percentage' },
+  { id: 'zoom-in', label: 'Zoom in' },
+  { id: 'fit', label: 'Fit chart' },
+  { id: 'fullscreen', label: 'Full screen' },
+  { id: 'info', label: 'Licenses' },
+  { id: 'options', label: 'Options' },
+]
 
-function loadState(): PaletteState {
-  try {
-    return JSON.parse(localStorage.getItem(KEY) ?? '{}') as PaletteState
-  } catch {
-    return {}
-  }
-}
+export const DEFAULT_ORDER = PALETTE_BUTTONS.map((b) => b.id)
+
+/** group separators render before these ids in the default layout */
+const SEP_BEFORE = new Set(['undo', 'snap', 'zoom-out'])
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
 
 /** Floating, draggable tool palette. Defaults to anchored at the top of the
- *  canvas; can be moved, collapsed to a pill, laid out in one or two rows,
- *  and reset to its default spot. */
+ *  canvas; buttons can be hidden/reordered from Options; can be collapsed to
+ *  a pill that always keeps the essential tools visible; layout, position,
+ *  and customization live in the store and persist with preferences. */
 export function ToolPalette() {
   const tool = useStore((s) => s.tool)
   const canUndo = useStore((s) => s.past.length > 0)
@@ -48,27 +55,14 @@ export function ToolPalette() {
   const gridVisible = useStore((s) => s.gridVisible)
   const guidesVisible = useStore((s) => s.guidesVisible)
   const viewport = useStore((s) => s.viewport)
-  const viewAnimations = useStore((s) => s.viewAnimations)
-  const paletteRows = useStore((s) => s.paletteRows)
+  const palette = useStore((s) => s.palette)
+  const { rows, pos, collapsed, order, hidden } = palette
   const [isFullscreen, setIsFullscreen] = useState(false)
 
   const barRef = useRef<HTMLDivElement>(null)
-  const saved = useRef(loadState())
-  const [pos, setPos] = useState<{ x: number; y: number } | null>(
-    saved.current.x !== undefined && saved.current.y !== undefined
-      ? { x: saved.current.x, y: saved.current.y }
-      : null,
-  )
-  const [collapsed, setCollapsed] = useState(saved.current.collapsed === true)
   const [dragging, setDragging] = useState(false)
 
-  const persist = (patch: Partial<PaletteState>) => {
-    try {
-      localStorage.setItem(KEY, JSON.stringify({ ...loadState(), ...patch }))
-    } catch {
-      /* storage unavailable */
-    }
-  }
+  const setPalette = (patch: Partial<typeof palette>) => useStore.getState().setPalette(patch)
 
   // default: centered along the top edge of the canvas
   useEffect(() => {
@@ -76,26 +70,25 @@ export function ToolPalette() {
     const bar = barRef.current
     const parent = bar?.parentElement
     if (!bar || !parent) return
-    setPos({ x: Math.max(8, (parent.clientWidth - bar.offsetWidth) / 2), y: 8 })
+    setPalette({ pos: { x: Math.max(8, (parent.clientWidth - bar.offsetWidth) / 2), y: 8 } })
   }, [pos])
 
   // clamp into the canvas on mount/resize/fullscreen — the saved spot may come
   // from a different window size
   useEffect(() => {
     if (!pos) return
-    const clamp = () => {
+    const clampPos = () => {
       const bar = barRef.current
       const parent = bar?.parentElement
       if (!bar || !parent) return
       const nx = Math.min(Math.max(0, pos.x), Math.max(0, parent.clientWidth - bar.offsetWidth))
       const ny = Math.min(Math.max(0, pos.y), Math.max(0, parent.clientHeight - bar.offsetHeight))
       if (nx !== pos.x || ny !== pos.y) {
-        setPos({ x: nx, y: ny })
-        persist({ x: nx, y: ny })
+        setPalette({ pos: { x: nx, y: ny } })
       }
     }
-    clamp()
-    const deferred = () => requestAnimationFrame(clamp)
+    clampPos()
+    const deferred = () => requestAnimationFrame(clampPos)
     window.addEventListener('resize', deferred)
     document.addEventListener('fullscreenchange', deferred)
     return () => {
@@ -108,9 +101,7 @@ export function ToolPalette() {
     const bar = barRef.current
     const parent = bar?.parentElement
     if (!bar || !parent) return
-    const next = { x: Math.max(8, (parent.clientWidth - bar.offsetWidth) / 2), y: 8 }
-    setPos(next)
-    persist(next)
+    setPalette({ pos: { x: Math.max(8, (parent.clientWidth - bar.offsetWidth) / 2), y: 8 } })
   }
 
   const startDrag = (e: React.PointerEvent) => {
@@ -127,9 +118,7 @@ export function ToolPalette() {
       const ph = parent.clientHeight
       const nx = Math.min(Math.max(0, startPos.x + (ev.clientX - startX)), Math.max(0, pw - bar.offsetWidth))
       const ny = Math.min(Math.max(0, startPos.y + (ev.clientY - startY)), Math.max(0, ph - bar.offsetHeight))
-      const next = { x: nx, y: ny }
-      setPos(next)
-      persist(next)
+      setPalette({ pos: { x: nx, y: ny } })
     }
     const onUp = () => {
       setDragging(false)
@@ -160,6 +149,7 @@ export function ToolPalette() {
 
   const st = useStore
   const zoomPct = Math.round(viewport.zoom * 100)
+  const viewAnimationsOn = useStore((s) => s.viewAnimations)
   const fit = () => {
     const el = document.querySelector('.canvas-wrap')
     if (el) {
@@ -178,145 +168,164 @@ export function ToolPalette() {
     setZoomEdit(null)
     if (Number.isFinite(v)) {
       st.getState().zoomAt(clamp(v / 100, 0.04, 24) / viewport.zoom, window.innerWidth / 2, window.innerHeight / 2)
-      if (viewAnimations) {
+      if (viewAnimationsOn) {
         setBounce(true)
         window.setTimeout(() => setBounce(false), 400)
       }
     }
   }
 
-  // ---- button groups --------------------------------------------------------
-  const toolsGroup = (
-    <div className="tb-group">
-      {TOOLS.map((t) => (
+  /** Render one customizable button by id. */
+  const renderButton = (id: string) => {
+    const toolDef = TOOLS.find((t) => t.id === id)
+    if (toolDef) {
+      return (
         <button
-          key={t.id}
-          className={`tool-btn${tool === t.id ? ' active' : ''}`}
-          title={`${t.label} (${t.key})`}
-          onClick={() => st.getState().setTool(t.id as never)}
+          key={id}
+          className={`tool-btn${tool === id ? ' active' : ''}`}
+          title={`${toolDef.label} (${toolDef.key})`}
+          onClick={() => st.getState().setTool(id as never)}
         >
-          <Icon name={t.icon} />
+          <Icon name={toolDef.icon} />
         </button>
-      ))}
-    </div>
-  )
-  const editGroup = (
-    <div className="tb-group">
-      <button className="tool-btn" disabled={!canUndo} title="Undo (Ctrl+Z)" onClick={() => st.getState().undo()}>
-        <Icon name="undo" />
-      </button>
-      <button className="tool-btn" disabled={!canRedo} title="Redo (Ctrl+Shift+Z)" onClick={() => st.getState().redo()}>
-        <Icon name="redo" />
-      </button>
-    </div>
-  )
-  const viewGroup = (
-    <div className="tb-group">
-      <button
-        className={`tool-btn${snapEnabled ? ' active' : ''}`}
-        title="Snapping (guide points, anchors, grid)"
-        onClick={() => st.getState().setSnap(!snapEnabled)}
-      >
-        <Icon name="snap" />
-      </button>
-      <button
-        className={`tool-btn${gridVisible ? ' active' : ''}`}
-        title="Grid"
-        onClick={() => st.getState().setGrid(!gridVisible)}
-      >
-        <Icon name="grid" />
-      </button>
-      <button
-        className={`tool-btn${guidesVisible ? ' active' : ''}`}
-        title="Show guides"
-        onClick={() => st.getState().setGuidesVisible(!guidesVisible)}
-      >
-        <Icon name="guides" />
-      </button>
-    </div>
-  )
-  const zoomGroup = (
-    <div className="tb-group zoom">
-      <button className="tool-btn" title="Zoom out" onClick={() => zoom(1 / 1.2)}>
-        −
-      </button>
-      <input
-        className={`zoom-label zoom-input${bounce ? ' zoom-bounce' : ''}`}
-        value={zoomEdit ?? `${zoomPct}%`}
-        onChange={(e) => setZoomEdit(e.target.value)}
-        onFocus={() => setZoomEdit(`${zoomPct}%`)}
-        onBlur={() => commitZoom()}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            commitZoom()
-            ;(e.target as HTMLInputElement).blur()
-          }
-          if (e.key === 'Escape') {
-            setZoomEdit(null)
-            ;(e.target as HTMLInputElement).blur()
-          }
-        }}
-        size={5}
-        inputMode="decimal"
-        spellCheck={false}
-        title="Zoom — type a percentage and press Enter"
-        data-testid="zoom-input"
-      />
-      <button className="tool-btn" title="Zoom in" onClick={() => zoom(1.2)}>
-        +
-      </button>
-      <button className="tool-btn" title="Fit chart (Ctrl+0)" onClick={fit}>
-        <Icon name="fit" />
-      </button>
-      <button
-        className={`tool-btn${isFullscreen ? ' active' : ''}`}
-        title={isFullscreen ? 'Exit full screen' : 'Full screen'}
-        onClick={toggleFullscreen}
-      >
-        <Icon name="expand" />
-      </button>
-      <button
-        className="tool-btn"
-        title="Licenses & attributions"
-        onClick={() => st.getState().openDialog('licenses')}
-      >
-        <Icon name="info" />
-      </button>
-      <button
-        className="tool-btn"
-        title="Options — animations, left-handed view, sidecar"
-        data-testid="open-options"
-        onClick={() => st.getState().openDialog('options')}
-      >
-        <Icon name="gear" />
-      </button>
-    </div>
-  )
-  const actionGroup = (
-    <>
-      <button className="tool-btn" title="Reset palette position" data-testid="tool-palette-reset" onClick={resetPos}>
-        ⟲
-      </button>
-      <button
-        className="tool-btn"
-        title="Shrink — stays in this spot"
-        data-testid="tool-palette-collapse"
-        onClick={() => {
-          setCollapsed(true)
-          persist({ collapsed: true })
-        }}
-      >
-        ▴
-      </button>
-    </>
-  )
-  const sep = <div className="tb-sep" />
+      )
+    }
+    switch (id) {
+      case 'undo':
+        return (
+          <button key={id} className="tool-btn" disabled={!canUndo} title="Undo (Ctrl+Z)" onClick={() => st.getState().undo()}>
+            <Icon name="undo" />
+          </button>
+        )
+      case 'redo':
+        return (
+          <button key={id} className="tool-btn" disabled={!canRedo} title="Redo (Ctrl+Shift+Z)" onClick={() => st.getState().redo()}>
+            <Icon name="redo" />
+          </button>
+        )
+      case 'snap':
+        return (
+          <button
+            key={id}
+            className={`tool-btn${snapEnabled ? ' active' : ''}`}
+            title="Snapping (guide points, anchors, grid)"
+            onClick={() => st.getState().setSnap(!snapEnabled)}
+          >
+            <Icon name="snap" />
+          </button>
+        )
+      case 'grid':
+        return (
+          <button
+            key={id}
+            className={`tool-btn${gridVisible ? ' active' : ''}`}
+            title="Grid"
+            onClick={() => st.getState().setGrid(!gridVisible)}
+          >
+            <Icon name="grid" />
+          </button>
+        )
+      case 'guides':
+        return (
+          <button
+            key={id}
+            className={`tool-btn${guidesVisible ? ' active' : ''}`}
+            title="Show guides"
+            onClick={() => st.getState().setGuidesVisible(!guidesVisible)}
+          >
+            <Icon name="guides" />
+          </button>
+        )
+      case 'zoom-out':
+        return (
+          <button key={id} className="tool-btn" title="Zoom out" onClick={() => zoom(1 / 1.2)}>
+            −
+          </button>
+        )
+      case 'zoom':
+        return (
+          <input
+            key={id}
+            className={`zoom-label zoom-input${bounce ? ' zoom-bounce' : ''}`}
+            value={zoomEdit ?? `${zoomPct}%`}
+            onChange={(e) => setZoomEdit(e.target.value)}
+            onFocus={() => setZoomEdit(`${zoomPct}%`)}
+            onBlur={() => commitZoom()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                commitZoom()
+                ;(e.target as HTMLInputElement).blur()
+              }
+              if (e.key === 'Escape') {
+                setZoomEdit(null)
+                ;(e.target as HTMLInputElement).blur()
+              }
+            }}
+            size={5}
+            inputMode="decimal"
+            spellCheck={false}
+            title="Zoom — type a percentage and press Enter"
+            data-testid="zoom-input"
+          />
+        )
+      case 'zoom-in':
+        return (
+          <button key={id} className="tool-btn" title="Zoom in" onClick={() => zoom(1.2)}>
+            +
+          </button>
+        )
+      case 'fit':
+        return (
+          <button key={id} className="tool-btn" title="Fit chart (Ctrl+0)" onClick={fit}>
+            <Icon name="fit" />
+          </button>
+        )
+      case 'fullscreen':
+        return (
+          <button
+            key={id}
+            className={`tool-btn${isFullscreen ? ' active' : ''}`}
+            title={isFullscreen ? 'Exit full screen' : 'Full screen'}
+            onClick={toggleFullscreen}
+          >
+            <Icon name="expand" />
+          </button>
+        )
+      case 'info':
+        return (
+          <button
+            key={id}
+            className="tool-btn"
+            title="Licenses & attributions"
+            onClick={() => st.getState().openDialog('licenses')}
+          >
+            <Icon name="info" />
+          </button>
+        )
+      case 'options':
+        return (
+          <button
+            key={id}
+            className="tool-btn"
+            title="Options — animations, left-handed view, sidecar"
+            data-testid="open-options"
+            onClick={() => st.getState().openDialog('options')}
+          >
+            <Icon name="gear" />
+          </button>
+        )
+      default:
+        return null
+    }
+  }
+
+  const visible = (order ?? DEFAULT_ORDER).filter((id) => !hidden.includes(id))
 
   return (
     <div
       key={collapsed ? 'min' : 'max'}
       ref={barRef}
-      className={`tool-palette bar-pop${collapsed ? ' compact' : ''}${paletteRows === 2 ? ' two-rows' : ''}${
+      className={`tool-palette bar-pop${collapsed ? ' compact' : ''}${rows === 2 ? ' two-rows' : ''}${
         dragging ? ' dragging' : ''
       }`}
       style={{ left: pos?.x, top: pos?.y }}
@@ -327,26 +336,16 @@ export function ToolPalette() {
       </div>
       {collapsed ? (
         <>
-          {/* essential tools stay visible even when collapsed */}
-          {TOOLS.filter((t) => ESSENTIAL_TOOLS.includes(t.id)).map((t) => (
-            <button
-              key={t.id}
-              className={`tool-btn${tool === t.id ? ' active' : ''}`}
-              title={`${t.label} (${t.key})`}
-              onClick={() => st.getState().setTool(t.id as never)}
-            >
-              <Icon name={t.icon} />
-            </button>
-          ))}
+          {/* essential tools stay visible and usable when collapsed */}
+          {visible
+            .filter((id) => ESSENTIAL_TOOLS.includes(id))
+            .map((id) => renderButton(id))}
           <div className="tb-sep" />
           <button
             className="btn"
             title="Expand the tool palette"
             data-testid="tool-palette-expand"
-            onClick={() => {
-              setCollapsed(false)
-              persist({ collapsed: false })
-            }}
+            onClick={() => setPalette({ collapsed: false })}
           >
             ▾
           </button>
@@ -354,32 +353,34 @@ export function ToolPalette() {
             ⟲
           </button>
         </>
-      ) : paletteRows === 2 ? (
+      ) : rows === 2 ? (
         <>
-          <div className="tp-row">{toolsGroup}</div>
           <div className="tp-row">
-            {editGroup}
-            {sep}
-            {viewGroup}
-            {sep}
-            {zoomGroup}
-            {sep}
-            {actionGroup}
+            {visible.slice(0, Math.ceil(visible.length / 2)).map((id) => renderButton(id))}
           </div>
+          <div className="tp-row">{visible.slice(Math.ceil(visible.length / 2)).map((id) => renderButton(id))}</div>
         </>
       ) : (
-        <>
-          {toolsGroup}
-          {sep}
-          {editGroup}
-          {sep}
-          {viewGroup}
-          {sep}
-          {zoomGroup}
-          {sep}
-          {actionGroup}
-        </>
+        visible.map((id, i) => (
+          <Fragment key={id}>
+            {SEP_BEFORE.has(id) && i > 0 && <div className="tb-sep" />}
+            {renderButton(id)}
+          </Fragment>
+        ))
       )}
+      {/* structural controls: always present, not customizable */}
+      <div className="tb-sep" />
+      <button className="tool-btn" title="Reset palette position" data-testid="tool-palette-reset" onClick={resetPos}>
+        ⟲
+      </button>
+      <button
+        className="tool-btn"
+        title={collapsed ? 'Expand the tool palette' : 'Shrink — stays in this spot'}
+        data-testid={collapsed ? 'tool-palette-expand' : 'tool-palette-collapse'}
+        onClick={() => setPalette({ collapsed: !collapsed })}
+      >
+        {collapsed ? '▾' : '▴'}
+      </button>
     </div>
   )
 }

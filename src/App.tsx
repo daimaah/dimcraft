@@ -86,7 +86,30 @@ export default function App() {
       if (typeof prefs.rightCollapsed === 'boolean') useStore.setState({ rightCollapsed: prefs.rightCollapsed })
       if (typeof prefs.lefty === 'boolean') useStore.setState({ lefty: prefs.lefty })
       if (typeof prefs.viewAnimations === 'boolean') useStore.setState({ viewAnimations: prefs.viewAnimations })
-      if (prefs.paletteRows === 1 || prefs.paletteRows === 2) useStore.setState({ paletteRows: prefs.paletteRows })
+      if (typeof prefs.clock24h === 'boolean') useStore.setState({ clock24h: prefs.clock24h })
+      const legacy = (() => {
+        try {
+          return JSON.parse(localStorage.getItem('dimcrochet.toolPalette') ?? '{}')
+        } catch {
+          return {}
+        }
+      })()
+      if (prefs.palette && typeof prefs.palette === 'object') {
+        const pal = prefs.palette as Record<string, unknown>
+        useStore.setState({
+          palette: {
+            rows: pal.rows === 2 ? 2 : 1,
+            pos: (pal.pos as { x: number; y: number } | null) ?? null,
+            collapsed: pal.collapsed === true,
+            order: Array.isArray(pal.order) ? (pal.order as string[]) : null,
+            hidden: Array.isArray(pal.hidden) ? (pal.hidden as string[]) : [],
+          },
+        })
+      } else if (legacy.x !== undefined) {
+        // migrate the pre-options follow-bar-style storage
+        useStore.getState().setPalette({ pos: { x: legacy.x, y: legacy.y }, collapsed: legacy.collapsed === true })
+      }
+      localStorage.removeItem('dimcrochet.toolPalette')
     } catch {
       /* ignore bad prefs */
     }
@@ -110,7 +133,8 @@ export default function App() {
         s.rightCollapsed !== prev.rightCollapsed ||
         s.lefty !== prev.lefty ||
         s.viewAnimations !== prev.viewAnimations ||
-        s.paletteRows !== prev.paletteRows
+        s.palette !== prev.palette ||
+        s.clock24h !== prev.clock24h
       ) {
         localStorage.setItem(
           PREFS_KEY,
@@ -122,7 +146,8 @@ export default function App() {
             rightCollapsed: s.rightCollapsed,
             lefty: s.lefty,
             viewAnimations: s.viewAnimations,
-            paletteRows: s.paletteRows,
+            palette: s.palette,
+            clock24h: s.clock24h,
           }),
         )
       }

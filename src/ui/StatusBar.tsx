@@ -9,6 +9,7 @@ export function StatusBar() {
   const selTexts = useStore((s) => s.selTexts)
   const selLines = useStore((s) => s.selLines)
   const savedAt = useStore((s) => s.savedAt)
+  const clock24h = useStore((s) => s.clock24h)
   const tool = useStore((s) => s.tool)
   const armed = useStore((s) => s.armedSymbolId)
 
@@ -49,7 +50,13 @@ export function StatusBar() {
       {toolHint && <span className="sb-cell hint-text">{toolHint}</span>}
       <span className="sb-spacer" />
       <span className="sb-cell">
-        {savedAt ? `Saved ${new Date(savedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Unsaved'}
+        {savedAt
+          ? `Saved ${new Date(savedAt).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: !clock24h,
+            })}`
+          : 'Unsaved'}
       </span>
       <span className="sb-cell muted">Everything stays in this browser — no account, no uploads</span>
     </footer>

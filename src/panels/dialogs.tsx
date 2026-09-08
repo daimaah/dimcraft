@@ -11,6 +11,7 @@ import { PatternImportDialog } from './PatternImportDialog'
 import { StitchMotionDialog } from './StitchMotionDialog'
 import { createShortLink, sidecarAvailable } from '../export/secureShare'
 import { recentChangelog } from '../export/changelog'
+import { DEFAULT_ORDER, PALETTE_BUTTONS } from '../ui/ToolPalette'
 import changelogRaw from '../../CHANGELOG.md?raw'
 import type { RotationMode } from '../model/types'
 import type { SvgExportOptions } from '../export/svg'
@@ -498,11 +499,16 @@ export function FileLoadRow() {
 
 // ---- universal options: view animations, handedness, sidecar, danger zone --
 
+const PALETTE_BUTTON_LABELS: Record<string, string> = Object.fromEntries(
+  PALETTE_BUTTONS.map((b) => [b.id, b.label]),
+)
+
 export function OptionsDialog() {
   const viewAnimations = useStore((s) => s.viewAnimations)
   const lefty = useStore((s) => s.lefty)
-  const paletteRows = useStore((s) => s.paletteRows)
-  const [tab, setTab] = useState<'general' | 'danger'>('general')
+  const palette = useStore((s) => s.palette)
+  const clock24h = useStore((s) => s.clock24h)
+  const [tab, setTab] = useState<'general' | 'buttons' | 'danger'>('general')
   const [confirmText, setConfirmText] = useState('')
   const [wiping, setWiping] = useState(false)
   const [sidecarUrl, setSidecarUrl] = useState(
@@ -535,6 +541,15 @@ export function OptionsDialog() {
         </button>
         <button
           role="tab"
+          aria-selected={tab === 'buttons'}
+          className={tab === 'buttons' ? 'on' : ''}
+          onClick={() => setTab('buttons')}
+          data-testid="options-buttons-tab"
+        >
+          Buttons
+        </button>
+        <button
+          role="tab"
           aria-selected={tab === 'danger'}
           className={`danger${tab === 'danger' ? ' on' : ''}`}
           onClick={() => setTab('danger')}
@@ -561,6 +576,18 @@ export function OptionsDialog() {
               </span>
             </span>
           </label>
+          <label className="check" data-testid="opt-clock24h">
+            <input
+              type="checkbox"
+              checked={clock24h}
+              onChange={(e) => useStore.getState().setClock24h(e.target.checked)}
+            />
+            <span>
+              <strong>Show 24 hour clock</strong>
+              <br />
+              <span className="hint">Display save times like 14:07 instead of 2:07 PM.</span>
+            </span>
+          </label>
           <label className="check" data-testid="opt-lefty">
             <input
               type="checkbox"
@@ -575,25 +602,6 @@ export function OptionsDialog() {
               </span>
             </span>
           </label>
-          <div className="form-row" data-testid="opt-rows">
-            <span>
-              <strong>Tool palette layout</strong>
-              <br />
-              <span className="hint">Two rows take less horizontal space.</span>
-            </span>
-            <div className="seg">
-              {[1, 2].map((n) => (
-                <button
-                  key={n}
-                  className={paletteRows === n ? 'on' : ''}
-                  data-testid={`opt-rows-${n}`}
-                  onClick={() => useStore.getState().setPaletteRows(n as 1 | 2)}
-                >
-                  {n === 1 ? 'One row' : 'Two rows'}
-                </button>
-              ))}
-            </div>
-          </div>
           <div className="form-row" data-testid="opt-sidecar">
             <span>
               <strong>Sidecar URL</strong>
@@ -618,6 +626,100 @@ export function OptionsDialog() {
               data-testid="opt-sidecar-url"
             />
           </div>
+        </div>
+      )}
+
+      {tab === 'buttons' && (
+        <div className="form">
+          <div className="form-row" data-testid="opt-rows">
+            <span>
+              <strong>Tool palette layout</strong>
+              <br />
+              <span className="hint">Two rows take less horizontal space.</span>
+            </span>
+            <div className="seg">
+              {[1, 2].map((n) => (
+                <button
+                  key={n}
+                  className={palette.rows === n ? 'on' : ''}
+                  data-testid={`opt-rows-${n}`}
+                  onClick={() => useStore.getState().setPalette({ rows: n as 1 | 2 })}
+                >
+                  {n === 1 ? 'One row' : 'Two rows'}
+                </button>
+              ))}
+            </div>
+          </div>
+          <p className="hint">
+            Show or hide buttons, and reorder them with the arrows. Hidden buttons come back here
+            anytime. Select, Pan, Place and Text stay on the palette even when it is collapsed.
+          </p>
+          <div className="palette-custom-list">
+            {(palette.order ?? DEFAULT_ORDER).map((id, i) => {
+              const hidden = palette.hidden.includes(id)
+              const label = PALETTE_BUTTON_LABELS[id] ?? id
+              const order = palette.order ?? DEFAULT_ORDER
+              return (
+                <div key={id} className={`btnrow${hidden ? ' off' : ''}`}>
+                  <span className="btnrow-order">
+                    <button
+                      className="tool-btn"
+                      title="Move up"
+                      disabled={i === 0}
+                      onClick={() => {
+                        const next = [...order]
+                        ;[next[i - 1], next[i]] = [next[i], next[i - 1]]
+                        useStore.getState().setPalette({ order: next })
+                      }}
+                    >
+                      ↑
+                    </button>
+                    <button
+                      className="tool-btn"
+                      title="Move down"
+                      disabled={i === order.length - 1}
+                      onClick={() => {
+                        const next = [...order]
+                        ;[next[i + 1], next[i]] = [next[i], next[i + 1]]
+                        useStore.getState().setPalette({ order: next })
+                      }}
+                    >
+                      ↓
+                    </button>
+                  </span>
+                  <span className="btnrow-label">{label}</span>
+                  <label className="check">
+                    <input
+                      type="checkbox"
+                      checked={!hidden}
+                      onChange={(e) => {
+                        const nextHidden = e.target.checked
+                          ? palette.hidden.filter((h) => h !== id)
+                          : [...palette.hidden, id]
+                        useStore.getState().setPalette({ hidden: nextHidden })
+                      }}
+                    />
+                    <span>{hidden ? 'hidden' : 'shown'}</span>
+                  </label>
+                </div>
+              )
+            })}
+          </div>
+          <button
+            className="btn"
+            data-testid="reset-buttons-positions"
+            onClick={() => {
+              if (
+                window.confirm(
+                  'Reset buttons and positions? Your customizations on the action bar (visibility and order), the one/two-row layout, and the palette position return to defaults.',
+                )
+              ) {
+                useStore.getState().resetPalette()
+              }
+            }}
+          >
+            ⟲ Reset buttons and positions
+          </button>
         </div>
       )}
 
