@@ -218,17 +218,6 @@ export function FollowBar() {
       </div>
       {minimized ? (
         <>
-          <button
-            className="btn"
-            title="Expand the follow bar"
-            data-testid="follow-expand"
-            onClick={() => {
-              setMinimized(false)
-              persist({ min: false })
-            }}
-          >
-            ▴
-          </button>
           <span className="follow-compact-label" data-testid="follow-compact-label">
             {compactLabel}
           </span>
@@ -240,6 +229,17 @@ export function FollowBar() {
             onClick={() => toggleFollowPlayback()}
           >
             {playing ? '⏸' : '▶'}
+          </button>
+          <button
+            className="btn"
+            title="Expand the follow bar"
+            data-testid="follow-expand"
+            onClick={() => {
+              setMinimized(false)
+              persist({ min: false })
+            }}
+          >
+            ▴
           </button>
           <button className="icon-btn" title="Exit follow mode" onClick={() => useStore.getState().setFollow(false)}>
             ✕
