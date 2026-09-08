@@ -733,27 +733,49 @@ button {
 /* ---- follow mode --------------------------------------------------------- */
 .follow-bar {
   position: absolute;
-  left: 50%;
-  bottom: 14px;
-  transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 10px;
-  max-width: min(92%, 780px);
+  min-width: 300px;
+  min-height: 64px;
+  max-width: 92%;
   background: var(--bg-raised);
   border: 1px solid var(--accent);
   border-radius: 12px;
-  padding: 10px 14px;
+  padding: 10px 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   z-index: 5;
+  resize: both;
+  overflow: auto;
+}
+
+.follow-bar.dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.follow-grip {
+  cursor: grab;
+  color: var(--text-dim);
+  font-size: 14px;
+  padding: 2px 4px;
+  touch-action: none;
+  user-select: none;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+
+.follow-grip:active {
+  cursor: grabbing;
 }
 
 .follow-main {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  min-width: 240px;
-  max-width: 520px;
+  min-width: 200px;
+  flex: 1;
 }
 
 .follow-step {
