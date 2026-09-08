@@ -50,7 +50,12 @@ export default function App() {
     const short = parseShortLinkLocation(location.pathname, location.hash)
     if (short) {
       fetchShortLink(location.origin, short.id, short.key).then((res) => {
-        if (res) useStore.getState().setSharedChart(res)
+        if (res) {
+          useStore.getState().setSharedChart({
+            ...res,
+            note: 'The chart arrived encrypted — the sidecar stored only ciphertext it cannot read.',
+          })
+        }
         history.replaceState(null, '', location.pathname.replace(/\/x\/[^/]+$/, '/') + location.search)
       })
       return

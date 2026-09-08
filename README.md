@@ -127,6 +127,19 @@ GEN_FIXTURES=1 npx vitest run tests/fixtures/gen-fixtures.test.ts
 Everything stays in your browser by default: charts live in IndexedDB, exports download straight from the page, and the app works fully offline. Sharing is always an explicit act:
 
 - **Share links** (Export → Create share link) embed a compressed copy of the chart *in the URL fragment* — the part of a URL that is never sent to any server. There is no backend and no upload. Anyone with the link can view the chart, and opening it creates a new local copy; treat the link like the file it contains.
+- **Encrypted short links** (Export → Short link) for sharing through chat apps, where very long URLs get mangled: the chart is encrypted in your browser (AES-GCM-256), and only the ciphertext is stored on a sidecar you control. The decryption key rides in the link fragment, so the sidecar cannot read the pattern, and tampering fails closed. Links expire after 30 days of not being opened (configurable). The sidecar ships **inside the same image** — serve DimCrochet from it and the short-link API comes with it, no extra container:
+
+  ```yaml
+  services:
+    dimcrochet:
+      build: .
+      ports: ["8080:80"]
+      volumes: ["dimcrochet-data:/data"]   # stores encrypted short links
+  volumes:
+    dimcrochet-data:
+  ```
+
+  Note: creating encrypted links needs a secure context — open the app via HTTPS or localhost.
 - **Files** (Save .json file / Load chart or pack file) work the same way and have no size limit — prefer them for very large charts or archival backups.
 - Symbol packs keep their own licenses and attributions (see Licenses & attributions in the app).
 

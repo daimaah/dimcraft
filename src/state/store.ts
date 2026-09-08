@@ -130,8 +130,8 @@ interface EditorState {
   addBracketFromPoints: (a: Vec, b: Vec) => void
   updateBracket: (id: string, patch: Partial<{ count: number; label: string | undefined; side: 1 | -1 }>) => void
   deleteBracket: (id: string) => void
-  sharedChart: { name: string; doc: ChartDoc } | null
-  setSharedChart: (s: { name: string; doc: ChartDoc } | null) => void
+  sharedChart: { name: string; doc: ChartDoc; note?: string } | null
+  setSharedChart: (s: { name: string; doc: ChartDoc; note?: string } | null) => void
 
   followActive: boolean
   followRound: number

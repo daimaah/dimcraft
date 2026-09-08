@@ -37,10 +37,8 @@ export function SharedChartDialog() {
             This link contains the chart <strong>{shared.name}</strong> ({shared.doc.placements.length}{' '}
             stitches).
           </p>
-          <p className="hint">
-            The chart is embedded in the link itself — nothing was uploaded to a server. Opening it
-            creates a <strong>new copy</strong> in your browser; the original stays untouched.
-          </p>
+          <p className="hint">{shared.note ?? 'The chart is embedded in the link itself — nothing was uploaded to a server.'}</p>
+          <p className="hint">Opening it creates a <strong>new copy</strong> in your browser; the original stays untouched.</p>
           <div className="modal-actions">
             <button className="btn" onClick={() => useStore.getState().setSharedChart(null)}>
               Not now
