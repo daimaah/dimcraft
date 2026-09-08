@@ -34,6 +34,28 @@ describe('golden fixtures: real v1-era files keep importing', () => {
     expect(set!.authors).toBe('Fixture authors')
     expect(set!.artwork['dc']).toContain('@INK@')
   })
+
+  it('imports a chart that references a bundled set and one of its added symbols', async () => {
+    const parsed = await readProjectFile(asFile(fixture('v1-commons-chart.dimcrochet.json'), 'v1-commons-chart.dimcrochet.json'))
+    expect(parsed).not.toBeNull()
+    expect(parsed!.doc.symbolSet).toBe('commons-variants')
+    // the Commons-only stitch still resolves to real artwork
+    const blo = parsed!.doc.placements.find((p) => p.symbolId === 'blo')
+    expect(blo).toBeDefined()
+    // and the referenced set is a bundled one, so getDefMap knows the symbol
+    const { getDefMap } = await import('../src/symbols/registry')
+    const def = getDefMap(parsed!.doc).get('blo')
+    expect(def).toBeDefined()
+    expect(def!.content).toContain('@INK@')
+  })
+
+  it('pins the symbol pack reader output shape', async () => {
+    const set = await readSymbolPackFile(asFile(fixture('v1-pack.pack.json'), 'v1-pack.pack.json'))
+    expect(set).not.toBeNull()
+    expect(Object.keys(set!).sort()).toEqual(['artwork', 'authors', 'id', 'license', 'name', 'notes', 'sourceUrl'])
+    expect(set!.id.startsWith('set-')).toBe(true)
+    expect(set!.license).toBe('CC BY-SA 4.0')
+  })
 })
 
 describe('export envelope shape is pinned', () => {

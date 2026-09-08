@@ -1,14 +1,14 @@
 {
   "app": "dimcrochet",
   "version": 1,
-  "name": "Golden starter (v1 era)",
+  "name": "Golden commons chart (v1 era)",
   "savedAt": 1757000000000,
   "doc": {
     "schemaVersion": 1,
-    "title": "Granny square — round 1",
+    "title": "Golden commons chart (v1 era)",
     "placements": [
       {
-        "id": "p-qhrk5nu1",
+        "id": "p-hw2vslbs",
         "symbolId": "magicring",
         "x": 0,
         "y": 0,
@@ -17,127 +17,127 @@
         "flip": false
       },
       {
-        "id": "p-1kn1dw13",
+        "id": "p-0hwh8ziu",
         "symbolId": "dc",
         "x": 120,
         "y": -14,
         "rotation": 90,
         "scale": 1,
         "flip": false,
-        "groupId": "grp-qotr7iv2"
+        "groupId": "grp-3skkxf2t"
       },
       {
-        "id": "p-ztoomtc4",
+        "id": "p-eatgu23v",
         "symbolId": "dc",
         "x": 120,
         "y": 0,
         "rotation": 90,
         "scale": 1,
         "flip": false,
-        "groupId": "grp-qotr7iv2"
+        "groupId": "grp-3skkxf2t"
       },
       {
-        "id": "p-90e5bz45",
+        "id": "p-98r6vicw",
         "symbolId": "dc",
         "x": 120,
         "y": 14,
         "rotation": 90,
         "scale": 1,
         "flip": false,
-        "groupId": "grp-qotr7iv2"
+        "groupId": "grp-3skkxf2t"
       },
       {
-        "id": "p-kdp5wbr7",
+        "id": "p-jx22c22y",
         "symbolId": "dc",
         "x": 14.000000000000007,
         "y": 120,
         "rotation": 180,
         "scale": 1,
         "flip": false,
-        "groupId": "grp-n8do2xv6"
+        "groupId": "grp-ty6km7cx"
       },
       {
-        "id": "p-ebmqt498",
+        "id": "p-td33z90z",
         "symbolId": "dc",
         "x": 7.34788079488412e-15,
         "y": 120,
         "rotation": 180,
         "scale": 1,
         "flip": false,
-        "groupId": "grp-n8do2xv6"
+        "groupId": "grp-ty6km7cx"
       },
       {
-        "id": "p-0hgw5a29",
+        "id": "p-sjn2min10",
         "symbolId": "dc",
         "x": -13.999999999999993,
         "y": 120,
         "rotation": 180,
         "scale": 1,
         "flip": false,
-        "groupId": "grp-n8do2xv6"
+        "groupId": "grp-ty6km7cx"
       },
       {
-        "id": "p-y5obatnb",
+        "id": "p-1v6f43e12",
         "symbolId": "dc",
         "x": -120,
         "y": 14.000000000000014,
         "rotation": 270,
         "scale": 1,
         "flip": false,
-        "groupId": "grp-psccs6ya"
+        "groupId": "grp-mtkpdjc11"
       },
       {
-        "id": "p-w6z64iuc",
+        "id": "p-m2o2j5f13",
         "symbolId": "dc",
         "x": -120,
         "y": 1.469576158976824e-14,
         "rotation": 270,
         "scale": 1,
         "flip": false,
-        "groupId": "grp-psccs6ya"
+        "groupId": "grp-mtkpdjc11"
       },
       {
-        "id": "p-5k7pynid",
+        "id": "p-ne08ekm14",
         "symbolId": "dc",
         "x": -120,
         "y": -13.999999999999986,
         "rotation": 270,
         "scale": 1,
         "flip": false,
-        "groupId": "grp-psccs6ya"
+        "groupId": "grp-mtkpdjc11"
       },
       {
-        "id": "p-2tpqnv0f",
+        "id": "p-mzkpwqk16",
         "symbolId": "dc",
         "x": -14.000000000000021,
         "y": -120,
         "rotation": 0,
         "scale": 1,
         "flip": false,
-        "groupId": "grp-2j0lktxe"
+        "groupId": "grp-fztc0kh15"
       },
       {
-        "id": "p-woh1bekg",
+        "id": "p-9435sby17",
         "symbolId": "dc",
         "x": -2.2043642384652355e-14,
         "y": -120,
         "rotation": 0,
         "scale": 1,
         "flip": false,
-        "groupId": "grp-2j0lktxe"
+        "groupId": "grp-fztc0kh15"
       },
       {
-        "id": "p-9dbz1wfh",
+        "id": "p-hcv9eth18",
         "symbolId": "dc",
         "x": 13.999999999999979,
         "y": -120,
         "rotation": 0,
         "scale": 1,
         "flip": false,
-        "groupId": "grp-2j0lktxe"
+        "groupId": "grp-fztc0kh15"
       },
       {
-        "id": "p-c9hwcjii",
+        "id": "p-7jpwksz19",
         "symbolId": "ch",
         "x": 79.90306627407988,
         "y": 79.90306627407986,
@@ -146,7 +146,7 @@
         "flip": false
       },
       {
-        "id": "p-zbvmboej",
+        "id": "p-c9u4pov1a",
         "symbolId": "ch",
         "x": 89.80256121069154,
         "y": 89.80256121069152,
@@ -155,7 +155,7 @@
         "flip": false
       },
       {
-        "id": "p-2mo7welk",
+        "id": "p-0hv2wbl1b",
         "symbolId": "ch",
         "x": -79.90306627407986,
         "y": 79.90306627407988,
@@ -164,7 +164,7 @@
         "flip": false
       },
       {
-        "id": "p-au6ch2ml",
+        "id": "p-heljar71c",
         "symbolId": "ch",
         "x": -89.80256121069152,
         "y": 89.80256121069154,
@@ -173,7 +173,7 @@
         "flip": false
       },
       {
-        "id": "p-dgu6rttm",
+        "id": "p-6375gvw1d",
         "symbolId": "ch",
         "x": -79.90306627407989,
         "y": -79.90306627407986,
@@ -182,7 +182,7 @@
         "flip": false
       },
       {
-        "id": "p-gmcx7lwn",
+        "id": "p-p32j8ou1e",
         "symbolId": "ch",
         "x": -89.80256121069155,
         "y": -89.80256121069152,
@@ -191,7 +191,7 @@
         "flip": false
       },
       {
-        "id": "p-q0ovgp5o",
+        "id": "p-xek6b4w1f",
         "symbolId": "ch",
         "x": 79.90306627407985,
         "y": -79.90306627407989,
@@ -200,11 +200,20 @@
         "flip": false
       },
       {
-        "id": "p-gs5a55rp",
+        "id": "p-tuwvnvv1g",
         "symbolId": "ch",
         "x": 89.80256121069151,
         "y": -89.80256121069155,
         "rotation": 45,
+        "scale": 1,
+        "flip": false
+      },
+      {
+        "id": "p-blo-golden",
+        "symbolId": "blo",
+        "x": 0,
+        "y": 0,
+        "rotation": 0,
         "scale": 1,
         "flip": false
       }
@@ -225,7 +234,7 @@
     "lines": [],
     "brackets": [
       {
-        "id": "b-0z1rsezq",
+        "id": "b-e0zz2i11h",
         "x1": -14,
         "y1": -120,
         "x2": 14,
@@ -236,7 +245,7 @@
     ],
     "texts": [
       {
-        "id": "t-wqu7323r",
+        "id": "t-gs7m0vi1i",
         "x": -108,
         "y": -218,
         "content": "Granny square — round 1",
@@ -254,6 +263,7 @@
       "showCounts": true,
       "scale": 1
     },
-    "ink": "#26221f"
+    "ink": "#26221f",
+    "symbolSet": "commons-variants"
   }
 }

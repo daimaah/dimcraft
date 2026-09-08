@@ -45,4 +45,29 @@ describe.skipIf(!regenerate)('golden fixture generation', () => {
     writeFileSync('tests/fixtures/v1-pack.pack.json', JSON.stringify(pack, null, 2))
     expect(true).toBe(true)
   })
+
+  it('writes a v1-era chart that uses a bundled set and one of its added symbols', () => {
+    const doc = createStarterDoc()
+    doc.title = 'Golden commons chart (v1 era)'
+    doc.symbolSet = 'commons-variants'
+    // a stitch that only exists in the Commons pack's artwork
+    doc.placements.push({
+      id: 'p-blo-golden',
+      symbolId: 'blo',
+      x: 0,
+      y: 0,
+      rotation: 0,
+      scale: 1,
+      flip: false,
+    })
+    const rec = {
+      id: 'proj-golden-commons-v1',
+      name: 'Golden commons chart (v1 era)',
+      createdAt: 1757000000000,
+      updatedAt: 1757000000000,
+      doc,
+    }
+    writeFileSync('tests/fixtures/v1-commons-chart.dimcrochet.json', serializeProject(rec))
+    expect(true).toBe(true)
+  })
 })

@@ -72,15 +72,12 @@ export async function readSymbolPackFile(file: File): Promise<CustomSet | null> 
     }
     if (Object.keys(clean).length === 0) return null
     const str = (v: unknown) => (typeof v === 'string' ? v : undefined)
-    return {
-      id: uid('set'),
-      name: parsed.name,
-      artwork: clean,
-      license: str(parsed.license),
-      authors: str(parsed.authors),
-      sourceUrl: str(parsed.sourceUrl),
-      notes: str(parsed.notes),
+    const set: CustomSet = { id: uid('set'), name: parsed.name, artwork: clean }
+    for (const key of ['license', 'authors', 'sourceUrl', 'notes'] as const) {
+      const value = str(parsed[key])
+      if (value !== undefined) set[key] = value
     }
+    return set
   } catch {
     return null
   }
