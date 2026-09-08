@@ -702,11 +702,18 @@ button {
 }
 
 .collapse-btn {
-  font-size: 20px;
-  padding: 2px 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 19px;
+  line-height: 1;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--bg-raised);
+  /* slightly lighter than the panel so the collapse control is easy to spot */
+  background: rgba(255, 255, 255, 0.08);
   color: var(--text);
 }
 
