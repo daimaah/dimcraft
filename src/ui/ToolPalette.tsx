@@ -16,9 +16,6 @@ const TOOLS: { id: string; icon: IconName; label: string; key: string }[] = [
   { id: 'text', icon: 'text', label: 'Text label', key: 'T' },
 ]
 
-/** tools that stay visible even when the palette is collapsed */
-const ESSENTIAL_TOOLS = ['select', 'pan', 'place', 'text']
-
 /** customizable buttons in default display order */
 export const PALETTE_BUTTONS: { id: string; label: string; icon?: IconName; glyph?: string }[] = [
   ...TOOLS.map((t) => ({ id: t.id, label: t.label, icon: t.icon })),
@@ -320,6 +317,9 @@ export function ToolPalette() {
   }
 
   const visible = (order ?? DEFAULT_ORDER).filter((id) => !hidden.includes(id))
+  const visibleTools = visible.filter((id) => TOOLS.some((t) => t.id === id))
+  const toolsSplit = Math.ceil(visibleTools.length / 2)
+  const split = Math.ceil(visible.length / 2)
 
   return (
     <div
@@ -331,56 +331,51 @@ export function ToolPalette() {
       style={{ left: pos?.x, top: pos?.y }}
       data-testid="tool-palette"
     >
-      <div className="follow-grip" title="Drag to move" onPointerDown={startDrag} data-testid="tool-palette-grip">
-        ⠿
+      {/* always-visible left island: drag to move + collapse/expand, same spot in both states */}
+      <div className="tp-side" onPointerDown={startDrag} title="Drag to move" data-testid="tool-palette-grip">
+        <span className="tp-grip">⠿</span>
+        <button
+          className="tool-btn"
+          title={collapsed ? 'Expand the tool palette' : 'Shrink — stays in this spot'}
+          data-testid={collapsed ? 'tool-palette-expand' : 'tool-palette-collapse'}
+          onClick={() => setPalette({ collapsed: !collapsed })}
+        >
+          {collapsed ? '▾' : '▴'}
+        </button>
       </div>
-      {collapsed ? (
-        <>
-          {/* essential tools stay visible and usable when collapsed */}
-          {visible
-            .filter((id) => ESSENTIAL_TOOLS.includes(id))
-            .map((id) => renderButton(id))}
-          <div className="tb-sep" />
-          <button
-            className="btn"
-            title="Expand the tool palette"
-            data-testid="tool-palette-expand"
-            onClick={() => setPalette({ collapsed: false })}
-          >
-            ▾
-          </button>
-          <button className="btn" title="Reset palette position" data-testid="tool-palette-reset" onClick={resetPos}>
-            ⟲
-          </button>
-        </>
-      ) : rows === 2 ? (
-        <>
-          <div className="tp-row">
-            {visible.slice(0, Math.ceil(visible.length / 2)).map((id) => renderButton(id))}
-          </div>
-          <div className="tp-row">{visible.slice(Math.ceil(visible.length / 2)).map((id) => renderButton(id))}</div>
-        </>
-      ) : (
-        visible.map((id, i) => (
-          <Fragment key={id}>
-            {SEP_BEFORE.has(id) && i > 0 && <div className="tb-sep" />}
-            {renderButton(id)}
-          </Fragment>
-        ))
-      )}
-      {/* structural controls: always present, not customizable */}
-      <div className="tb-sep" />
-      <button className="tool-btn" title="Reset palette position" data-testid="tool-palette-reset" onClick={resetPos}>
-        ⟲
-      </button>
-      <button
-        className="tool-btn"
-        title={collapsed ? 'Expand the tool palette' : 'Shrink — stays in this spot'}
-        data-testid={collapsed ? 'tool-palette-expand' : 'tool-palette-collapse'}
-        onClick={() => setPalette({ collapsed: !collapsed })}
-      >
-        {collapsed ? '▾' : '▴'}
-      </button>
+      <div className="tp-content">
+        {collapsed ? (
+          /* collapsed keeps every tool button visible; the edit/view/zoom cluster hides */
+          rows === 2 ? (
+            <>
+              <div className="tp-row">{visibleTools.slice(0, toolsSplit).map((id) => renderButton(id))}</div>
+              <div className="tp-row">{visibleTools.slice(toolsSplit).map((id) => renderButton(id))}</div>
+            </>
+          ) : (
+            visibleTools.map((id) => renderButton(id))
+          )
+        ) : rows === 2 ? (
+          <>
+            <div className="tp-row">{visible.slice(0, split).map((id) => renderButton(id))}</div>
+            <div className="tp-row">{visible.slice(split).map((id) => renderButton(id))}</div>
+          </>
+        ) : (
+          visible.map((id, i) => (
+            <Fragment key={id}>
+              {SEP_BEFORE.has(id) && i > 0 && <div className="tb-sep" />}
+              {renderButton(id)}
+            </Fragment>
+          ))
+        )}
+        {!collapsed && (
+          <>
+            <div className="tb-sep" />
+            <button className="tool-btn" title="Reset palette position" data-testid="tool-palette-reset" onClick={resetPos}>
+              ⟲
+            </button>
+          </>
+        )}
+      </div>
     </div>
   )
 }

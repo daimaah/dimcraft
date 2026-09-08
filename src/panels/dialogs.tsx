@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { useStore } from '../state/store'
 import { getDefMap } from '../symbols/registry'
 import { guideSample } from '../geometry/guides'
@@ -711,63 +711,70 @@ export function OptionsDialog() {
           </div>
           <p className="hint">
             Drag to reorder the buttons exactly as they appear on the palette, and use the checkbox
-            to hide ones you don't use. Select, Pan, Place and Text stay on the palette even when it
-            is collapsed.
+            to hide ones you don't use. The tool buttons stay on the palette even when it is
+            collapsed — only the edit/view/zoom cluster hides.
           </p>
           <div className="palette-dd-list" data-testid="palette-dd-list">
             {items.map((b) => {
               const isHidden = hiddenL.includes(b.id)
+              const visibleIds = items.filter((it) => !hiddenL.includes(it.id)).map((it) => it.id)
+              const splitAfterId =
+                palette.rows === 2 ? visibleIds[Math.ceil(visibleIds.length / 2) - 1] : null
               return (
-                <div
-                  key={b.id}
-                  className={`palette-dd-row${isHidden ? ' off' : ''}${dragId === b.id ? ' dragging' : ''}`}
-                  draggable
-                  onDragStart={(e) => {
-                    setDragId(b.id)
-                    e.dataTransfer.effectAllowed = 'move'
-                    try {
-                      e.dataTransfer.setData('text/plain', b.id)
-                    } catch {
-                      /* some engines refuse setData */
-                    }
-                  }}
-                  onDragOver={(e) => {
-                    e.preventDefault()
-                    if (!dragId || dragId === b.id) return
-                    const from = items.findIndex((i) => i.id === dragId)
-                    const to = items.findIndex((i) => i.id === b.id)
-                    if (from < 0 || to < 0 || from === to) return
-                    const next = [...items]
-                    next.splice(to, 0, next.splice(from, 1)[0])
-                    setItems(next)
-                    useStore.getState().setPalette({ order: next.map((i) => i.id) })
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault()
-                    setDragId(null)
-                  }}
-                  onDragEnd={() => setDragId(null)}
-                >
-                  <span className="dd-handle" title="Drag to reorder">
-                    ⠿
-                  </span>
-                  {preview(b.id)}
-                  <span className="btnrow-label">{b.label}</span>
-                  <label className="check">
-                    <input
-                      type="checkbox"
-                      checked={!isHidden}
-                      onChange={(e) => {
-                        const nextHidden = e.target.checked
-                          ? hiddenL.filter((h) => h !== b.id)
-                          : [...hiddenL, b.id]
-                        setHiddenL(nextHidden)
-                        useStore.getState().setPalette({ hidden: nextHidden })
-                      }}
-                    />
-                    <span>{isHidden ? 'hidden' : 'shown'}</span>
-                  </label>
-                </div>
+                <Fragment key={b.id}>
+                  <div
+                    className={`palette-dd-row${isHidden ? ' off' : ''}${dragId === b.id ? ' dragging' : ''}`}
+                    draggable
+                    onDragStart={(e) => {
+                      setDragId(b.id)
+                      e.dataTransfer.effectAllowed = 'move'
+                      try {
+                        e.dataTransfer.setData('text/plain', b.id)
+                      } catch {
+                        /* some engines refuse setData */
+                      }
+                    }}
+                    onDragOver={(e) => {
+                      e.preventDefault()
+                      if (!dragId || dragId === b.id) return
+                      const from = items.findIndex((it) => it.id === dragId)
+                      const to = items.findIndex((it) => it.id === b.id)
+                      if (from < 0 || to < 0 || from === to) return
+                      const next = [...items]
+                      next.splice(to, 0, next.splice(from, 1)[0])
+                      setItems(next)
+                      useStore.getState().setPalette({ order: next.map((it) => it.id) })
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault()
+                      setDragId(null)
+                    }}
+                    onDragEnd={() => setDragId(null)}
+                  >
+                    <span className="dd-handle" title="Drag to reorder">
+                      ⠿
+                    </span>
+                    {preview(b.id)}
+                    <span className="btnrow-label">{b.label}</span>
+                    <label className="check">
+                      <input
+                        type="checkbox"
+                        checked={!isHidden}
+                        onChange={(e) => {
+                          const nextHidden = e.target.checked
+                            ? hiddenL.filter((h) => h !== b.id)
+                            : [...hiddenL, b.id]
+                          setHiddenL(nextHidden)
+                          useStore.getState().setPalette({ hidden: nextHidden })
+                        }}
+                      />
+                      <span>{isHidden ? 'hidden' : 'shown'}</span>
+                    </label>
+                  </div>
+                  {splitAfterId === b.id && (
+                    <div className="dd-row-divider" title="Second row starts here" data-testid="dd-row-divider" />
+                  )}
+                </Fragment>
               )
             })}
           </div>

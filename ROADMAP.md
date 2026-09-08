@@ -7,6 +7,11 @@ in rough priority order, with design notes where the "how" matters.
 
 ## Recently shipped
 
+- **Tool palette left island + tools-only collapse** — the drag grip and collapse/expand
+  toggle live in a permanent left-side island (same spot in every state); the collapsed
+  palette keeps all tool buttons visible (two rows when two-row layout is on) while the
+  edit/view/zoom cluster hides. The drag & drop list shows a clear divider where the second
+  palette row starts in two-row layouts.
 - **Visual button customization** — the Options Buttons tab lists palette buttons with
   their live icons and highlight state, drag & drop reordering, show/hide checkboxes, and
   the two-row + position-reset controls consolidated in one place. The Options dialog now

@@ -1627,3 +1627,53 @@ button {
 .preview-btn.dimmed {
   opacity: 0.4;
 }
+
+/* ---- tool palette left island (drag + collapse) --------------------------- */
+.tool-palette {
+  align-items: stretch;
+}
+
+.tp-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding-right: 3px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.tool-palette.dragging .tp-side {
+  cursor: grabbing;
+}
+
+.tp-grip {
+  color: var(--text-dim);
+  font-size: 14px;
+  letter-spacing: -2px;
+}
+
+.tp-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.tool-palette.two-rows .tp-content {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+
+/* row boundary inside the drag & drop list */
+.dd-row-divider {
+  height: 2px;
+  background: var(--accent-soft);
+  opacity: 0.7;
+  border-radius: 1px;
+  margin: 3px 4px;
+}
