@@ -116,6 +116,16 @@ export function Gallery() {
           <button className="btn" onClick={() => create('Granny square starter', createStarterDoc())}>
             + Starter: granny square
           </button>
+          <button
+            className="btn"
+            onClick={() => {
+              useStore.getState().newProject('Imported pattern')
+              useStore.getState().openDialog('pattern-import')
+            }}
+            title="Paste written instructions and generate a suggested chart"
+          >
+            + From written pattern
+          </button>
           <FileLoadRow />
         </div>
       </header>

@@ -1,0 +1,117 @@
+import { describe, expect, it } from 'vitest'
+import { generateInstructions } from '../src/geometry/instructions'
+import { parsePattern } from '../src/geometry/patternParser'
+import { patternToChart } from '../src/geometry/patternToChart'
+import { createStarterDoc } from '../src/model/starter'
+
+describe('pattern parser', () => {
+  it('parses the canonical starter instructions back into rounds', () => {
+    const text = generateInstructions(createStarterDoc())
+    const parsed = parsePattern(text)
+    expect(parsed.start).toBe('magic-ring')
+    expect(parsed.rounds).toHaveLength(1)
+    expect(parsed.rounds[0].total).toBe(20)
+    expect(parsed.rounds[0].runs.map((r) => [r.symbolId, r.count])).toEqual([
+      ['dc', 3],
+      ['ch', 2],
+      ['dc', 3],
+      ['ch', 2],
+      ['dc', 3],
+      ['ch', 2],
+      ['dc', 3],
+      ['ch', 2],
+    ])
+  })
+
+  it('expands bracket repeats with ×N', () => {
+    const parsed = parsePattern('R1: [sc, ch 1] × 6')
+    expect(parsed.rounds[0].total).toBe(12)
+    // alternating runs of one stitch each — faithful to the written unit
+    const symbols = parsed.rounds[0].runs.flatMap((r) => Array.from({ length: r.count }, () => r.symbolId))
+    expect(symbols).toEqual(Array.from({ length: 12 }, (_, i) => (i % 2 === 0 ? 'sc' : 'ch')))
+  })
+
+  it('supports "(…) N times" repeats', () => {
+    const parsed = parsePattern('Round 1: (sc, ch 2) 6 times')
+    expect(parsed.rounds[0].total).toBe(18)
+  })
+
+  it('parses UK terminology via the preset (UK dc = US sc)', () => {
+    const parsed = parsePattern('R1: 12 dc', { terminology: 'uk' })
+    expect(parsed.rounds[0].runs).toEqual([{ symbolId: 'sc', count: 12 }])
+  })
+
+  it('parses Nordic abbreviations', () => {
+    const sv = parsePattern('Varv 1: lm, 3 fm, 2 st', { terminology: 'sv' })
+    expect(sv.rounds[0].runs).toEqual([
+      { symbolId: 'ch', count: 1 },
+      { symbolId: 'sc', count: 3 },
+      { symbolId: 'dc', count: 2 },
+    ])
+    const fi = parsePattern('R1: kj, 3 ks, 2 s', { terminology: 'fi' })
+    expect(fi.rounds[0].runs).toEqual([
+      { symbolId: 'ch', count: 1 },
+      { symbolId: 'sc', count: 3 },
+      { symbolId: 'dc', count: 2 },
+    ])
+  })
+
+  it('splits multiple rounds and sums totals', () => {
+    const parsed = parsePattern('R1: 8 sc\nR2: 16 dc\nR3: [3 dc, ch 2] × 4')
+    expect(parsed.rounds).toHaveLength(3)
+    expect(parsed.rounds.map((r) => r.total)).toEqual([8, 16, 20])
+  })
+
+  it('collects unknown abbreviations as warnings', () => {
+    const parsed = parsePattern('R1: 3 weirdthing, 2 dc')
+    expect(parsed.warnings).toContain('weirdthing')
+    expect(parsed.rounds[0].total).toBe(2)
+  })
+
+  it('detects magic-ring and chain-ring starts', () => {
+    expect(parsePattern('Start with a magic ring.\nR1: 12 dc').start).toBe('magic-ring')
+    expect(parsePattern('Ch 4, join with sl st to form a ring.\nR1: 12 dc').start).toBe('chain-ring')
+    expect(parsePattern('R1: 12 dc').start).toBeNull()
+  })
+})
+
+describe('pattern → chart layout', () => {
+  it('places every stitch, one circle guide per round, radii increasing', () => {
+    const parsed = parsePattern('R1: 12 dc\nR2: 24 dc')
+    const { doc } = patternToChart(parsed, { title: 'Test doily' })
+    expect(doc.placements).toHaveLength(36)
+    expect(doc.guides).toHaveLength(2)
+    const radii = doc.guides.map((g) => (g.kind === 'circle' ? g.r : 0))
+    expect([...radii].sort((a, b) => a - b)).toEqual(radii)
+    // all stitches tagged per round
+    expect(doc.placements.filter((p) => p.guideTag === 'imported-round-1')).toHaveLength(12)
+    expect(doc.placements.filter((p) => p.guideTag === 'imported-round-2')).toHaveLength(24)
+  })
+
+  it('draws a magic ring and matches stitch rotation to the radial direction', () => {
+    const parsed = parsePattern('Start with a magic ring.\nR1: 6 dc')
+    const { doc } = patternToChart(parsed, {})
+    expect(doc.placements[0].symbolId).toBe('magicring')
+    // 6 stitches starting at -90°: first right-side stitch sits at -30°, rotated 60°
+    const right = doc.placements.slice(1).reduce((a, b) => (b.x > a.x ? b : a))
+    expect(right.rotation).toBeCloseTo(60, 0)
+  })
+
+  it('applies terminology overrides so the legend matches the pasted language', () => {
+    const parsed = parsePattern('R1: 12 dc', { terminology: 'uk' })
+    const { doc } = patternToChart(parsed, { terminology: 'uk' })
+    expect(doc.labelOverrides['sc']).toBe('dc')
+    expect(doc.labelOverrides['dc']).toBe('tr')
+  })
+
+  it('round-trips: instructions → chart → same instructions', () => {
+    const original = createStarterDoc()
+    const text1 = generateInstructions(original)
+    const parsed = parsePattern(text1)
+    const chart = patternToChart(parsed, { title: 'Round trip' }).doc
+    const text2 = generateInstructions(chart)
+    const line1 = text1.split('\n').find((l) => l.startsWith('R1'))
+    const line2 = text2.split('\n').find((l) => l.startsWith('R1'))
+    expect(line2).toBe(line1)
+  })
+})

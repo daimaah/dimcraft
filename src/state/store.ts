@@ -34,7 +34,7 @@ export interface Viewport {
   zoom: number
 }
 
-export type DialogKind = 'place-evenly' | 'export' | 'preview' | 'instructions' | 'licenses' | null
+export type DialogKind = 'place-evenly' | 'export' | 'preview' | 'instructions' | 'licenses' | 'pattern-import' | null
 
 export interface DragPositions {
   placements: { id: string; x: number; y: number }[]

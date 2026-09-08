@@ -7,6 +7,7 @@ import { exportProjectFile, readProjectFile } from '../export/projectFile'
 import { PreviewDialog } from './PreviewDialog'
 import { InstructionsDialog } from './InstructionsDialog'
 import { LicensesDialog } from './LicensesDialog'
+import { PatternImportDialog } from './PatternImportDialog'
 import type { RotationMode } from '../model/types'
 import type { SvgExportOptions } from '../export/svg'
 import type { PaperFormat, PageOrientation } from '../export/pdf'
@@ -318,5 +319,6 @@ export function Dialogs() {
   if (dialog === 'preview') return <PreviewDialog />
   if (dialog === 'instructions') return <InstructionsDialog />
   if (dialog === 'licenses') return <LicensesDialog />
+  if (dialog === 'pattern-import') return <PatternImportDialog />
   return null
 }

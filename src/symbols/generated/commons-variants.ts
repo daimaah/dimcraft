@@ -16,7 +16,66 @@ export const commonsVariantsPack: CustomSet & { attributions: { id: string; file
     "crochet-decrease": "<g transform=\"translate(3.000 11.004) scale(0.67217)\">\n  <defs\n     id=\"ccrochet-decrease-defs4\" />\n  \n  <g\n     transform=\"translate(-118.41459,-468.50937)\"\n     id=\"ccrochet-decrease-layer1\">\n    <g\n       style=\"stroke-width:5.00873661;stroke-miterlimit:4;stroke-dasharray:none\"\n       transform=\"matrix(0.7730606,0,0,-0.46405841,26.706964,720.47982)\"\n       id=\"ccrochet-decrease-g4182\">\n      <path\n         style=\"fill:none;fill-rule:evenodd;stroke:@INK@;stroke-width:5.00873661;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1\"\n         d=\"m 120,407.3622 60,135\"\n         id=\"ccrochet-decrease-path4163\" />\n      <path\n         style=\"fill:none;fill-rule:evenodd;stroke:@INK@;stroke-width:5.00873661;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1\"\n         d=\"m 180,542.3622 60,-135\"\n         id=\"ccrochet-decrease-path4180\" />\n    </g>\n    <g\n       style=\"stroke-width:4.618783;stroke-miterlimit:4;stroke-dasharray:none\"\n       transform=\"matrix(0.77229809,0,0,0.54626387,26.844216,272.27179)\"\n       id=\"ccrochet-decrease-g4203\">\n      <path\n         style=\"fill:none;fill-rule:evenodd;stroke:@INK@;stroke-width:4.618783;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1\"\n         d=\"m 195.21429,422.3622 -30,40\"\n         id=\"ccrochet-decrease-path4186\" />\n      <path\n         style=\"fill:none;fill-rule:evenodd;stroke:@INK@;stroke-width:4.618783;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1\"\n         d=\"m 165.21429,423.07648 30,40\"\n         id=\"ccrochet-decrease-path4186-2\" />\n    </g>\n  </g>\n</g>",
     "crochet-double-crochet": "<g transform=\"translate(6.027 4.000) scale(7.02703)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<polyline points=\"3779,4251\n5669,3307\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4251,5905\n5196,5433\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4724,3779\n4724,7559\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n</g>\n</g>",
     "crochet-double-triple": "<g transform=\"translate(6.027 4.000) scale(7.02703)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<polyline points=\"3779,4251\n5669,3307\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4251,5905\n5196,5433\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4724,3779\n4724,7559\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4251,6377\n5196,5905\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n</g>\n</g>",
-    "crochet-fan": "<g transform=\"translate(3.000 6.875) scale(2.81250)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<ellipse transform=\"translate(7181,1322) rotate(-0.00000000)\" rx=\"944\" ry=\"472\"\n style=\"stroke:@INK@;stroke-width:126;\"/>\n\n<polyline points=\"5291,1734\n7181,5007\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"3907,3118\n7181,5007\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"5619,3215\n6437,2743\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4879,4259\n5352,3441\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4452,2192\n6089,1247\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"3470,3933\n4415,2297\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"10454,3118\n7181,5007\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"9070,1734\n7181,5007\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"7976,2753\n8794,3226\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"8969,3405\n9441,4223\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"8279,1291\n9916,2236\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"9987,2331\n10932,3968\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<ellipse transform=\"translate(7181,5669) rotate(-0.00000000)\" rx=\"944\" ry=\"472\"\n style=\"stroke:@INK@;stroke-width:126;\"/>\n\n<polyline points=\"5291,6080\n7181,9354\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"3907,7464\n7181,9354\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"5619,7562\n6437,7089\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4879,8605\n5352,7787\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4452,6538\n6089,5593\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"3470,8280\n4415,6643\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"10454,7464\n7181,9354\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"9070,6080\n7181,9354\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"7976,7100\n8794,7572\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"8969,7752\n9441,8570\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"8279,5637\n9916,6582\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"9987,6678\n10932,8314\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n</g>\n</g>"
+    "crochet-fan": "<g transform=\"translate(3.000 6.875) scale(2.81250)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<ellipse transform=\"translate(7181,1322) rotate(-0.00000000)\" rx=\"944\" ry=\"472\"\n style=\"stroke:@INK@;stroke-width:126;\"/>\n\n<polyline points=\"5291,1734\n7181,5007\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"3907,3118\n7181,5007\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"5619,3215\n6437,2743\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4879,4259\n5352,3441\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4452,2192\n6089,1247\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"3470,3933\n4415,2297\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"10454,3118\n7181,5007\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"9070,1734\n7181,5007\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"7976,2753\n8794,3226\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"8969,3405\n9441,4223\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"8279,1291\n9916,2236\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"9987,2331\n10932,3968\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<ellipse transform=\"translate(7181,5669) rotate(-0.00000000)\" rx=\"944\" ry=\"472\"\n style=\"stroke:@INK@;stroke-width:126;\"/>\n\n<polyline points=\"5291,6080\n7181,9354\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"3907,7464\n7181,9354\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"5619,7562\n6437,7089\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4879,8605\n5352,7787\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4452,6538\n6089,5593\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"3470,8280\n4415,6643\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"10454,7464\n7181,9354\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"9070,6080\n7181,9354\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"7976,7100\n8794,7572\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"8969,7752\n9441,8570\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"8279,5637\n9916,6582\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"9987,6678\n10932,8314\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n</g>\n</g>",
+    "crochet-half-double-crochet": "<g transform=\"translate(4.379 4.000) scale(8.96552)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<polyline points=\"3779,4251\n5669,3307\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4724,3779\n4724,6614\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n</g>\n</g>",
+    "crochet-inc1dc": "<g transform=\"translate(3.000 10.489) scale(3.82979)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<polyline points=\"2927,3704\n4724,7559\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"6521,3704\n4724,7559\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"1984,3685\n3874,3685\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"5574,3685\n7464,3685\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"5385,5338\n6398,5037\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"3259,5527\n4049,4826\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n</g>\n</g>",
+    "crochet-increase": "<g transform=\"translate(3.000 11.004) scale(0.67217)\">\n  <defs\n     id=\"ccrochet-increase-defs4\" />\n  \n  <g\n     transform=\"translate(-118.41459,-468.50937)\"\n     id=\"ccrochet-increase-layer1\">\n    <g\n       style=\"stroke-width:5.00873667;stroke-miterlimit:4;stroke-dasharray:none\"\n       transform=\"matrix(0.7730606,0,0,0.46405841,26.706964,279.75222)\"\n       id=\"ccrochet-increase-g4182\">\n      <path\n         style=\"fill:none;fill-rule:evenodd;stroke:@INK@;stroke-width:5.00873667;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1\"\n         d=\"m 120,407.3622 60,135\"\n         id=\"ccrochet-increase-path4163\" />\n      <path\n         style=\"fill:none;fill-rule:evenodd;stroke:@INK@;stroke-width:5.00873667;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1\"\n         d=\"m 180,542.3622 60,-135\"\n         id=\"ccrochet-increase-path4180\" />\n    </g>\n    <g\n       style=\"stroke-width:4.61878317;stroke-miterlimit:4;stroke-dasharray:none\"\n       transform=\"matrix(0.77229809,0,0,0.54626387,26.844216,246.27179)\"\n       id=\"ccrochet-increase-g4203\">\n      <path\n         style=\"fill:none;fill-rule:evenodd;stroke:@INK@;stroke-width:4.61878317;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1\"\n         d=\"m 195.21429,422.3622 -30,40\"\n         id=\"ccrochet-increase-path4186\" />\n      <path\n         style=\"fill:none;fill-rule:evenodd;stroke:@INK@;stroke-width:4.61878317;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1\"\n         d=\"m 165.21429,423.07648 30,40\"\n         id=\"ccrochet-increase-path4186-2\" />\n    </g>\n  </g>\n</g>",
+    "crochet-picot": "<g transform=\"translate(3.000 8.333) scale(6.66667)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<path style=\"stroke:@INK@;stroke-width:126;stroke-linecap:butt\"\nd=\"M 3779,7181 A 944 944  0  0  1  5669  7181 \" />\n\n<ellipse transform=\"translate(4724,4724) rotate(-0.00000000)\" rx=\"944\" ry=\"472\"\n style=\"stroke:@INK@;stroke-width:126;\"/>\n\n<ellipse transform=\"translate(5811,5763) rotate(-270.00063138)\" rx=\"944\" ry=\"472\"\n style=\"stroke:@INK@;stroke-width:126;\"/>\n\n<ellipse transform=\"translate(3637,5763) rotate(-270.00063138)\" rx=\"944\" ry=\"472\"\n style=\"stroke:@INK@;stroke-width:126;\"/>\n</g>\n</g>",
+    "crochet-popcorn": "<g transform=\"translate(3.000 7.122) scale(4.39024)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<path style=\"stroke:@INK@;stroke-width:126;stroke-linecap:butt\"\nd=\"M 3779,3307 A 2773 2773  0  0  0  4724  8031 \" />\n\n<path style=\"stroke:@INK@;stroke-width:126;stroke-linecap:butt\"\nd=\"M 5669,3307 A 2773 2773  0  0  1  4724  8031 \" />\n\n<path style=\"stroke:@INK@;stroke-width:126;stroke-linecap:butt\"\nd=\"M 5291,3685 A 3113 3113  0  0  1  4724  8031 \" />\n\n<path style=\"stroke:@INK@;stroke-width:126;stroke-linecap:butt\"\nd=\"M 4157,3685 A 3113 3113  0  0  0  4724  8031 \" />\n\n<ellipse transform=\"translate(4724,3307) rotate(-0.00000000)\" rx=\"944\" ry=\"472\"\n style=\"stroke:@INK@;stroke-width:126;\"/>\n\n<polyline points=\"4724,3779\n4724,8031\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4299,5905\n5244,5433\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"5433,5905\n6377,5433\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"3070,5905\n4015,5433\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"6141,5905\n7086,5433\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"2362,5905\n3307,5433\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n</g>\n</g>",
+    "crochet-puff-stitch": "<g transform=\"translate(3.000 5.120) scale(7.20000)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<ellipse transform=\"translate(4724,5669) rotate(-0.00000000)\" rx=\"1417\" ry=\"1889\"\n style=\"stroke:@INK@;stroke-width:126;\"/>\n\n<ellipse transform=\"translate(4724,5669) rotate(-0.00000000)\" rx=\"708\" ry=\"1889\"\n style=\"stroke:@INK@;stroke-width:126;\"/>\n</g>\n</g>",
+    "crochet-raised-double-back": "<g transform=\"translate(7.089 4.000) scale(5.77778)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<path style=\"stroke:@INK@;stroke-width:126;stroke-linecap:butt\"\nd=\"M 4771,6614 A 944 944  0  0  0  4771  8503 \" />\n\n<polyline points=\"3779,4251\n5669,3307\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4251,5905\n5196,5433\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4724,3779\n4724,6614\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n</g>\n</g>",
+    "crochet-raised-double-front": "<g transform=\"translate(7.089 4.000) scale(5.77778)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<path style=\"stroke:@INK@;stroke-width:126;stroke-linecap:butt\"\nd=\"M 4677,6614 A 944 944  0  0  1  4677  8503 \" />\n\n<polyline points=\"3779,4251\n5669,3307\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4251,5905\n5196,5433\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4724,3779\n4724,6614\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n</g>\n</g>",
+    "crochet-single-crochet-2": "<g transform=\"translate(3.000 8.000) scale(10.58823)\"><rect id=\"ccrochet-single-crochet-2-svgEditorBackground\" x=\"3677\" y=\"3677\" width=\"2093\" height=\"2093\" style=\"fill:none;stroke:none;\"/>\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\" transform=\"matrix(0.715644 0.698466 -0.698466 0.715644 4642.85 -1956.25)\">\n\n<polyline points=\"3779,4724 5669,4724 \" style=\"stroke:@INK@;stroke-width:126; stroke-linejoin:miter; stroke-linecap:butt; \"/>\n\n<polyline points=\"4724,3779 4724,5669 \" style=\"stroke:@INK@;stroke-width:126; stroke-linejoin:miter; stroke-linecap:butt; \"/>\n</g>\n</g>",
+    "crochet-single-crochet": "<g transform=\"translate(3.000 8.000) scale(10.58824)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<polyline points=\"3779,4724\n5669,4724\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4724,3779\n4724,5669\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n</g>\n</g>",
+    "crochet-slip-stitch": "<g transform=\"translate(3.000 12.235) scale(10.58824)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<path style=\"stroke:@INK@;stroke-width:126;stroke-linecap:butt\"\nd=\"M 3779,4724 A 944 944  0  0  1  5669  4724 \" />\n</g>\n</g>",
+    "crochet-solid-shell-stitch": "<g transform=\"translate(3.000 13.468) scale(1.13924)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<polyline points=\"6141,4866\n8031,4866\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"6661,6283\n7606,6283\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"5196,5372\n7086,8645\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"3813,6755\n7086,8645\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"5525,6853\n6343,6381\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4785,7897\n5257,7079\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4358,5829\n5994,4885\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"3376,7571\n4321,5934\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"10360,6755\n7086,8645\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"8976,5372\n7086,8645\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"7882,6391\n8700,6864\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"8874,7043\n9346,7861\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"8184,4929\n9821,5874\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"9892,5969\n10837,7606\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"7086,4818\n7086,8598\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"6141,3685\n8031,3685\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"7086,2740\n7086,4629\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"472,7511\n2362,7511\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"1417,6566\n1417,8456\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"11811,7511\n13700,7511\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"12755,6566\n12755,8456\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"11811,2362\n13700,2362\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"12330,3779\n13275,3779\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"10866,2868\n12755,6141\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"9482,4251\n12755,6141\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"11194,4349\n12012,3877\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"10454,5393\n10927,4575\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"10027,3325\n11664,2381\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"9045,5067\n9990,3430\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"16029,4251\n12755,6141\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"14645,2868\n12755,6141\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"13551,3887\n14369,4360\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"14543,4539\n15016,5357\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"13854,2425\n15490,3370\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"15562,3465\n16507,5102\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"12755,2314\n12755,6094\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"519,2314\n2409,2314\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"1039,3732\n1984,3732\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"-425,2820\n1464,6094\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"-1808,4204\n1464,6094\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"-96,4302\n721,3829\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"-836,5345\n-364,4528\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"-1264,3278\n372,2333\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"-2245,5020\n-1300,3383\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4738,4204\n1464,6094\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"3354,2820\n1464,6094\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"2260,3840\n3078,4312\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"3252,4492\n3724,5310\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"2562,2377\n4199,3322\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4270,3418\n5215,5055\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"1464,2267\n1464,6047\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<ellipse transform=\"translate(5196,9118) rotate(-0.00000000)\" rx=\"944\" ry=\"472\"\n style=\"stroke:@INK@;stroke-width:126;\"/>\n\n<ellipse transform=\"translate(7086,9118) rotate(-0.00000000)\" rx=\"944\" ry=\"472\"\n style=\"stroke:@INK@;stroke-width:126;\"/>\n\n<ellipse transform=\"translate(8976,9118) rotate(-0.00000000)\" rx=\"944\" ry=\"472\"\n style=\"stroke:@INK@;stroke-width:126;\"/>\n\n<ellipse transform=\"translate(10866,9118) rotate(-0.00000000)\" rx=\"944\" ry=\"472\"\n style=\"stroke:@INK@;stroke-width:126;\"/>\n\n<ellipse transform=\"translate(12755,9118) rotate(-0.00000000)\" rx=\"944\" ry=\"472\"\n style=\"stroke:@INK@;stroke-width:126;\"/>\n\n<ellipse transform=\"translate(3307,9118) rotate(-0.00000000)\" rx=\"944\" ry=\"472\"\n style=\"stroke:@INK@;stroke-width:126;\"/>\n\n<ellipse transform=\"translate(1417,9118) rotate(-0.00000000)\" rx=\"944\" ry=\"472\"\n style=\"stroke:@INK@;stroke-width:126;\"/>\n</g>\n</g>",
+    "crochet-triple-triple": "<g transform=\"translate(6.610 4.000) scale(6.34146)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<polyline points=\"3779,4251\n5669,3307\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4251,5905\n5196,5433\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4251,6377\n5196,5905\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4724,3779\n4724,8031\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4251,6850\n5196,6377\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n</g>\n</g>",
+    "crochet-triple": "<g transform=\"translate(6.610 4.000) scale(6.34146)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<polyline points=\"3779,4251\n5669,3307\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4251,5905\n5196,5433\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4251,6377\n5196,5905\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4724,3779\n4724,8031\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n</g>\n</g>",
+    "crochet-tunisian-cluster": "<g transform=\"translate(3.000 6.286) scale(8.57143)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<ellipse transform=\"translate(4724,5669) rotate(-0.00000000)\" rx=\"472\" ry=\"944\"\n style=\"stroke:@INK@;stroke-width:126;\"/>\n\n<polyline points=\"4724,4724\n4724,6614\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"3543,4251\n3545,4248\n3550,4242\n3559,4230\n3571,4213\n3589,4190\n3610,4161\n3636,4129\n3664,4093\n3694,4056\n3724,4019\n3756,3984\n3785,3949\n3815,3919\n3843,3890\n3869,3865\n3896,3844\n3920,3825\n3943,3811\n3966,3799\n3988,3790\n4010,3783\n4032,3780\n4055,3779\n4076,3780\n4097,3783\n4119,3787\n4141,3794\n4165,3802\n4190,3813\n4214,3824\n4239,3838\n4265,3854\n4292,3870\n4320,3889\n4347,3908\n4375,3930\n4404,3952\n4431,3975\n4459,4000\n4488,4024\n4515,4049\n4542,4074\n4570,4100\n4596,4125\n4622,4151\n4648,4176\n4674,4201\n4699,4226\n4724,4251\n4749,4277\n4774,4302\n4800,4327\n4826,4352\n4852,4377\n4878,4403\n4906,4429\n4933,4454\n4960,4479\n4988,4503\n5017,4528\n5044,4551\n5072,4573\n5101,4595\n5128,4614\n5155,4633\n5183,4649\n5209,4665\n5234,4679\n5258,4690\n5282,4701\n5307,4709\n5329,4716\n5351,4720\n5372,4723\n5394,4724\n5416,4723\n5438,4720\n5460,4713\n5482,4704\n5505,4692\n5528,4678\n5552,4659\n5579,4638\n5605,4613\n5633,4584\n5662,4554\n5692,4519\n5723,4483\n5754,4447\n5784,4410\n5812,4374\n5838,4342\n5859,4313\n5877,4290\n5889,4272\n5898,4261\n5903,4255\n5905,4251\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:bevel; stroke-linecap:butt;\n\"/>\n</g>\n</g>",
+    "crochet-tunisian-decrease": "<g transform=\"translate(3.000 6.286) scale(8.57143)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<polyline points=\"4724,4724\n4724,6614\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4724,4724\n3779,6614\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"3543,4251\n3545,4248\n3550,4242\n3559,4230\n3571,4213\n3589,4190\n3610,4161\n3636,4129\n3664,4093\n3694,4056\n3724,4019\n3756,3984\n3785,3949\n3815,3919\n3843,3890\n3869,3865\n3896,3844\n3920,3825\n3943,3811\n3966,3799\n3988,3790\n4010,3783\n4032,3780\n4055,3779\n4076,3780\n4097,3783\n4119,3787\n4141,3794\n4165,3802\n4190,3813\n4214,3824\n4239,3838\n4265,3854\n4292,3870\n4320,3889\n4347,3908\n4375,3930\n4404,3952\n4431,3975\n4459,4000\n4488,4024\n4515,4049\n4542,4074\n4570,4100\n4596,4125\n4622,4151\n4648,4176\n4674,4201\n4699,4226\n4724,4251\n4749,4277\n4774,4302\n4800,4327\n4826,4352\n4852,4377\n4878,4403\n4906,4429\n4933,4454\n4960,4479\n4988,4503\n5017,4528\n5044,4551\n5072,4573\n5101,4595\n5128,4614\n5155,4633\n5183,4649\n5209,4665\n5234,4679\n5258,4690\n5282,4701\n5307,4709\n5329,4716\n5351,4720\n5372,4723\n5394,4724\n5416,4723\n5438,4720\n5460,4713\n5482,4704\n5505,4692\n5528,4678\n5552,4659\n5579,4638\n5605,4613\n5633,4584\n5662,4554\n5692,4519\n5723,4483\n5754,4447\n5784,4410\n5812,4374\n5838,4342\n5859,4313\n5877,4290\n5889,4272\n5898,4261\n5903,4255\n5905,4251\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:bevel; stroke-linecap:butt;\n\"/>\n</g>\n</g>",
+    "crochet-tunisian-puff": "<g transform=\"translate(3.000 6.286) scale(8.57143)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<ellipse transform=\"translate(4724,5669) rotate(-0.00000000)\" rx=\"472\" ry=\"944\"\n style=\"stroke:@INK@;stroke-width:126;\"/>\n\n<polyline points=\"3543,4251\n3545,4248\n3550,4242\n3559,4230\n3571,4213\n3589,4190\n3610,4161\n3636,4129\n3664,4093\n3694,4056\n3724,4019\n3756,3984\n3785,3949\n3815,3919\n3843,3890\n3869,3865\n3896,3844\n3920,3825\n3943,3811\n3966,3799\n3988,3790\n4010,3783\n4032,3780\n4055,3779\n4076,3780\n4097,3783\n4119,3787\n4141,3794\n4165,3802\n4190,3813\n4214,3824\n4239,3838\n4265,3854\n4292,3870\n4320,3889\n4347,3908\n4375,3930\n4404,3952\n4431,3975\n4459,4000\n4488,4024\n4515,4049\n4542,4074\n4570,4100\n4596,4125\n4622,4151\n4648,4176\n4674,4201\n4699,4226\n4724,4251\n4749,4277\n4774,4302\n4800,4327\n4826,4352\n4852,4377\n4878,4403\n4906,4429\n4933,4454\n4960,4479\n4988,4503\n5017,4528\n5044,4551\n5072,4573\n5101,4595\n5128,4614\n5155,4633\n5183,4649\n5209,4665\n5234,4679\n5258,4690\n5282,4701\n5307,4709\n5329,4716\n5351,4720\n5372,4723\n5394,4724\n5416,4723\n5438,4720\n5460,4713\n5482,4704\n5505,4692\n5528,4678\n5552,4659\n5579,4638\n5605,4613\n5633,4584\n5662,4554\n5692,4519\n5723,4483\n5754,4447\n5784,4410\n5812,4374\n5838,4342\n5859,4313\n5877,4290\n5889,4272\n5898,4261\n5903,4255\n5905,4251\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:bevel; stroke-linecap:butt;\n\"/>\n</g>\n</g>",
+    "crochet-tunisian-triple-around-another-stitch": "<g transform=\"translate(5.341 4.000) scale(6.34146)\">\n<g style=\"stroke-width:.025in; stroke:@INK@; fill:none\">\n\n<path style=\"stroke:@INK@;stroke-width:126;stroke-linecap:butt\"\nd=\"M 4677,6614 A 944 944  0  0  1  4677  8503 \" />\n\n<polyline points=\"4724,6614\n4724,4724\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4251,5669\n5196,5196\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"4251,6141\n5196,5669\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:miter; stroke-linecap:butt;\n\"/>\n\n<polyline points=\"3543,4251\n3545,4248\n3550,4242\n3559,4230\n3571,4213\n3589,4190\n3610,4161\n3636,4129\n3664,4093\n3694,4056\n3724,4019\n3756,3984\n3785,3949\n3815,3919\n3843,3890\n3869,3865\n3896,3844\n3920,3825\n3943,3811\n3966,3799\n3988,3790\n4010,3783\n4032,3780\n4055,3779\n4076,3780\n4097,3783\n4119,3787\n4141,3794\n4165,3802\n4190,3813\n4214,3824\n4239,3838\n4265,3854\n4292,3870\n4320,3889\n4347,3908\n4375,3930\n4404,3952\n4431,3975\n4459,4000\n4488,4024\n4515,4049\n4542,4074\n4570,4100\n4596,4125\n4622,4151\n4648,4176\n4674,4201\n4699,4226\n4724,4251\n4749,4277\n4774,4302\n4800,4327\n4826,4352\n4852,4377\n4878,4403\n4906,4429\n4933,4454\n4960,4479\n4988,4503\n5017,4528\n5044,4551\n5072,4573\n5101,4595\n5128,4614\n5155,4633\n5183,4649\n5209,4665\n5234,4679\n5258,4690\n5282,4701\n5307,4709\n5329,4716\n5351,4720\n5372,4723\n5394,4724\n5416,4723\n5438,4720\n5460,4713\n5482,4704\n5505,4692\n5528,4678\n5552,4659\n5579,4638\n5605,4613\n5633,4584\n5662,4554\n5692,4519\n5723,4483\n5754,4447\n5784,4410\n5812,4374\n5838,4342\n5859,4313\n5877,4290\n5889,4272\n5898,4261\n5903,4255\n5905,4251\n\" style=\"stroke:@INK@;stroke-width:126;\nstroke-linejoin:bevel; stroke-linecap:butt;\n\"/>\n</g>\n</g>",
+    "dc": "<g transform=\"translate(7.593 4.000) scale(1.87388)\">\n  <sodipodi:namedview\n     id=\"cdc-namedview1\"\n     pagecolor=\"#ffffff\"\n     bordercolor=\"@INK@\"\n     borderopacity=\"0.25\"\n     inkscape:showpageshadow=\"2\"\n     inkscape:pageopacity=\"0.0\"\n     inkscape:pagecheckerboard=\"0\"\n     inkscape:deskcolor=\"#d1d1d1\"\n     inkscape:document-units=\"mm\"\n     inkscape:zoom=\"13.274208\"\n     inkscape:cx=\"8.8894191\"\n     inkscape:cy=\"26.216253\"\n     inkscape:window-width=\"932\"\n     inkscape:window-height=\"1040\"\n     inkscape:window-x=\"982\"\n     inkscape:window-y=\"6\"\n     inkscape:window-maximized=\"1\"\n     inkscape:current-layer=\"svg1\" />\n  <defs\n     id=\"cdc-defs1\" />\n  <path\n     transform=\"translate(-7.9999999e-6,13.874994)\"\n     d=\"M 0.25000648,-13.624994 H 4.4539935 m -3.1943433,5.9230123 2.1846996,1.2612884 M 2.3519995,-13.624994 v 13.37498802\"\n     label=\"dc\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"cdc-path223\" />\n</g>",
+    "dc2sh": "<g transform=\"translate(3.041 4.000) scale(1.81843)\">\n  <defs\n     id=\"cdc2sh-defs1\" />\n  <path\n     d=\"m 7.1059796,0.24999929 c 0.83235,0 1.6647,0 2.49705,0 m -9.35301999,0 c 0.83234999,0 1.66469999,0 2.49704999,0 m 0.9111,6.17530501 c -0.50716,-0.32462 -1.01433,-0.649236 -1.5215,-0.973857 m 5.55918,0.973857 c -0.50717,-0.32462 -1.01434,-0.649236 -1.52151,-0.973857 m -1.27941,8.5965637 C 3.7627896,9.4486753 2.6306596,4.8493363 1.4985396,0.24999929 m 3.39638,13.79801171 c 1.15319,-4.5993387 2.30638,-9.1986767 3.45958,-13.79801171\"\n     label=\"dc2sh\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"cdc2sh-path669\" />\n</g>",
+    "dc3sh": "<g transform=\"translate(3.041 4.000) scale(1.81844)\">\n  <defs\n     id=\"cdc3sh-defs1\" />\n  <path\n     d=\"m 7.1062825,0.24999975 c 0.83239,0 1.66477,0 2.49716,0 m -5.9569,0 c 0.83238,0 1.66477,0 2.49716,0 m -5.89369997,0 c 0.83238997,0 1.66476997,0 2.49715997,0 m 0.91114,6.17529895 c -0.50718,-0.324621 -1.01438,-0.649236 -1.52157,-0.973857 m 3.51917,0.973857 c -0.50718,-0.324621 -1.01438,-0.649236 -1.52157,-0.973857 m 3.56183,0.973857 c -0.50719,-0.324621 -1.01438,-0.649236 -1.52157,-0.973857 M 4.8951225,14.048 c 0,-4.5993343 0,-9.1986683 0,-13.79800025 m 0,13.79800025 C 3.7629325,9.4486667 2.6307625,4.8493317 1.4985825,0.24999975 M 4.8951225,14.048 c 1.15324,-4.5993353 2.30649,-9.1986693 3.45974,-13.79800025\"\n     label=\"dc3sh\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"cdc3sh-path670\" />\n</g>",
+    "dc4sh": "<g transform=\"translate(3.000 7.194) scale(1.37172)\">\n  <defs\n     id=\"cdc4sh-defs1\" />\n  <path\n     d=\"m 6.3173809,0.25000226 c -0.83239,0 -1.66477,0 -2.49716,0 m -1.07307,0 c -0.83239,0 -1.66477,0 -2.49715998,0 m 9.35385998,0 c -0.83239,0 -1.66477,0 -2.49716,0 m 5.7654701,0 c -0.83239,0 -1.66477,0 -2.49716,0 M 8.6812509,6.3095793 c 0.54304,-0.186338 1.08608,-0.372676 1.6291201,-0.559014 m -3.4529401,0.782248 c 0.54194,-0.33516 1.08388,-0.670321 1.62582,-1.005482 m -3.48156,0.989669 c 0.50719,-0.324618 1.01439,-0.649237 1.52158,-0.973856 m -3.62486,0.901766 c 0.54839,-0.276558 1.09677,-0.553117 1.64515,-0.829675 m 2.16848,8.4327667 c 0.54774,-4.5993327 1.09549,-9.1986667 1.64323,-13.79799974 M 6.7120409,14.048002 C 6.1642909,9.4486693 5.6165509,4.8493353 5.0688009,0.25000226 M 6.7120409,14.048002 C 8.3492209,9.4486693 9.9864009,4.8493353 11.623581,0.25000226 M 6.7120409,14.048002 C 4.9742109,9.4486693 3.2363909,4.8493353 1.4985709,0.25000226\"\n     label=\"dc4sh\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"cdc4sh-path671\" />\n</g>",
+    "dc5sh": "<g transform=\"translate(3.000 8.224) scale(1.22762)\">\n  <defs\n     id=\"cdc5sh-defs1\" />\n  <path\n     d=\"m 6.6916058,0.24999933 h 1.87317 m -4.65924,0 h 1.87317 m 3.61944,0 h 1.8731702 m -11.02132016,0 H 2.1231558 m 10.4161602,0 h 1.87316 m -4.12955,5.91479297 1.7232,-0.827572 m -3.6644002,0.886125 1.62582,-1.005481 m -3.05326,1.093834 1.42782,-1.182187 m -3.17149,1.078022 1.52158,-0.973857 v 0 0 m -3.65648,0.901767 1.64515,-0.829675 m 2.94733,8.7422297 V 0.24999933 m 0,13.79799867 L 10.134556,0.24999933 M 7.6281958,14.047998 4.8421258,0.24999933 M 7.6281958,14.047998 13.475896,0.24999933 M 7.6281958,14.047998 1.1865758,0.24999933\"\n     label=\"dc5sh\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"cdc5sh-path672\" />\n</g>",
+    "dc5tog": "<g transform=\"translate(3.000 6.938) scale(1.40742)\">\n  <defs\n     id=\"cdc5tog-defs1\" />\n  <path\n     d=\"m 9.3463545,8.1331769 1.7231905,0.8275686 m -3.6643905,-0.886122 1.62582,1.0054772 m -3.05326,-1.0938295 1.42782,1.1821818 m -3.1715,-1.0780173 1.52159,0.9738529 v 0 0 m -3.65648,-0.9017622 1.64515,0.8296714 m 2.94733,-8.74219742 V 14.047945 m 0,-13.79794462 2.50635,13.79794462 M 6.6916245,0.25000038 3.9055545,14.047945 M 6.6916245,0.25000038 12.539315,14.047945 M 4.5897245,0.25000038 h 4.20379 m -2.10189,0 L 0.25000451,14.047945\"\n     label=\"dc5tog\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"cdc5tog-path134\" />\n</g>",
+    "dtr": "<g transform=\"translate(9.295 4.000) scale(1.15027)\">\n  <defs\n     id=\"cdtr-defs1\" />\n  <path\n     d=\"M 0.25000301,0.25000027 H 4.453803 m -2.1019,0 V 22.353334 m -1.0923,-15.8399847 2.1846,1.261281 m -2.1846,0.157783 2.1846,1.26128 m -2.1846,0 2.1846,1.2612817\"\n     label=\"dtr\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"cdtr-path225\" />\n</g>",
+    "end": "<g transform=\"translate(3.000 13.052) scale(1.66108)\">\n  <defs\n     id=\"cend-defs1\" />\n  <path\n     d=\"M 0.24997453,4.5040272 V 0.24999508 L 10.586395,2.1717859 0.24997453,4.5040272\"\n     label=\"end\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"cend-path219\" />\n</g>",
+    "flo": "<g transform=\"translate(3.000 13.182) scale(2.46728)\">\n  <defs\n     id=\"cflo-defs1\" />\n  <path\n     d=\"m 7.0454114,0.25 c 0.007,0.8486548 -0.56272,1.5984917 -1.26806,2.0189888 -1.21349,0.7290591 -2.80914,0.7604595 -4.06304,0.1118846 C 0.91844139,1.9705022 0.24327139,1.1852775 0.25006139,0.25\"\n     label=\"blo\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"cflo-path492\" />\n</g>",
+    "hdc": "<g transform=\"translate(6.327 4.000) scale(2.41210)\">\n  <sodipodi:namedview\n     id=\"chdc-namedview1\"\n     pagecolor=\"#ffffff\"\n     bordercolor=\"@INK@\"\n     borderopacity=\"0.25\"\n     inkscape:showpageshadow=\"2\"\n     inkscape:pageopacity=\"0.0\"\n     inkscape:pagecheckerboard=\"0\"\n     inkscape:deskcolor=\"#d1d1d1\"\n     inkscape:document-units=\"mm\"\n     inkscape:zoom=\"13.274749\"\n     inkscape:cx=\"8.8890568\"\n     inkscape:cy=\"20.339367\"\n     inkscape:window-width=\"932\"\n     inkscape:window-height=\"1040\"\n     inkscape:window-x=\"982\"\n     inkscape:window-y=\"6\"\n     inkscape:window-maximized=\"1\"\n     inkscape:current-layer=\"svg1\" />\n  <defs\n     id=\"chdc-defs1\" />\n  <path\n     transform=\"translate(-3.9999999e-6,10.778996)\"\n     d=\"M 0.25000438,-10.528996 H 4.4537966 m -2.1018966,0 v 10.27899162\"\n     label=\"hdc\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"chdc-path222\" />\n</g>",
+    "hdc2sh": "<g transform=\"translate(3.000 4.625) scale(2.29614)\">\n  <defs\n     id=\"chdc2sh-defs1\" />\n  <path\n     d=\"m 7.5892455,0.25000053 h -2.42461 m 1.26302,0 -2.50803,10.27899247 M 0.24999555,0.25000053 H 2.6746055 m -1.26302,0 2.50804,10.27899247\"\n     label=\"hdc2sh\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"chdc2sh-path667\" />\n</g>",
+    "hdc2tog": "<g transform=\"translate(4.958 4.000) scale(0.88162)\">\n  <defs\n     id=\"chdc2tog-defs1\" />\n  <path\n     d=\"m 51.030738,17.883397 7.121186,28.12018 M 45.267507,17.883397 h 11.526457 m -5.763226,0 -7.482758,28.12019\"\n     label=\"hdc2tog\"\n     style=\"fill:none;stroke:@INK@;stroke-width:1.37096px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"chdc2tog-path17\"\n     transform=\"translate(-42.8625,-17.197917)\" />\n</g>",
+    "hdc3sh": "<g transform=\"translate(3.000 6.388) scale(1.96900)\">\n  <defs\n     id=\"chdc3sh-defs1\" />\n  <path\n     d=\"m 3.3585525,0.25000059 h 2.42461 M 4.5708525,10.528993 V 0.25000059 m 4.32085,0 h -2.42461 m 1.26302,0 -3.15926,10.27899241 M 0.25001245,0.25000059 H 2.6746225 m -1.26303,0 3.15926,10.27899241\"\n     label=\"hdc3sh\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"chdc3sh-path668\" />\n</g>",
+    "hdg3tog": "<g transform=\"translate(4.958 4.000) scale(0.88162)\">\n  <defs\n     id=\"chdg3tog-defs1\" />\n  <path\n     d=\"m 8.16824,0.68548 v 28.12018 m 0,-28.12018 7.12119,28.12018 M 2.40501,0.68548 h 11.52646 m -5.76323,0 -7.48276,28.12019\"\n     label=\"hdc3tog\"\n     style=\"fill:none;stroke:@INK@;stroke-width:1.37096px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"chdg3tog-path18\" />\n</g>",
+    "magicring": "<g transform=\"translate(3.000 7.989) scale(1.13796)\">\n  <defs\n     id=\"cmagicring-defs1\" />\n  <path\n     vector-effect=\"none\"\n     fill-rule=\"nonzero\"\n     d=\"M 7.708795,3.3573218 C 4.6122485,2.6986778 1.9513538,5.0399978 1.9071497,8.2973548 1.8599357,11.77489 4.3912038,14.049387 7.9233772,14.082562 11.650021,14.117562 14.245415,11.630744 14.25436,8.0142088 14.26376,4.2296518 11.47344,1.4576318 7.6207633,1.4505798 3.6132387,1.4432798 0.23650637,4.3457978 0.25004047,8.2414238 0.26404547,12.275008 3.7630141,15.597071 7.8742892,15.586446 12.115741,15.57547 15.597161,12.071223 15.567529,7.9441208 15.538731,3.9300398 12.228168,0.53701058 8.141012,0.25000048\"\n     id=\"cmagicring-path867\"\n     style=\"font-variation-settings:normal;opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:@INK@;stop-opacity:1\" />\n</g>",
+    "ring": "<g transform=\"translate(3.000 8.000) scale(1.13852)\">\n  <defs\n     id=\"cring-defs1\" />\n  <path\n     vector-effect=\"none\"\n     fill-rule=\"nonzero\"\n     d=\"m 15.559958,7.9049695 c 0,4.2277085 -3.427247,7.6549485 -7.6549844,7.6549485 -4.227719,0 -7.65497402,-3.42724 -7.65497402,-7.6549485 0,-4.227727 3.42725502,-7.65497004 7.65497402,-7.65497004 4.2277374,0 7.6549844,3.42724304 7.6549844,7.65497004\"\n     id=\"cring-path1341\"\n     style=\"font-variation-settings:normal;opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:@INK@;stop-opacity:1\" />\n</g>",
+    "ring6ch": "<g transform=\"translate(3.000 8.061) scale(1.11212)\">\n  <defs\n     id=\"cring6ch-defs1\" />\n  <path\n     id=\"cring6ch-path47\"\n     style=\"font-variation-settings:normal;opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:@INK@;stop-opacity:1\"\n     d=\"M 14.536509,11.588803 C 13.867783,11.537253 13.404035,9.9083431 13.5007,7.9505431 c 0.09666,-1.9578 0.717139,-3.503116 1.385865,-3.451564 0.668732,0.05155 1.132475,1.680449 1.03581,3.63825 -0.09666,1.9577999 -0.717133,3.5031259 -1.385866,3.4515739 M 13.798616,3.4400371 c -0.241662,0.781132 -1.624955,0.840818 -3.089665,0.133312 -1.4647103,-0.707506 -2.4561833,-1.914287 -2.2145213,-2.69541799 0.241665,-0.781138 1.6249493,-0.840821 3.0896593,-0.133315 1.464709,0.70750599 2.456192,1.91428299 2.214527,2.69542099 M 7.6924597,0.87730511 c 0.241662,0.78113099 -0.749818,1.98791499 -2.214528,2.69541999 -1.46471,0.707506 -2.847996,0.647817 -3.089658,-0.133315 -0.241664,-0.781138 0.749811,-1.987911 2.214521,-2.69541599 1.46471,-0.707506 2.848001,-0.647829 3.089665,0.133311 M 1.6526177,4.4971101 c 0.668659,0.05251 1.130792,1.682146 1.032207,3.639741 -0.09859,1.9575939 -0.720556,3.5019149 -1.389212,3.4493399 -0.66866503,-0.05251 -1.13079103,-1.6821389 -1.03220703,-3.6397329 0.09859,-1.957593 0.720551,-3.501924 1.38921203,-3.449348 m 0.72755,8.1715929 c 0.237663,-0.783046 1.620615,-0.853777 3.088904,-0.157981 1.468289,0.695795 2.465906,1.894633 2.228242,2.677679 -0.237665,0.783053 -1.620608,0.85378 -3.088897,0.157985 -1.468289,-0.695794 -2.465914,-1.89463 -2.228249,-2.677683 m 6.106936,2.519888 c -0.237664,-0.783046 0.75996,-1.981888 2.2282493,-2.677684 1.468288,-0.695794 2.851233,-0.62506 3.088897,0.157985 0.237665,0.783054 -0.759954,1.981885 -2.228243,2.67768 -1.468288,0.695795 -2.8512383,0.625072 -3.0889033,-0.157981\" />\n</g>",
+    "sc": "<g transform=\"translate(4.550 4.000) scale(1.40382)\">\n  <defs\n     id=\"csc-defs1\" />\n  <path\n     d=\"m -408.00937,-211.53181 v -17.20304 m -4.6109,8.18883 h 9.29626\"\n     label=\"sc+\"\n     style=\"fill:none;stroke:@INK@;stroke-width:1.31779px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"csc-path4\"\n     transform=\"translate(413.27917,229.39375)\" />\n</g>",
+    "sc-x": "<g transform=\"translate(3.000 8.000) scale(1.70079)\">\n  <sodipodi:namedview\n     id=\"csc-x-namedview1\"\n     pagecolor=\"#ffffff\"\n     bordercolor=\"@INK@\"\n     borderopacity=\"0.25\"\n     inkscape:showpageshadow=\"2\"\n     inkscape:pageopacity=\"0.0\"\n     inkscape:pagecheckerboard=\"0\"\n     inkscape:deskcolor=\"#d1d1d1\"\n     inkscape:document-units=\"mm\"\n     inkscape:zoom=\"5.9000018\"\n     inkscape:cx=\"19.999994\"\n     inkscape:cy=\"19.999994\"\n     inkscape:window-width=\"932\"\n     inkscape:window-height=\"1040\"\n     inkscape:window-x=\"982\"\n     inkscape:window-y=\"6\"\n     inkscape:window-maximized=\"1\"\n     inkscape:current-layer=\"svg1\" />\n  <defs\n     id=\"csc-x-defs1\" />\n  <path\n     d=\"m -411.33596,-213.60988 9.34274,-9.34274 m -9.34274,0 9.34274,9.34274\"\n     label=\"sc\"\n     style=\"fill:none;stroke:@INK@;stroke-width:1.24059px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"csc-x-path3\"\n     transform=\"translate(411.95625,223.57291)\" />\n</g>",
+    "sc2sh": "<g transform=\"translate(3.000 9.457) scale(2.57360)\">\n  <sodipodi:namedview\n     id=\"csc2sh-namedview1\"\n     pagecolor=\"#ffffff\"\n     bordercolor=\"@INK@\"\n     borderopacity=\"0.25\"\n     inkscape:showpageshadow=\"2\"\n     inkscape:pageopacity=\"0.0\"\n     inkscape:pagecheckerboard=\"0\"\n     inkscape:deskcolor=\"#d1d1d1\"\n     inkscape:document-units=\"mm\"\n     inkscape:zoom=\"8.9277756\"\n     inkscape:cx=\"13.217178\"\n     inkscape:cy=\"11.088988\"\n     inkscape:window-width=\"932\"\n     inkscape:window-height=\"1040\"\n     inkscape:window-x=\"982\"\n     inkscape:window-y=\"6\"\n     inkscape:window-maximized=\"1\"\n     inkscape:current-layer=\"svg1\" />\n  <defs\n     id=\"csc2sh-defs1\" />\n  <path\n     transform=\"translate(3.9999999e-6,5.812)\"\n     d=\"M 6.305736,-3.4660595 5.110121,-4.265307 M 6.744084,-5.562 3.469134,-0.2004967 M 0.25,-5.562 3.469134,-0.2004967 M 0.678795,-3.4684936 1.874412,-4.2677411\"\n     label=\"sc2sh\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"csc2sh-path232\" />\n</g>",
+    "sc2sh-x": "<g transform=\"translate(3.000 9.947) scale(2.58104)\">\n  <sodipodi:namedview\n     id=\"csc2sh-x-namedview1\"\n     pagecolor=\"#ffffff\"\n     bordercolor=\"@INK@\"\n     borderopacity=\"0.25\"\n     inkscape:showpageshadow=\"2\"\n     inkscape:pageopacity=\"0.0\"\n     inkscape:pagecheckerboard=\"0\"\n     inkscape:deskcolor=\"#d1d1d1\"\n     inkscape:document-units=\"mm\"\n     inkscape:zoom=\"8.9535864\"\n     inkscape:cx=\"13.179076\"\n     inkscape:cy=\"10.275212\"\n     inkscape:window-width=\"932\"\n     inkscape:window-height=\"1040\"\n     inkscape:window-x=\"982\"\n     inkscape:window-y=\"6\"\n     inkscape:window-maximized=\"1\"\n     inkscape:current-layer=\"svg1\" />\n  <defs\n     id=\"csc2sh-x-defs1\" />\n  <path\n     transform=\"translate(7e-6,5.4115033)\"\n     d=\"M 2.3850101,-2.9043482 4.6422283,-5.1615033 M 0.24999673,-3.4335149 3.486958,-0.19664524 M 6.7239193,-3.4335149 3.486958,-0.19664524 M 2.3850101,-5.1615033 4.6422283,-2.9043482\"\n     label=\"sc2sh-x\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"csc2sh-x-path231\" />\n</g>",
+    "sc2tog": "<g transform=\"translate(3.000 9.457) scale(2.57360)\">\n  <sodipodi:namedview\n     id=\"csc2tog-namedview1\"\n     pagecolor=\"#ffffff\"\n     bordercolor=\"@INK@\"\n     borderopacity=\"0.25\"\n     inkscape:showpageshadow=\"2\"\n     inkscape:pageopacity=\"0.0\"\n     inkscape:pagecheckerboard=\"0\"\n     inkscape:deskcolor=\"#d1d1d1\"\n     inkscape:document-units=\"mm\"\n     inkscape:zoom=\"8.9277811\"\n     inkscape:cx=\"13.21717\"\n     inkscape:cy=\"11.088982\"\n     inkscape:window-width=\"932\"\n     inkscape:window-height=\"1040\"\n     inkscape:window-x=\"982\"\n     inkscape:window-y=\"6\"\n     inkscape:window-maximized=\"1\"\n     inkscape:current-layer=\"svg1\" />\n  <defs\n     id=\"csc2tog-defs1\" />\n  <path\n     transform=\"translate(2e-6,5.6120001)\"\n     d=\"M 6.305736,-2.0964372 5.110121,-1.2971897 M 6.744084,-4.967e-4 3.469134,-5.362 M 0.25,-4.967e-4 3.469134,-5.362 m -2.790339,3.2679969 1.195617,0.7992475\"\n     label=\"sc2tog\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"csc2tog-path228\" />\n</g>",
+    "sc2tog-x": "<g transform=\"translate(3.000 9.947) scale(2.58104)\">\n  <sodipodi:namedview\n     id=\"csc2tog-x-namedview1\"\n     pagecolor=\"#ffffff\"\n     bordercolor=\"@INK@\"\n     borderopacity=\"0.25\"\n     inkscape:showpageshadow=\"2\"\n     inkscape:pageopacity=\"0.0\"\n     inkscape:pagecheckerboard=\"0\"\n     inkscape:deskcolor=\"#d1d1d1\"\n     inkscape:document-units=\"mm\"\n     inkscape:zoom=\"8.9535968\"\n     inkscape:cx=\"13.179061\"\n     inkscape:cy=\"10.2752\"\n     inkscape:window-width=\"932\"\n     inkscape:window-height=\"1040\"\n     inkscape:window-x=\"982\"\n     inkscape:window-y=\"6\"\n     inkscape:window-maximized=\"1\"\n     inkscape:current-layer=\"svg1\" />\n  <defs\n     id=\"csc2tog-x-defs1\" />\n  <path\n     transform=\"translate(2e-6,5.4115033)\"\n     d=\"m 2.3850101,-2.4538003 2.2572182,2.25715506 M 0.24999673,-1.9246336 3.486958,-5.1615033 M 6.7239193,-1.9246336 3.486958,-5.1615033 M 2.3850101,-0.19664524 4.6422283,-2.4538003\"\n     label=\"sc2tog-x\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"csc2tog-x-path227\" />\n</g>",
+    "sc3sh": "<g transform=\"translate(3.000 9.457) scale(2.57361)\">\n  <sodipodi:namedview\n     id=\"csc3sh-namedview1\"\n     pagecolor=\"#ffffff\"\n     bordercolor=\"@INK@\"\n     borderopacity=\"0.25\"\n     inkscape:showpageshadow=\"2\"\n     inkscape:pageopacity=\"0.0\"\n     inkscape:pagecheckerboard=\"0\"\n     inkscape:deskcolor=\"#d1d1d1\"\n     inkscape:document-units=\"mm\"\n     inkscape:zoom=\"8.9278066\"\n     inkscape:cx=\"13.217132\"\n     inkscape:cy=\"11.08895\"\n     inkscape:window-width=\"932\"\n     inkscape:window-height=\"1040\"\n     inkscape:window-x=\"982\"\n     inkscape:window-y=\"6\"\n     inkscape:window-maximized=\"1\"\n     inkscape:current-layer=\"svg1\" />\n  <defs\n     id=\"csc3sh-defs1\" />\n  <path\n     transform=\"translate(0,6.0619889)\"\n     d=\"M 6.3057161,-3.715863 5.110105,-4.5151814 M 6.7440626,-5.8119893 3.4691234,-0.45001067 M 0.25,-5.8119893 3.4691234,-0.45001067 M 0.67879359,-3.7182973 1.8744066,-4.5176157 M 2.6199422,-4.6796489 H 4.3197766 M 3.4691224,-0.45001087 V -5.8119893\"\n     label=\"sc3sh\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"csc3sh-path234\" />\n</g>",
+    "sc3sh-x": "<g transform=\"translate(3.000 9.947) scale(2.58105)\">\n  <sodipodi:namedview\n     id=\"csc3sh-x-namedview1\"\n     pagecolor=\"#ffffff\"\n     bordercolor=\"@INK@\"\n     borderopacity=\"0.25\"\n     inkscape:showpageshadow=\"2\"\n     inkscape:pageopacity=\"0.0\"\n     inkscape:pagecheckerboard=\"0\"\n     inkscape:deskcolor=\"#d1d1d1\"\n     inkscape:document-units=\"mm\"\n     inkscape:zoom=\"8.9536072\"\n     inkscape:cx=\"13.179046\"\n     inkscape:cy=\"10.275188\"\n     inkscape:window-width=\"932\"\n     inkscape:window-height=\"1040\"\n     inkscape:window-x=\"982\"\n     inkscape:window-y=\"6\"\n     inkscape:window-maximized=\"1\"\n     inkscape:current-layer=\"svg1\" />\n  <defs\n     id=\"csc3sh-x-defs1\" />\n  <path\n     transform=\"translate(0,5.6650001)\"\n     d=\"M 3.4869579,-0.45000658 V -2.9054619 M 2.3850112,-3.1577834 4.6422271,-5.415 M 0.25,-3.6869645 3.486958,-0.45000658 M 6.723916,-3.6869645 3.486958,-0.45000658 M 2.3850112,-5.415 4.6422271,-3.1577834\"\n     label=\"sc3sh-x\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"csc3sh-x-path233\" />\n</g>",
+    "sc3tog": "<g transform=\"translate(3.000 9.457) scale(2.57361)\">\n  <sodipodi:namedview\n     id=\"csc3tog-namedview1\"\n     pagecolor=\"#ffffff\"\n     bordercolor=\"@INK@\"\n     borderopacity=\"0.25\"\n     inkscape:showpageshadow=\"2\"\n     inkscape:pageopacity=\"0.0\"\n     inkscape:pagecheckerboard=\"0\"\n     inkscape:deskcolor=\"#d1d1d1\"\n     inkscape:document-units=\"mm\"\n     inkscape:zoom=\"8.9278066\"\n     inkscape:cx=\"13.217132\"\n     inkscape:cy=\"11.08895\"\n     inkscape:window-width=\"932\"\n     inkscape:window-height=\"1040\"\n     inkscape:window-x=\"982\"\n     inkscape:window-y=\"6\"\n     inkscape:window-maximized=\"1\"\n     inkscape:current-layer=\"svg1\" />\n  <defs\n     id=\"csc3tog-defs1\" />\n  <path\n     transform=\"translate(-7e-6,5.861989)\"\n     d=\"M 6.3057268,-2.346137 5.1101157,-1.5468186 M 6.7440733,-0.25001067 3.4691341,-5.6119893 M 0.25001067,-0.25001067 3.4691341,-5.6119893 m -2.79032984,3.2682866 1.19561304,0.7993184 m 0.7455356,0.1620332 h 1.6998344 m -0.8506542,-4.229638 v 5.36197843\"\n     label=\"sc3tog\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"csc3tog-path230\" />\n</g>",
+    "sc3tog-x": "<g transform=\"translate(3.000 9.947) scale(2.58104)\">\n  <sodipodi:namedview\n     id=\"csc3tog-x-namedview1\"\n     pagecolor=\"#ffffff\"\n     bordercolor=\"@INK@\"\n     borderopacity=\"0.25\"\n     inkscape:showpageshadow=\"2\"\n     inkscape:pageopacity=\"0.0\"\n     inkscape:pagecheckerboard=\"0\"\n     inkscape:deskcolor=\"#d1d1d1\"\n     inkscape:document-units=\"mm\"\n     inkscape:zoom=\"8.9535968\"\n     inkscape:cx=\"13.179061\"\n     inkscape:cy=\"10.2752\"\n     inkscape:window-width=\"932\"\n     inkscape:window-height=\"1040\"\n     inkscape:window-x=\"982\"\n     inkscape:window-y=\"6\"\n     inkscape:window-maximized=\"1\"\n     inkscape:current-layer=\"svg1\" />\n  <defs\n     id=\"csc3tog-x-defs1\" />\n  <path\n     transform=\"translate(9.9999998e-7,5.6115032)\"\n     d=\"m 3.4869612,-5.3615031 v 2.2469173 m -1.1019478,0.4607855 2.2572182,2.25715506 M 0.25,-2.1246336 3.4869613,-5.3615033 M 6.7239226,-2.1246336 3.4869613,-5.3615033 M 2.3850134,-0.39664524 4.6422316,-2.6538003\"\n     label=\"sc3tog-x\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"csc3tog-x-path229\" />\n</g>",
+    "slst": "<g transform=\"translate(3.000 8.000) scale(6.80316)\">\n  <sodipodi:namedview\n     id=\"cslst-namedview1\"\n     pagecolor=\"#ffffff\"\n     bordercolor=\"@INK@\"\n     borderopacity=\"0.25\"\n     inkscape:showpageshadow=\"2\"\n     inkscape:pageopacity=\"0.0\"\n     inkscape:pagecheckerboard=\"0\"\n     inkscape:deskcolor=\"#d1d1d1\"\n     inkscape:document-units=\"mm\"\n     inkscape:zoom=\"23.60003\"\n     inkscape:cx=\"4.9999935\"\n     inkscape:cy=\"4.9999935\"\n     inkscape:window-width=\"932\"\n     inkscape:window-height=\"1040\"\n     inkscape:window-x=\"982\"\n     inkscape:window-y=\"6\"\n     inkscape:window-maximized=\"1\"\n     inkscape:current-layer=\"svg1\" />\n  <defs\n     id=\"cslst-defs1\" />\n  <path\n     d=\"m -406.78636,-217.22292 a 0.67196972,0.67196972 0 0 1 -0.67197,0.67197 0.67196972,0.67196972 0 0 1 -0.67197,-0.67197 0.67196972,0.67196972 0 0 1 0.67197,-0.67197 0.67196972,0.67196972 0 0 1 0.67197,0.67197 z\"\n     label=\"slst\"\n     style=\"fill:none;stroke:@INK@;stroke-width:1.30189px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"cslst-path2\"\n     transform=\"translate(408.78125,218.54584)\" />\n</g>",
+    "st2tog-v1": "<g transform=\"translate(3.000 12.434) scale(1.14783)\">\n  <defs\n     id=\"cst2tog-v1-defs1\" />\n  <path\n     id=\"cst2tog-v1-path1414-5\"\n     d=\"M 0.52917221,0.64498542 V 7.4262694 M 15.152666,7.4003138 0.53149525,0.52916936\"\n     style=\"font-variation-settings:normal;opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:@INK@;stroke-width:1.05833;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:@INK@;stop-opacity:1\" />\n</g>",
+    "st2tog-v2": "<g transform=\"translate(3.000 12.434) scale(1.14783)\">\n  <defs\n     id=\"cst2tog-v2-defs1\" />\n  <path\n     id=\"cst2tog-v2-path1419-9\"\n     d=\"M 15.152662,0.64498369 V 7.4262677 M 0.52916799,7.400312 15.150334,0.52916763\"\n     style=\"font-variation-settings:normal;opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:@INK@;stroke-width:1.05833;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:@INK@;stop-opacity:1\" />\n</g>",
+    "st3tog-ch": "<g transform=\"translate(3.000 14.162) scale(0.71751)\">\n  <defs\n     id=\"cst3tog-ch-defs1\" />\n  <path\n     id=\"cst3tog-ch-path1435-9\"\n     style=\"font-variation-settings:normal;vector-effect:none;fill:none;fill-opacity:1;stroke:@INK@;stroke-width:1.05833;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:@INK@;stop-opacity:1\"\n     d=\"M 12.868342,0.7102865 C 13.16904,1.0365019 13.27406,1.7469892 13.104908,2.3108052 12.935757,2.8746117 12.554253,3.085706 12.245532,2.7862892 11.93681,2.4869045 11.813659,1.786447 11.968134,1.2083888 12.12258,0.63033393 12.498231,0.3859461 12.81429,0.65786127 M 24.587824,7.2870577 12.539035,3.1656589 m 0.01069,0 V 7.3486853 M 0.49903902,7.2870577 12.547815,3.1656589 M 12.868342,0.7102865 C 13.16904,1.0365019 13.27406,1.7469892 13.104908,2.3108052 12.935757,2.8746117 12.554253,3.085706 12.245532,2.7862892 11.93681,2.4869045 11.813659,1.786447 11.968134,1.2083888 12.12258,0.63033393 12.498231,0.3859461 12.81429,0.65786127 M 24.587824,7.2870577 12.539035,3.1656592 m 0.01069,0 V 7.3486853 M 0.4990391,7.2870577 12.547815,3.1656592\" />\n</g>",
+    "st3tog": "<g transform=\"translate(3.000 14.544) scale(0.71902)\">\n  <defs\n     id=\"cst3tog-defs1\" />\n  <path\n     id=\"cst3tog-path1426-7\"\n     d=\"M 24.505047,6.2161722 12.512728,0.52917052 m 0.01064,0 V 6.3011829 M 0.52916424,6.2161722 12.521486,0.52917052\"\n     style=\"font-variation-settings:normal;vector-effect:none;fill:none;fill-opacity:1;stroke:@INK@;stroke-width:1.05833;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:@INK@;stop-opacity:1\" />\n</g>",
+    "start": "<g transform=\"translate(3.000 13.052) scale(1.66108)\">\n  <defs\n     id=\"cstart-defs1\" />\n  <path\n     d=\"m 0.25001022,4.5040272 c 0,-1.4180107 0,-2.8360214 0,-4.25403212 C 3.6954838,0.89059198 7.1409573,1.531189 10.586431,2.1717859 7.1409573,2.9491997 3.6954838,3.7266135 0.25001022,4.5040272 0.40492562,3.2734272 0.55984103,2.0428272 0.71475643,0.81222718 3.4277367,1.2637397 6.140717,1.7152522 8.8536972,2.1667647 6.1540143,2.7535993 3.4543315,3.340434 0.75464854,3.9272686 0.87420988,3.0665483 0.99377121,2.205828 1.1133326,1.3451077 3.0513858,1.6352162 4.9894389,1.9253247 6.9274921,2.2154332 5.0346249,2.5996676 3.1417578,2.983902 1.2488906,3.3681364 1.3345026,2.8788529 1.4201149,2.3895694 1.5057271,1.9002859 2.583938,2.0362525 3.6621489,2.1722191 4.7403598,2.3081857 3.7332108,2.4700688 2.7260618,2.6319518 1.7189128,2.7938349\"\n     label=\"start\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"cstart-path218\" />\n</g>",
+    "tch1": "<g transform=\"translate(5.409 4.000) scale(5.14139)\">\n  <defs\n     id=\"ctch1-defs1\" />\n  <path\n     d=\"M 1.2820115,0.24999982 A 1.0320015,2.2784998 0 0 0 0.25000946,2.5284997 1.0320015,2.2784998 0 0 0 1.2820115,4.8069998 1.0320015,2.2784998 0 0 0 2.3140125,2.5284997 1.0320015,2.2784998 0 0 0 1.2820115,0.24999982 Z\"\n     label=\"tch1\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"ctch1-path728\" />\n</g>",
+    "tch2": "<g transform=\"translate(8.693 4.000) scale(2.57960)\">\n  <defs\n     id=\"ctch2-defs1\" />\n  <path\n     d=\"m 1.281996,5.2720799 a 1.0320015,2.2784999 0 0 0 -1.03200196,2.2785 1.0320015,2.2784999 0 0 0 1.03200196,2.2785002 1.0320015,2.2784999 0 0 0 1.032001,-2.2785002 1.0320015,2.2784999 0 0 0 -1.032001,-2.2785 z m 0,-5.0220792 A 1.0320015,2.2784999 0 0 0 0.24999404,2.5284998 1.0320015,2.2784999 0 0 0 1.281996,4.8069999 1.0320015,2.2784999 0 0 0 2.313997,2.5284998 1.0320015,2.2784999 0 0 0 1.281996,0.2500007 Z\"\n     label=\"tch2\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"ctch2-path729\" />\n</g>",
+    "tch3": "<g transform=\"translate(9.793 4.000) scale(1.72172)\">\n  <defs\n     id=\"ctch3-defs1\" />\n  <path\n     d=\"m 1.2819959,0.25000033 a 1.0320015,2.2784999 0 0 0 -1.03200202,2.27850097 1.0320015,2.2784999 0 0 0 1.03200202,2.2785 1.0320015,2.2784999 0 0 0 1.032001,-2.2785 1.0320015,2.2784999 0 0 0 -1.032001,-2.27850097 z m 0,10.04416067 a 1.0320015,2.2784999 0 0 0 -1.03200202,2.2785 1.0320015,2.2784999 0 0 0 1.03200202,2.2785 1.0320015,2.2784999 0 0 0 1.032001,-2.2785 1.0320015,2.2784999 0 0 0 -1.032001,-2.2785 z m 0,-5.0220795 A 1.0320015,2.2784999 0 0 0 0.24999388,7.550581 1.0320015,2.2784999 0 0 0 1.2819959,9.8290811 1.0320015,2.2784999 0 0 0 2.3139969,7.550581 1.0320015,2.2784999 0 0 0 1.2819959,5.2720815 Z\"\n     label=\"tch3\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"ctch3-path730\" />\n</g>",
+    "tch4": "<g transform=\"translate(10.344 4.000) scale(1.29204)\">\n  <defs\n     id=\"ctch4-defs1\" />\n  <path\n     d=\"m 1.2819957,0.2499988 a 1.0320015,2.2784999 0 0 0 -1.03200198,2.2785 1.0320015,2.2784999 0 0 0 1.03200198,2.2785 1.0320015,2.2784999 0 0 0 1.032001,-2.2785 1.0320015,2.2784999 0 0 0 -1.032001,-2.2785 z m 0,5.02208 a 1.0320015,2.2784999 0 0 0 -1.03200198,2.2785 1.0320015,2.2784999 0 0 0 1.03200198,2.2785 1.0320015,2.2784999 0 0 0 1.032001,-2.2785 1.0320015,2.2784999 0 0 0 -1.032001,-2.2785 z m 0,10.0441592 a 1.0320015,2.2784999 0 0 0 -1.03200198,2.2785 1.0320015,2.2784999 0 0 0 1.03200198,2.2785 1.0320015,2.2784999 0 0 0 1.032001,-2.2785 1.0320015,2.2784999 0 0 0 -1.032001,-2.2785 z m 0,-5.02208 a 1.0320015,2.2784999 0 0 0 -1.03200198,2.2785 1.0320015,2.2784999 0 0 0 1.03200198,2.2785 1.0320015,2.2784999 0 0 0 1.032001,-2.2785 1.0320015,2.2784999 0 0 0 -1.032001,-2.2785 z\"\n     label=\"tch4\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"ctch4-path731\" />\n</g>",
+    "tch5": "<g transform=\"translate(10.674 4.000) scale(1.03399)\">\n  <defs\n     id=\"ctch5-defs1\" />\n  <path\n     d=\"m 1.2819956,0.25000194 a 1.0320015,2.2784999 0 0 0 -1.03200204,2.27849996 1.0320015,2.2784999 0 0 0 1.03200204,2.2785 1.0320015,2.2784999 0 0 0 1.032001,-2.2785 1.0320015,2.2784999 0 0 0 -1.032001,-2.27849996 z m 0,5.02207996 a 1.0320015,2.2784999 0 0 0 -1.03200204,2.2785 1.0320015,2.2784999 0 0 0 1.03200204,2.2785 1.0320015,2.2784999 0 0 0 1.032001,-2.2785 1.0320015,2.2784999 0 0 0 -1.032001,-2.2785 z m 0,5.0220801 a 1.0320015,2.2784999 0 0 0 -1.03200204,2.2785 1.0320015,2.2784999 0 0 0 1.03200204,2.2785 1.0320015,2.2784999 0 0 0 1.032001,-2.2785 1.0320015,2.2784999 0 0 0 -1.032001,-2.2785 z m 0,10.04416 a 1.0320015,2.2784999 0 0 0 -1.03200204,2.2785 1.0320015,2.2784999 0 0 0 1.03200204,2.2785 1.0320015,2.2784999 0 0 0 1.032001,-2.2785 1.0320015,2.2784999 0 0 0 -1.032001,-2.2785 z m 0,-5.02208 a 1.0320015,2.2784999 0 0 0 -1.03200204,2.2785 1.0320015,2.2784999 0 0 0 1.03200204,2.2785 1.0320015,2.2784999 0 0 0 1.032001,-2.2785 1.0320015,2.2784999 0 0 0 -1.032001,-2.2785 z\"\n     label=\"tch5\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"ctch5-path732\" />\n</g>",
+    "tch6": "<g transform=\"translate(10.895 4.000) scale(0.86186)\">\n  <defs\n     id=\"ctch6-defs1\" />\n  <path\n     d=\"m 1.2820259,0.24999836 a 1.0320015,2.2784999 0 0 0 -1.03200199,2.27850004 1.0320015,2.2784999 0 0 0 1.03200199,2.2785 1.0320015,2.2784999 0 0 0 1.032001,-2.2785 1.0320015,2.2784999 0 0 0 -1.032001,-2.27850004 z m 0,5.02208004 a 1.0320015,2.2784999 0 0 0 -1.03200199,2.2785 1.0320015,2.2784999 0 0 0 1.03200199,2.2785 1.0320015,2.2784999 0 0 0 1.032001,-2.2785 1.0320015,2.2784999 0 0 0 -1.032001,-2.2785 z m 0,5.0220796 a 1.0320015,2.2784999 0 0 0 -1.03200199,2.2785 1.0320015,2.2784999 0 0 0 1.03200199,2.2785 1.0320015,2.2784999 0 0 0 1.032001,-2.2785 1.0320015,2.2784999 0 0 0 -1.032001,-2.2785 z m 0,5.02208 a 1.0320015,2.2784999 0 0 0 -1.03200199,2.2785 1.0320015,2.2784999 0 0 0 1.03200199,2.2785 1.0320015,2.2784999 0 0 0 1.032001,-2.2785 1.0320015,2.2784999 0 0 0 -1.032001,-2.2785 z m 0,10.04416 a 1.0320015,2.2784999 0 0 0 -1.03200199,2.2785 1.0320015,2.2784999 0 0 0 1.03200199,2.2785 1.0320015,2.2784999 0 0 0 1.032001,-2.2785 1.0320015,2.2784999 0 0 0 -1.032001,-2.2785 z m 0,-5.022079 a 1.0320015,2.2784999 0 0 0 -1.03200199,2.278499 1.0320015,2.2784999 0 0 0 1.03200199,2.2785 1.0320015,2.2784999 0 0 0 1.032001,-2.2785 1.0320015,2.2784999 0 0 0 -1.032001,-2.278499 z\"\n     label=\"tch6\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"ctch6-path733\" />\n</g>",
+    "tr": "<g transform=\"translate(8.318 4.000) scale(1.56565)\">\n  <defs\n     id=\"ctr-defs1\" />\n  <path\n     d=\"M 0.24999935,0.25000015 H 4.4538002 m -2.1019008,0 V 16.356531 m -1.092301,-10.7193498 2.184603,1.261281 m -2.184603,0.157783 2.184603,1.261281\"\n     label=\"tr\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"ctr-path224\" />\n</g>",
+    "trtr": "<g transform=\"translate(9.843 4.000) scale(0.91707)\">\n  <defs\n     id=\"ctrtr-defs1\" />\n  <path\n     d=\"M 0.25000284,0.24999943 H 4.4538028 m -3.1942,8.38001597 2.1846,1.261281 m -2.1846,0.1577826 2.1846,1.261281 m -2.1846,0 2.1846,1.261282 M 0.25000284,0.24999943 H 4.4538028 m -2.1019,0 V 28.101289 m -1.0923,-21.0587746 2.1846,1.261281 m -2.1846,1.7452836 2.1846,1.261281 m -2.1846,0 2.1846,1.261282\"\n     label=\"ttr\"\n     style=\"fill:none;stroke:@INK@;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none\"\n     id=\"ctrtr-path226\" />\n</g>"
   },
   "license": "Per file: CC BY-SA / CC BY / CC0 / Public Domain (see attributions)",
   "authors": "Wikimedia Commons contributors",
@@ -88,6 +147,360 @@ export const commonsVariantsPack: CustomSet & { attributions: { id: string; file
       "file": "Crochet fan.svg",
       "license": "CC BY 3.0",
       "artist": "WillowW"
+    },
+    {
+      "id": "crochet-half-double-crochet",
+      "file": "Crochet half double crochet.svg",
+      "license": "CC BY 3.0",
+      "artist": "WillowW"
+    },
+    {
+      "id": "crochet-inc1dc",
+      "file": "Crochet inc1dc.svg",
+      "license": "CC BY 3.0",
+      "artist": "WillowW"
+    },
+    {
+      "id": "crochet-increase",
+      "file": "Crochet increase.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Dianakc"
+    },
+    {
+      "id": "crochet-picot",
+      "file": "Crochet picot.svg",
+      "license": "CC BY 3.0",
+      "artist": "WillowW"
+    },
+    {
+      "id": "crochet-popcorn",
+      "file": "Crochet popcorn.svg",
+      "license": "CC BY 3.0",
+      "artist": "WillowW"
+    },
+    {
+      "id": "crochet-puff-stitch",
+      "file": "Crochet puff stitch.svg",
+      "license": "CC BY 3.0",
+      "artist": "WillowW"
+    },
+    {
+      "id": "crochet-raised-double-back",
+      "file": "Crochet raised double back.svg",
+      "license": "CC BY 3.0",
+      "artist": "WillowW"
+    },
+    {
+      "id": "crochet-raised-double-front",
+      "file": "Crochet raised double front.svg",
+      "license": "CC BY 3.0",
+      "artist": "WillowW"
+    },
+    {
+      "id": "crochet-single-crochet-2",
+      "file": "Crochet single crochet 2.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Yamaha5"
+    },
+    {
+      "id": "crochet-single-crochet",
+      "file": "Crochet single crochet.svg",
+      "license": "CC BY 3.0",
+      "artist": "WillowW"
+    },
+    {
+      "id": "crochet-slip-stitch",
+      "file": "Crochet slip stitch.svg",
+      "license": "CC BY 3.0",
+      "artist": "WillowW"
+    },
+    {
+      "id": "crochet-solid-shell-stitch",
+      "file": "Crochet solid shell stitch.svg",
+      "license": "CC BY 3.0",
+      "artist": "WillowW"
+    },
+    {
+      "id": "crochet-triple-triple",
+      "file": "Crochet triple triple.svg",
+      "license": "CC BY 3.0",
+      "artist": "WillowW"
+    },
+    {
+      "id": "crochet-triple",
+      "file": "Crochet triple.svg",
+      "license": "CC BY 3.0",
+      "artist": "WillowW"
+    },
+    {
+      "id": "crochet-tunisian-cluster",
+      "file": "Crochet Tunisian cluster.svg",
+      "license": "CC BY 3.0",
+      "artist": "WillowW"
+    },
+    {
+      "id": "crochet-tunisian-decrease",
+      "file": "Crochet Tunisian decrease.svg",
+      "license": "CC BY 3.0",
+      "artist": "WillowW"
+    },
+    {
+      "id": "crochet-tunisian-puff",
+      "file": "Crochet Tunisian puff.svg",
+      "license": "CC BY 3.0",
+      "artist": "WillowW"
+    },
+    {
+      "id": "crochet-tunisian-triple-around-another-stitch",
+      "file": "Crochet Tunisian triple around another stitch.svg",
+      "license": "CC BY 3.0",
+      "artist": "WillowW"
+    },
+    {
+      "id": "dc",
+      "file": "Dc-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "dc2sh",
+      "file": "Dc2sh-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "dc3sh",
+      "file": "Dc3sh-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "dc4sh",
+      "file": "Dc4sh-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "dc5sh",
+      "file": "Dc5sh-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "dc5tog",
+      "file": "Dc5tog-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "dtr",
+      "file": "Dtr-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "end",
+      "file": "End-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "flo",
+      "file": "Flo-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "hdc",
+      "file": "Hdc-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "hdc2sh",
+      "file": "Hdc2sh-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "hdc2tog",
+      "file": "Hdc2tog-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "hdc3sh",
+      "file": "Hdc3sh-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "hdg3tog",
+      "file": "Hdg3tog-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "magicring",
+      "file": "Magicring-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "ring",
+      "file": "Ring-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "ring6ch",
+      "file": "Ring6ch-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "sc",
+      "file": "Sc-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "sc-x",
+      "file": "Sc-x-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "sc2sh",
+      "file": "Sc2sh-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "sc2sh-x",
+      "file": "Sc2sh-x-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "sc2tog",
+      "file": "Sc2tog-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "sc2tog-x",
+      "file": "Sc2tog-x-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "sc3sh",
+      "file": "Sc3sh-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "sc3sh-x",
+      "file": "Sc3sh-x-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "sc3tog",
+      "file": "Sc3tog-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "sc3tog-x",
+      "file": "Sc3tog-x-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "slst",
+      "file": "Slst-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "st2tog-v1",
+      "file": "St2tog-v1.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "st2tog-v2",
+      "file": "St2tog-v2.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "st3tog-ch",
+      "file": "St3tog-ch.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "st3tog",
+      "file": "St3tog.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "start",
+      "file": "Start-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "tch1",
+      "file": "Tch1-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "tch2",
+      "file": "Tch2-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "tch3",
+      "file": "Tch3-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "tch4",
+      "file": "Tch4-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "tch5",
+      "file": "Tch5-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "tch6",
+      "file": "Tch6-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "tr",
+      "file": "Tr-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
+    },
+    {
+      "id": "trtr",
+      "file": "Trtr-crochet-symbols.svg",
+      "license": "CC BY-SA 4.0",
+      "artist": "Tek"
     }
   ]
 }

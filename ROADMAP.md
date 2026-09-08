@@ -89,9 +89,12 @@ extension; older v1 files keep importing forever via the existing
   order is fixed (guides → brackets → stitches → lines → text).
 - **Multi-chart documents** — several artboards per pattern (motif + schematic
   + edging) in one project.
-- **Written pattern → chart** — the reverse of the Rounds generator. The brief
-  positions this as a later, AI-assisted feature; the chart must remain
-  deterministic and editable regardless of how the draft was produced.
+- **Written pattern → chart** — **v1 shipped** (deterministic parser: round headers, stitch
+  abbreviations via terminology presets, counts, bracketed/×N repeats; radial layout with
+  cluster grouping and count-driven radii). Remaining ideas: asterisk-style repeats
+  ("repeat from \* 3 more times"), increases/decreases ("2 dc in next st", "sc2tog") as
+  placement annotations, multi-round radius refinement, and optionally an AI-assisted freeform
+  parser on top of the deterministic core.
 - **Print tiling** — split oversized charts across multiple pages with
   alignment marks.
 - **Stitch-count validation** — heuristic warnings when a round's stitch count

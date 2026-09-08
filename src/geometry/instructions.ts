@@ -60,7 +60,7 @@ function renderRuns(runs: Run[]): string {
     .join(', ')
 }
 
-function smallestPeriod(runs: Run[]): number {
+export function smallestPeriod(runs: Run[]): number {
   const n = runs.length
   for (let p = 1; p <= Math.floor(n / 2); p++) {
     if (n % p !== 0) continue
