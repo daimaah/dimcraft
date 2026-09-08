@@ -61,13 +61,13 @@ export function ToolPalette() {
 
   const setPalette = (patch: Partial<typeof palette>) => useStore.getState().setPalette(patch)
 
-  // default: centered along the top edge of the canvas
+  // default: anchored top-left, aligned with the sidebar buttons below
   useEffect(() => {
     if (pos) return
     const bar = barRef.current
     const parent = bar?.parentElement
     if (!bar || !parent) return
-    setPalette({ pos: { x: Math.max(8, (parent.clientWidth - bar.offsetWidth) / 2), y: 8 } })
+    setPalette({ pos: { x: 8, y: 8 } })
   }, [pos])
 
   // clamp into the canvas on mount/resize/fullscreen — the saved spot may come
@@ -98,7 +98,7 @@ export function ToolPalette() {
     const bar = barRef.current
     const parent = bar?.parentElement
     if (!bar || !parent) return
-    setPalette({ pos: { x: Math.max(8, (parent.clientWidth - bar.offsetWidth) / 2), y: 8 } })
+    setPalette({ pos: { x: 8, y: 8 } })
   }
 
   const startDrag = (e: React.PointerEvent) => {
