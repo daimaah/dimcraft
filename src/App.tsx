@@ -86,6 +86,7 @@ export default function App() {
       if (typeof prefs.rightCollapsed === 'boolean') useStore.setState({ rightCollapsed: prefs.rightCollapsed })
       if (typeof prefs.lefty === 'boolean') useStore.setState({ lefty: prefs.lefty })
       if (typeof prefs.viewAnimations === 'boolean') useStore.setState({ viewAnimations: prefs.viewAnimations })
+      if (prefs.paletteRows === 1 || prefs.paletteRows === 2) useStore.setState({ paletteRows: prefs.paletteRows })
     } catch {
       /* ignore bad prefs */
     }
@@ -108,7 +109,8 @@ export default function App() {
         s.leftCollapsed !== prev.leftCollapsed ||
         s.rightCollapsed !== prev.rightCollapsed ||
         s.lefty !== prev.lefty ||
-        s.viewAnimations !== prev.viewAnimations
+        s.viewAnimations !== prev.viewAnimations ||
+        s.paletteRows !== prev.paletteRows
       ) {
         localStorage.setItem(
           PREFS_KEY,
@@ -120,6 +122,7 @@ export default function App() {
             rightCollapsed: s.rightCollapsed,
             lefty: s.lefty,
             viewAnimations: s.viewAnimations,
+            paletteRows: s.paletteRows,
           }),
         )
       }

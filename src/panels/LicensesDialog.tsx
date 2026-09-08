@@ -20,6 +20,7 @@ export function LicensesDialog() {
       <div className="modal wide" onPointerDown={(e) => e.stopPropagation()}>
         <div className="modal-head">
           <h2>Licenses &amp; attributions</h2>
+            <span className="hint">DimCrochet v{__APP_VERSION__}{__GIT_COMMIT__ ? ` · ${__GIT_COMMIT__}` : ''}</span>
           <button className="icon-btn" onClick={() => useStore.getState().closeDialog()}>
             ✕
           </button>

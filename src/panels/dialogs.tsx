@@ -499,6 +499,7 @@ export function FileLoadRow() {
 export function OptionsDialog() {
   const viewAnimations = useStore((s) => s.viewAnimations)
   const lefty = useStore((s) => s.lefty)
+  const paletteRows = useStore((s) => s.paletteRows)
   const [sidecarUrl, setSidecarUrl] = useState(
     () => localStorage.getItem('dimcrochet.sidecarUrl') ?? location.origin,
   )
@@ -534,6 +535,25 @@ export function OptionsDialog() {
             </span>
           </span>
         </label>
+        <div className="form-row" data-testid="opt-rows">
+          <span>
+            <strong>Tool palette layout</strong>
+            <br />
+            <span className="hint">Two rows take less horizontal space.</span>
+          </span>
+          <div className="seg">
+            {[1, 2].map((n) => (
+              <button
+                key={n}
+                className={paletteRows === n ? 'on' : ''}
+                data-testid={`opt-rows-${n}`}
+                onClick={() => useStore.getState().setPaletteRows(n as 1 | 2)}
+              >
+                {n === 1 ? 'One row' : 'Two rows'}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="form-row" data-testid="opt-sidecar">
           <span>
             <strong>Sidecar URL</strong>

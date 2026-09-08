@@ -76,6 +76,8 @@ interface EditorState {
   lefty: boolean
   /** animate collapsible bars and the zoom indicator in the design view */
   viewAnimations: boolean
+  /** tool palette layout: 1 = single row, 2 = two stacked rows */
+  paletteRows: 1 | 2
   /** symbol id a "show me how" button asked the stitch-motions dialog to open */
   motionRequest: string | null
   leftCollapsed: boolean
@@ -182,6 +184,7 @@ interface EditorState {
   setSnap: (v: boolean) => void
   setLefty: (v: boolean) => void
   setViewAnimations: (v: boolean) => void
+  setPaletteRows: (n: 1 | 2) => void
   requestMotion: (symbolId: string) => void
   requestMotionDone: () => void
   setGrid: (v: boolean) => void
@@ -258,6 +261,7 @@ export const useStore = create<EditorState>()((set, get) => {
     guidesVisible: true,
     lefty: false,
     viewAnimations: true,
+    paletteRows: 1,
     motionRequest: null,
 
     dialog: null,
@@ -925,6 +929,7 @@ export const useStore = create<EditorState>()((set, get) => {
     setSnap: (v) => set({ snapEnabled: v }),
     setLefty: (v) => set({ lefty: v }),
     setViewAnimations: (v) => set({ viewAnimations: v }),
+    setPaletteRows: (n) => set({ paletteRows: n }),
     requestMotion: (symbolId) => set({ motionRequest: symbolId, dialog: 'stitch-motions' }),
     requestMotionDone: () => set({ motionRequest: null }),
     setGrid: (v) => set({ gridVisible: v }),

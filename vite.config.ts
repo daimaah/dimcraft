@@ -2,8 +2,24 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { execSync } from 'node:child_process'
+import { readFileSync } from 'node:fs'
+
+const pkg = JSON.parse(readFileSync('./package.json', 'utf8'))
+// short commit hash for the About/version display; empty when .git is not
+// part of the build context (e.g. container builds) — inject GIT_HASH instead
+let gitHash = ''
+try {
+  gitHash = execSync('git rev-parse --short HEAD').toString().trim()
+} catch {
+  gitHash = process.env.GIT_HASH ?? ''
+}
 
 export default defineConfig({
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
+    __GIT_COMMIT__: JSON.stringify(gitHash),
+  },
   plugins: [
     react(),
     VitePWA({

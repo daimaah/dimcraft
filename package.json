@@ -1,7 +1,7 @@
 {
   "name": "dimcrochet",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.5.0",
   "type": "module",
   "description": "Crochet round & motif chart composer — draw granny squares, doilies and circular crochet charts in the browser.",
   "scripts": {
