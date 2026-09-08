@@ -88,8 +88,10 @@ interface EditorState {
   }
   /** status bar clock in 24-hour format */
   clock24h: boolean
-  /** opacity of the floating tool palette, percent (30 minimum stays findable) */
+  /** opacity of the floating tool palette at rest, percent (30 minimum stays findable) */
   toolbarOpacity: number
+  /** opacity while the pointer hovers the palette (>= resting value) */
+  toolbarHoverOpacity: number
   /** symbol id a "show me how" button asked the stitch-motions dialog to open */
   motionRequest: string | null
   leftCollapsed: boolean
@@ -200,6 +202,7 @@ interface EditorState {
   resetPalette: () => void
   setClock24h: (v: boolean) => void
   setToolbarOpacity: (v: number) => void
+  setToolbarHoverOpacity: (v: number) => void
   requestMotion: (symbolId: string) => void
   requestMotionDone: () => void
   setGrid: (v: boolean) => void
@@ -279,6 +282,7 @@ export const useStore = create<EditorState>()((set, get) => {
     palette: { rows: 1, pos: null, collapsed: false, order: null, hidden: [] },
     clock24h: false,
     toolbarOpacity: 100,
+    toolbarHoverOpacity: 100,
     motionRequest: null,
 
     dialog: null,
@@ -950,7 +954,19 @@ export const useStore = create<EditorState>()((set, get) => {
     resetPalette: () =>
       set({ palette: { rows: 1, pos: null, collapsed: false, order: null, hidden: [] } }),
     setClock24h: (v) => set({ clock24h: v }),
-    setToolbarOpacity: (v) => set({ toolbarOpacity: Math.round(Math.min(100, Math.max(30, v))) }),
+    setToolbarOpacity: (v) =>
+      set((st) => {
+        const rest = Math.round(Math.min(100, Math.max(30, v)))
+        // hover opacity always sits at or above the resting value
+        const hover = Math.max(rest, st.toolbarHoverOpacity)
+        return { toolbarOpacity: rest, toolbarHoverOpacity: hover }
+      }),
+    setToolbarHoverOpacity: (v) =>
+      set((st) => {
+        // never below the resting opacity
+        const hover = Math.round(Math.min(100, Math.max(st.toolbarOpacity, v)))
+        return { toolbarHoverOpacity: hover }
+      }),
     requestMotion: (symbolId) => set({ motionRequest: symbolId, dialog: 'stitch-motions' }),
     requestMotionDone: () => set({ motionRequest: null }),
     setGrid: (v) => set({ gridVisible: v }),

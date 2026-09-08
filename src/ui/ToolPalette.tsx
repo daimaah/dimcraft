@@ -148,6 +148,7 @@ export function ToolPalette() {
   const zoomPct = Math.round(viewport.zoom * 100)
   const viewAnimationsOn = useStore((s) => s.viewAnimations)
   const toolbarOpacity = useStore((s) => s.toolbarOpacity)
+  const toolbarHoverOpacity = useStore((s) => s.toolbarHoverOpacity)
   const fit = () => {
     const el = document.querySelector('.canvas-wrap')
     if (el) {
@@ -329,7 +330,15 @@ export function ToolPalette() {
       className={`tool-palette bar-pop${collapsed ? ' compact' : ''}${rows === 2 ? ' two-rows' : ''}${
         dragging ? ' dragging' : ''
       }`}
-      style={{ left: pos?.x, top: pos?.y, opacity: toolbarOpacity / 100 }}
+      style={
+        {
+          left: pos?.x,
+          top: pos?.y,
+          opacity: toolbarOpacity / 100,
+          '--bar-rest': toolbarOpacity / 100,
+          '--bar-hover': Math.max(toolbarOpacity, toolbarHoverOpacity) / 100,
+        } as React.CSSProperties
+      }
       data-testid="tool-palette"
     >
       {/* always-visible left island: drag to move + collapse/expand, same spot in both states */}

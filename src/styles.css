@@ -1721,3 +1721,31 @@ button {
   border-radius: 1px;
   margin: 3px 4px;
 }
+
+/* toolbar opacity: rest vs hover values from Options */
+.tool-palette {
+  opacity: var(--bar-rest, 1);
+  transition: opacity 0.2s ease;
+}
+
+.tool-palette:hover {
+  opacity: var(--bar-hover, 1);
+}
+
+:root[data-anim='off'] .tool-palette {
+  transition: none;
+}
+
+/* toolbar opacity: rest vs hover values from Options */
+.tool-palette {
+  opacity: var(--bar-rest, 1);
+  transition: opacity 0.2s ease;
+}
+
+.tool-palette:hover {
+  opacity: var(--bar-hover, 1);
+}
+
+:root[data-anim='off'] .tool-palette {
+  transition: none;
+}

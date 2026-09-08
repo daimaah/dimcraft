@@ -511,6 +511,7 @@ export function OptionsDialog() {
   const palette = useStore((s) => s.palette)
   const clock24h = useStore((s) => s.clock24h)
   const toolbarOpacity = useStore((s) => s.toolbarOpacity)
+  const toolbarHoverOpacity = useStore((s) => s.toolbarHoverOpacity)
   const tool = useStore((s) => s.tool)
   const snapEnabled = useStore((s) => s.snapEnabled)
   const gridVisible = useStore((s) => s.gridVisible)
@@ -625,7 +626,7 @@ export function OptionsDialog() {
         <div className="form">
           <div className="form-row opacity-slider" data-testid="opt-toolbar-opacity">
             <span>
-              <strong>Toolbar opacity</strong>
+              <strong>Toolbar opacity at rest</strong>
               <br />
               <span className="hint">Make the floating palette more subtle. Never fully invisible — 30% keeps it findable.</span>
             </span>
@@ -640,6 +641,25 @@ export function OptionsDialog() {
                 onChange={(e) => useStore.getState().setToolbarOpacity(Number(e.target.value))}
               />
               <span className="opacity-value">{toolbarOpacity}%</span>
+            </span>
+          </div>
+          <div className="form-row" data-testid="opt-toolbar-hover">
+            <span>
+              <strong>Toolbar opacity on hover</strong>
+              <br />
+              <span className="hint">Brightens while the pointer is over the palette. Cannot go below the resting value.</span>
+            </span>
+            <span className="opacity-slider">
+              <input
+                type="range"
+                min={toolbarOpacity}
+                max={100}
+                step={5}
+                value={toolbarHoverOpacity}
+                data-testid="opt-toolbar-hover-slider"
+                onChange={(e) => useStore.getState().setToolbarHoverOpacity(Number(e.target.value))}
+              />
+              <span className="opacity-value">{toolbarHoverOpacity}%</span>
             </span>
           </div>
           <label className="check" data-testid="opt-animations">

@@ -88,6 +88,7 @@ export default function App() {
       if (typeof prefs.viewAnimations === 'boolean') useStore.setState({ viewAnimations: prefs.viewAnimations })
       if (typeof prefs.clock24h === 'boolean') useStore.setState({ clock24h: prefs.clock24h })
       if (typeof prefs.toolbarOpacity === 'number') useStore.getState().setToolbarOpacity(prefs.toolbarOpacity)
+      if (typeof prefs.toolbarHoverOpacity === 'number') useStore.getState().setToolbarHoverOpacity(prefs.toolbarHoverOpacity)
       const legacy = (() => {
         try {
           return JSON.parse(localStorage.getItem('dimcrochet.toolPalette') ?? '{}')
@@ -136,7 +137,8 @@ export default function App() {
         s.viewAnimations !== prev.viewAnimations ||
         s.palette !== prev.palette ||
         s.clock24h !== prev.clock24h ||
-        s.toolbarOpacity !== prev.toolbarOpacity
+        s.toolbarOpacity !== prev.toolbarOpacity ||
+        s.toolbarHoverOpacity !== prev.toolbarHoverOpacity
       ) {
         localStorage.setItem(
           PREFS_KEY,
@@ -151,6 +153,7 @@ export default function App() {
             palette: s.palette,
             clock24h: s.clock24h,
             toolbarOpacity: s.toolbarOpacity,
+            toolbarHoverOpacity: s.toolbarHoverOpacity,
           }),
         )
       }
