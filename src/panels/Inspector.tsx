@@ -5,7 +5,6 @@ import { BUILTIN_SETS, resolveSet } from '../symbols/sets'
 import { TERMINOLOGY_PRESETS } from '../symbols/terminology'
 import { legendItems } from '../geometry/legend'
 import { contentBBox } from '../geometry/bounds'
-import { uid } from '../model/doc'
 import { downloadBlob, safeFilename } from '../export/download'
 import type { Guide } from '../model/types'
 
@@ -366,36 +365,13 @@ function SymbolSetSection() {
   const current = resolveSet(doc)
 
   const importPack = async (file: File) => {
-    try {
-      const parsed = JSON.parse(await file.text()) as {
-        name?: string
-        artwork?: unknown
-        license?: unknown
-        authors?: unknown
-        sourceUrl?: unknown
-        notes?: unknown
-      }
-      const artwork = parsed.artwork
-      if (!artwork || typeof artwork !== 'object') throw new Error('no artwork map')
-      const clean: Record<string, string> = {}
-      for (const [k, v] of Object.entries(artwork as Record<string, unknown>)) {
-        if (typeof v === 'string' && v.includes('@INK@')) clean[k] = v
-      }
-      if (Object.keys(clean).length === 0) throw new Error('no usable symbol artwork')
-      const id = uid('set')
-      const str = (v: unknown) => (typeof v === 'string' ? v : undefined)
-      st.getState().addCustomSet({
-        id,
-        name: parsed.name ?? file.name.replace(/\.json$/i, ''),
-        artwork: clean,
-        license: str(parsed.license),
-        authors: str(parsed.authors),
-        sourceUrl: str(parsed.sourceUrl),
-        notes: str(parsed.notes),
-      })
-    } catch (err) {
-      window.alert(`That symbol pack could not be read: ${err instanceof Error ? err.message : err}`)
+    const { readSymbolPackFile } = await import('../export/projectFile')
+    const set = await readSymbolPackFile(file)
+    if (!set) {
+      window.alert('That symbol pack could not be read. Expected a DimCrochet symbol pack with @INK@ artwork.')
+      return
     }
+    st.getState().addCustomSet(set)
   }
 
   const exportPack = () => {

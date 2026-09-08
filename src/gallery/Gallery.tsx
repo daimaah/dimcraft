@@ -9,6 +9,7 @@ import { contentBBox } from '../geometry/bounds'
 import { guideSvgPath } from '../geometry/guides'
 import { placementTransform } from '../geometry/transform'
 import { lineSvg } from '../render/markup'
+import { readProjectFile, readSymbolPackFile } from '../export/projectFile'
 
 const LAST_KEY = 'dimcrochet.lastProject'
 
@@ -16,9 +17,33 @@ export function Gallery() {
   const [projects, setProjects] = useState<ProjectRecord[] | null>(null)
   const [renamingId, setRenamingId] = useState<string | null>(null)
   const [renameValue, setRenameValue] = useState('')
+  const [dragOver, setDragOver] = useState(false)
 
   const refresh = () => void listProjects().then(setProjects)
   useEffect(refresh, [])
+
+  /** purely client-side import: dropped files are read into memory, never uploaded */
+  const importFiles = async (files: File[]) => {
+    for (const f of files) {
+      if (f.name.endsWith('.pack.json')) {
+        const set = await readSymbolPackFile(f)
+        if (!set) {
+          window.alert(`Could not read symbol pack ${f.name}.`)
+          continue
+        }
+        useStore.getState().addCustomSet(set)
+        useStore.getState().setSymbolSet(set.id)
+        window.alert(`Symbol pack “${set.name}” imported and selected.`)
+        continue
+      }
+      const pf = await readProjectFile(f)
+      if (!pf) {
+        window.alert(`Could not read chart ${f.name}. Expected a DimCrochet export (.dimcrochet.json).`)
+        continue
+      }
+      create(pf.name, pf.doc)
+    }
+  }
 
   const open = (rec: ProjectRecord) => {
     localStorage.setItem(LAST_KEY, rec.id)
@@ -54,7 +79,19 @@ export function Gallery() {
   }
 
   return (
-    <div className="gallery">
+    <div
+      className={`gallery${dragOver ? ' drag-over' : ''}`}
+      onDragOver={(e) => {
+        e.preventDefault()
+        setDragOver(true)
+      }}
+      onDragLeave={() => setDragOver(false)}
+      onDrop={(e) => {
+        e.preventDefault()
+        setDragOver(false)
+        void importFiles(Array.from(e.dataTransfer.files))
+      }}
+    >
       <header className="gallery-head">
         <div className="brand big">
           <svg viewBox="0 0 64 64" width="34" height="34" aria-hidden>
@@ -144,8 +181,9 @@ export function Gallery() {
       </div>
       <footer className="gallery-foot">
         <p className="hint">
-          Charts are stored only in this browser. DimCrochet is open source (MIT) — symbol packs keep
-          their own licenses.
+          Charts are stored only in this browser. Drop a .dimcrochet.json export or a symbol pack
+          anywhere on this page to import it — purely client-side, nothing is uploaded. DimCrochet is
+          open source (MIT); symbol packs keep their own licenses.
         </p>
         <button className="btn" onClick={() => useStore.getState().openDialog('licenses')}>
           Licenses &amp; attributions

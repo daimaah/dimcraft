@@ -879,6 +879,11 @@ button {
   padding: 34px clamp(16px, 6vw, 90px);
 }
 
+.gallery.drag-over {
+  outline: 3px dashed var(--accent);
+  outline-offset: -12px;
+}
+
 .gallery-head {
   display: flex;
   align-items: center;
