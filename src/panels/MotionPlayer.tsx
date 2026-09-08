@@ -15,7 +15,7 @@ const STEP_MS: Record<MotionKind, number> = {
 }
 
 /** Animated side-view player for one stitch's physical technique. */
-export function MotionPlayer({ motion }: { motion: StitchMotion }) {
+export function MotionPlayer({ motion, mirrored = false }: { motion: StitchMotion; mirrored?: boolean }) {
   const steps = motion.steps
   const clock = useRef({ i: 0, t: 0 })
   const playingRef = useRef(true)
@@ -90,7 +90,7 @@ export function MotionPlayer({ motion }: { motion: StitchMotion }) {
 
   return (
     <div className="motion-player" data-testid="motion-player">
-      {renderScene(scene)}
+      {renderScene(scene, mirrored)}
       <div className="motion-caption" data-testid="motion-caption">
         <span className="motion-stepnum">
           Step {clock.current.i + 1}/{steps.length}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { STITCH_MOTIONS, motionFor } from '../src/motion/stitches'
+import { STITCH_MOTIONS, motionFor, motionForAny, genericMotion } from '../src/motion/stitches'
 import { applyStep, baseScene, simulate } from '../src/motion/engine'
 import type { MotionKind, MotionStep, StitchMotion } from '../src/motion/types'
 
@@ -79,6 +79,90 @@ describe('stitch motion data', () => {
     const body = kinds(ch).slice(1)
     expect(body).toEqual(['yarnOver', 'chain', 'yarnOver', 'chain', 'yarnOver', 'chain', 'hold'])
     expect(ch.steps[0].kind).toBe('slipKnot')
+  })
+})
+
+describe('family stitches (shells, texture, decreases)', () => {
+  const FAMILY_IDS = [
+    'picot', 'shell', 'popcorn', 'puff', 'bobble', 'fpdc', 'bpdc', 'crosseddc', 'blo', 'flo',
+    'sc2tog', 'sc3tog', 'hdc2tog', 'hdg3tog', 'tr3tog', 'dc5tog', 'st2tog-v1', 'st3tog', 'ring',
+    'crochet-picot', 'crochet-popcorn', 'crochet-puff-stitch', 'crochet-raised-double-front',
+    'crochet-dc2tog', 'crochet-dc3tog', 'crochet-decrease', 'crochet-increase', 'dc5sh', 'sc2sh',
+  ]
+
+  it('resolves every family id to a motion that ends with one working loop', () => {
+    for (const id of FAMILY_IDS) {
+      const m = motionForAny(id, id)
+      expect(m, `no motion for ${id}`).toBeTruthy()
+      expect(ladder(m!).at(-1), `${id} must end with 1 loop`).toBe(1)
+      expect(m!.approximate, `${id} should be authored, not approximate`).toBeFalsy()
+    }
+  })
+
+  it('simulates every family motion to the declared end state', () => {
+    for (const id of FAMILY_IDS) {
+      const s = simulate(motionForAny(id, id)!.steps)
+      expect(s.loops, `${id} must end with 1 loop`).toBe(1)
+    }
+  })
+
+  it('works shells as N stitches into the same stitch', () => {
+    const sh = motionForAny('dc5sh', '5-dc shell')!
+    expect(sh.approximate).toBeFalsy()
+    const inserts = sh.steps.filter((s) => s.kind === 'insert')
+    expect(inserts).toHaveLength(5)
+    for (const ins of inserts) expect(ins.target).toBe('A')
+    expect(ladder(sh).at(-1)).toBe(1)
+    const crossed = motionForAny('sc2sh-x', 'crossed 2-sc shell')!
+    expect(crossed.approximate).toBe(true)
+  })
+
+  it('joins multi-stitch decreases across targets A, B and C', () => {
+    const dec = motionForAny('tr3tog', '3 tr together')!
+    const inserts = dec.steps.filter((s) => s.kind === 'insert')
+    expect(inserts.map((s) => s.target)).toEqual(['A', 'B', 'C'])
+    expect(ladder(dec).at(-1)).toBe(1)
+    // the standard hdc2tog closes through all five loops
+    const hdc2 = motionForAny('hdc2tog', 'hdc2tog')!
+    expect(hdc2.steps.at(-1)?.through).toBe(5)
+  })
+
+  it('gives post stitches and loop variants their own insertion captions', () => {
+    const fpdc = motionForAny('fpdc', 'FPdc')!
+    expect(fpdc.steps.find((s) => s.kind === 'insert')?.caption).toMatch(/front to BACK/)
+    const bpdc = motionForAny('bpdc', 'BPdc')!
+    expect(bpdc.steps.find((s) => s.kind === 'insert')?.caption).toMatch(/BACK to FRONT/)
+    const blo = motionForAny('blo', 'blo')!
+    expect(blo.steps.find((s) => s.kind === 'insert')?.caption).toMatch(/BACK loop/)
+  })
+})
+
+describe('generic fallback motion', () => {
+  it('approximates by stitch height from the id', () => {
+    const dc = genericMotion('some-dc-thing', 'thing')
+    expect(dc.approximate).toBe(true)
+    // dc formula: one yarn over, pull up, then two pull-through-2 rounds
+    expect(kinds(dc).slice(1, 4)).toEqual(['yarnOver', 'insert', 'pullUp'])
+    expect(dc.steps.filter((s) => s.kind === 'pullThrough').map((s) => s.through)).toEqual([2, 2])
+    const tr = genericMotion('fancy-tr', 'fancy')
+    expect(tr.steps.filter((s) => s.kind === 'yarnOver')).toHaveLength(5) // 2 leading wraps + 3 closing
+    const dtr = genericMotion('dtr', 'dtr')
+    expect(dtr.steps.filter((s) => s.kind === 'pullThrough')).toHaveLength(4)
+    const hdc = genericMotion('half-something', 'half')
+    expect(hdc.steps.at(-1)).toMatchObject({ kind: 'pullThrough', through: 3 })
+  })
+
+  it('covers any palette symbol, ending with one loop', () => {
+    for (const id of ['crochet-basic-tunisian-stitch', 'crochet-broomstick', 'start', 'end', 'weird-id']) {
+      const m = motionForAny(id, id)!
+      expect(m.approximate).toBe(true)
+      expect(simulate(m.steps).loops).toBe(1)
+    }
+  })
+
+  it('prefers authored motions over the fallback', () => {
+    expect(motionForAny('dc', 'dc')!.approximate).toBeFalsy()
+    expect(motionForAny('magicring', 'magic ring')!.steps[0].kind).toBe('ringShow')
   })
 })
 

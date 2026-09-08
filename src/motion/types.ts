@@ -1,7 +1,7 @@
 // ---- Shared types for the stitch-motion (physical technique) animations ----
 
 /** Where the hook inserts during an "insert" step. */
-export type InsertTarget = 'A' | 'B' | 'ring'
+export type InsertTarget = 'A' | 'B' | 'C' | 'ring'
 
 export type MotionKind =
   | 'slipKnot' // form a loop, pull the tail through, tighten on the hook
@@ -30,4 +30,6 @@ export interface StitchMotion {
   symbolId: string
   name: string
   steps: MotionStep[]
+  /** True when the choreography is a height-based approximation, not the authored technique. */
+  approximate?: boolean
 }

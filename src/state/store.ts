@@ -71,6 +71,10 @@ interface EditorState {
   snapEnabled: boolean
   gridVisible: boolean
   guidesVisible: boolean
+  /** mirror the technique animations and follow order for left-handed crocheters */
+  lefty: boolean
+  /** symbol id a "show me how" button asked the stitch-motions dialog to open */
+  motionRequest: string | null
   leftCollapsed: boolean
   rightCollapsed: boolean
 
@@ -170,6 +174,9 @@ interface EditorState {
   fitView: (width: number, height: number) => void
 
   setSnap: (v: boolean) => void
+  setLefty: (v: boolean) => void
+  requestMotion: (symbolId: string) => void
+  requestMotionDone: () => void
   setGrid: (v: boolean) => void
   setGuidesVisible: (v: boolean) => void
   setLeftCollapsed: (v: boolean) => void
@@ -242,6 +249,8 @@ export const useStore = create<EditorState>()((set, get) => {
     snapEnabled: true,
     gridVisible: true,
     guidesVisible: true,
+    lefty: false,
+    motionRequest: null,
 
     dialog: null,
     placeEvenlyGuideId: null,
@@ -883,6 +892,9 @@ export const useStore = create<EditorState>()((set, get) => {
       }),
 
     setSnap: (v) => set({ snapEnabled: v }),
+    setLefty: (v) => set({ lefty: v }),
+    requestMotion: (symbolId) => set({ motionRequest: symbolId, dialog: 'stitch-motions' }),
+    requestMotionDone: () => set({ motionRequest: null }),
     setGrid: (v) => set({ gridVisible: v }),
     setGuidesVisible: (v) => set({ guidesVisible: v }),
     leftCollapsed: false,

@@ -87,12 +87,13 @@ function Yarn({ scene }: { scene: Scene }) {
 
 function Fabric({ scene }: { scene: Scene }) {
   const worked = [0, 1, 2, 3].map((i) => stitchV(152 + i * 28, 126, 152, YARN_SOFT, 4))
-  const isHi = (t: 'A' | 'B') => scene.highlight === t
+  const isHi = (t: 'A' | 'B' | 'C') => scene.highlight === t
   return (
     <g>
       {worked}
       {stitchV(TARGET.A.x, 126, 152, isHi('A') ? ACCENT : INK, isHi('A') ? 5 : 4)}
       {stitchV(TARGET.B.x, 126, 152, isHi('B') ? ACCENT : INK, isHi('B') ? 5 : 4)}
+      {stitchV(TARGET.C.x, 126, 152, isHi('C') ? ACCENT : INK, isHi('C') ? 5 : 4)}
     </g>
   )
 }
@@ -162,11 +163,16 @@ function FormingLoop({ scene }: { scene: Scene }) {
 }
 
 /** Render the whole scene, layer order depending on whether the hook is inside the fabric. */
-export function renderScene(scene: Scene) {
+export function renderScene(scene: Scene, mirrored = false) {
   const hook = <Hook scene={scene} />
   const fabric = <Fabric scene={scene} />
   return (
-    <svg viewBox={`0 0 ${VIEW.w} ${VIEW.h}`} className="motion-svg" data-testid="motion-svg">
+    <svg
+      viewBox={`0 0 ${VIEW.w} ${VIEW.h}`}
+      className="motion-svg"
+      data-testid="motion-svg"
+      style={mirrored ? { transform: 'scaleX(-1)' } : undefined}
+    >
       <rect x={0} y={0} width={VIEW.w} height={VIEW.h} fill="var(--paper, #faf8f4)" />
       <Ring scene={scene} />
       <Chains scene={scene} />

@@ -61,6 +61,7 @@ export default function App() {
       if (typeof prefs.guidesVisible === 'boolean') useStore.setState({ guidesVisible: prefs.guidesVisible })
       if (typeof prefs.leftCollapsed === 'boolean') useStore.setState({ leftCollapsed: prefs.leftCollapsed })
       if (typeof prefs.rightCollapsed === 'boolean') useStore.setState({ rightCollapsed: prefs.rightCollapsed })
+      if (typeof prefs.lefty === 'boolean') useStore.setState({ lefty: prefs.lefty })
     } catch {
       /* ignore bad prefs */
     }
@@ -81,7 +82,8 @@ export default function App() {
         s.gridVisible !== prev.gridVisible ||
         s.guidesVisible !== prev.guidesVisible ||
         s.leftCollapsed !== prev.leftCollapsed ||
-        s.rightCollapsed !== prev.rightCollapsed
+        s.rightCollapsed !== prev.rightCollapsed ||
+        s.lefty !== prev.lefty
       ) {
         localStorage.setItem(
           PREFS_KEY,
@@ -91,6 +93,7 @@ export default function App() {
             guidesVisible: s.guidesVisible,
             leftCollapsed: s.leftCollapsed,
             rightCollapsed: s.rightCollapsed,
+            lefty: s.lefty,
           }),
         )
       }

@@ -18,10 +18,12 @@ function loadBarState(): Partial<FollowBarState> {
   }
 }
 
+const dirOf = () => (useStore.getState().lefty ? 'cw' : 'ccw')
+
 /** Move the stitch cursor within the round's working order, crossing round boundaries. */
 export function stepFollow(delta: 1 | -1) {
   const st = useStore.getState()
-  const steps = followSteps(st.doc, st.followTolerance)
+  const steps = followSteps(st.doc, st.followTolerance, dirOf())
   if (steps.length === 0) return
   const idx = Math.min(st.followRound, steps.length - 1)
   const order = steps[idx].order
@@ -45,7 +47,7 @@ export function toggleFollowPlayback() {
     st.setFollowPlaying(false)
     return
   }
-  const steps = followSteps(st.doc, st.followTolerance)
+  const steps = followSteps(st.doc, st.followTolerance, dirOf())
   if (steps.length === 0) return
   const idx = Math.min(st.followRound, steps.length - 1)
   const order = steps[idx].order
@@ -53,6 +55,22 @@ export function toggleFollowPlayback() {
   if (st.followStitch == null) st.seekFollow(idx, 0, true)
   else if (atEnd) st.seekFollow(0, 0, true)
   else st.setFollowPlaying(true)
+}
+
+/** Open the technique animation for the current round's dominant stitch. */
+export function showHowForCurrentRound() {
+  const st = useStore.getState()
+  const steps = followSteps(st.doc, st.followTolerance, dirOf())
+  if (steps.length === 0) return
+  const step = steps[Math.min(st.followRound, steps.length - 1)]
+  const counts = new Map<string, number>()
+  for (const id of step.ids) {
+    const p = st.doc.placements.find((pl) => pl.id === id)
+    if (p) counts.set(p.symbolId, (counts.get(p.symbolId) ?? 0) + 1)
+  }
+  const ranked = [...counts.entries()].sort((a, b) => b[1] - a[1])
+  const pick = ranked.find(([id]) => id !== 'ch')?.[0] ?? ranked[0]?.[0]
+  if (pick) st.requestMotion(pick)
 }
 
 /** Bottom-of-canvas bar for stepping through the chart round by round. */
@@ -63,8 +81,12 @@ export function FollowBar() {
   const followStitch = useStore((s) => s.followStitch)
   const playing = useStore((s) => s.followPlaying)
   const speed = useStore((s) => s.followSpeed)
+  const lefty = useStore((s) => s.lefty)
 
-  const steps = useMemo(() => followSteps(doc, tolerance), [doc, tolerance])
+  const steps = useMemo(
+    () => followSteps(doc, tolerance, lefty ? 'cw' : 'ccw'),
+    [doc, tolerance, lefty],
+  )
   const idx = steps.length === 0 ? 0 : Math.min(round, steps.length - 1)
   const step = steps[idx]
   const order = step?.order ?? []
@@ -75,7 +97,7 @@ export function FollowBar() {
     if (!playing) return
     const t = window.setTimeout(() => {
       const st = useStore.getState()
-      const cur = followSteps(st.doc, st.followTolerance)
+      const cur = followSteps(st.doc, st.followTolerance, st.lefty ? 'cw' : 'ccw')
       if (cur.length === 0) return st.setFollowPlaying(false)
       const i = Math.min(st.followRound, cur.length - 1)
       const ord = cur[i].order
@@ -227,23 +249,34 @@ export function FollowBar() {
             : 'No rounds detected'}
         </span>
         <span className="follow-text">{step?.text ?? '—'}</span>
-        <div className="seg follow-tolerance">
-          {(
-            [
-              [10, 'Tight'],
-              [18, 'Normal'],
-              [28, 'Loose'],
-            ] as const
-          ).map(([v, label]) => (
-            <button
-              key={v}
-              className={tolerance === v ? 'on' : ''}
-              title={`Round grouping: ${label.toLowerCase()}`}
-              onClick={() => useStore.getState().setFollowTolerance(v)}
-            >
-              {label}
-            </button>
-          ))}
+        <div className="follow-toggles">
+          <div className="seg follow-tolerance">
+            {(
+              [
+                [10, 'Tight'],
+                [18, 'Normal'],
+                [28, 'Loose'],
+              ] as const
+            ).map(([v, label]) => (
+              <button
+                key={v}
+                className={tolerance === v ? 'on' : ''}
+                title={`Round grouping: ${label.toLowerCase()}`}
+                onClick={() => useStore.getState().setFollowTolerance(v)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <button
+            className="btn follow-how"
+            title="Show the technique animation for this round's stitches"
+            data-testid="follow-show-how"
+            disabled={!step}
+            onClick={() => showHowForCurrentRound()}
+          >
+            ▶ Show me how
+          </button>
         </div>
       </div>
       <button

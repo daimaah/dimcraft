@@ -793,15 +793,6 @@ button {
   line-height: 1.3;
 }
 
-.follow-tolerance {
-  margin-top: 2px;
-}
-
-.follow-tolerance button {
-  padding: 2px 8px;
-  font-size: 11px;
-}
-
 /* stitch playback: worked stitches fade in as the fabric grows */
 .layer-stitches > g[data-kind='placement'] {
   transition: opacity 0.25s ease;
@@ -1067,6 +1058,50 @@ button {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 10px;
+}
+
+.follow-toggles {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.follow-toggles button {
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+.follow-tolerance {
+  margin-top: 0;
+}
+
+.follow-how {
+  white-space: nowrap;
+}
+
+.motion-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.motion-lookup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.motion-lookup select {
+  flex: 1;
+}
+
+.motion-lookup span {
+  white-space: nowrap;
 }
 
 .motion-caption {

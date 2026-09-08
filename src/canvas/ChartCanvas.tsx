@@ -443,13 +443,14 @@ export function ChartCanvas() {
   const followRound = useStore((s) => s.followRound)
   const followTolerance = useStore((s) => s.followTolerance)
   const followStitch = useStore((s) => s.followStitch)
+  const lefty = useStore((s) => s.lefty)
 
   // follow mode: worked stitches stay at full ink, the rest fade. With a
   // stitch cursor active, everything up to and including the cursor is lit
   // and the next stitch to work gets a pulsing marker.
   const followView = useMemo(() => {
     if (!followActive) return null
-    const steps = followSteps(doc, followTolerance)
+    const steps = followSteps(doc, followTolerance, lefty ? 'cw' : 'ccw')
     if (steps.length === 0) return null
     const idx = Math.min(followRound, steps.length - 1)
     if (followStitch == null) {
@@ -461,7 +462,7 @@ export function ChartCanvas() {
     for (const s of steps.slice(0, idx)) for (const id of s.ids) full.add(id)
     for (let i = 0; i <= cursor; i++) full.add(order[i])
     return { full, currentId: order[cursor] ?? null }
-  }, [doc, followActive, followRound, followTolerance, followStitch])
+  }, [doc, followActive, followRound, followTolerance, followStitch, lefty])
   const selectedGuide = selGuides.length === 1 ? doc.guides.find((g) => g.id === selGuides[0]) : undefined
   const handles = selectedGuide ? guideHandles(selectedGuide) : []
   const legendBox = legendSize(doc, defMap)

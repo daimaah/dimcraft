@@ -16,10 +16,11 @@ export interface Vec {
   y: number
 }
 
-/** The stitch the hook is about to work (A), the second decrease stitch (B). */
+/** The stitch the hook is about to work (A), plus B and C for multi-stitch decreases. */
 export const TARGET: Record<Exclude<InsertTarget, 'ring'>, Vec> = {
   A: { x: 122, y: 134 },
   B: { x: 94, y: 134 },
+  C: { x: 66, y: 134 },
 }
 export const RING_CENTER: Vec = { x: 76, y: 118 }
 export const YARN_TAIL: Vec = { x: 16, y: 174 }
