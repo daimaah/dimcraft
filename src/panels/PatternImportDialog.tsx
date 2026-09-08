@@ -68,6 +68,11 @@ export function PatternImportDialog() {
               {parsed.warnings.length > 0 && (
                 <p className="hint">Unrecognised words (ignored): {parsed.warnings.join(', ')}</p>
               )}
+              {(parsed.notes ?? []).map((n) => (
+                <p key={n} className="hint">
+                  {n}
+                </p>
+              ))}
               {chart && (
                 <p className="hint">
                   Suggested layout: {parsed.rounds.length} round{parsed.rounds.length === 1 ? '' : 's'},{' '}

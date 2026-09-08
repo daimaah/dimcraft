@@ -73,6 +73,51 @@ describe('pattern parser', () => {
     expect(parsePattern('Ch 4, join with sl st to form a ring.\nR1: 12 dc').start).toBe('chain-ring')
     expect(parsePattern('R1: 12 dc').start).toBeNull()
   })
+
+  it('accepts a CrochetPARADE-style pattern with DEFs, colors and anchors', () => {
+    const parade = [
+      '#Granny square showcase',
+      'DEF: p=3ch,ss@1[%,%-4] # Picot stitch',
+      'COLOR: Pink',
+      '6ch.Ring+1!,ss@[%,0]',
+      '[ch,15sc].Ring1[]@Ring,ss@[%,0],COLOR: Violet,sc@Ring1[][0]',
+      '$c=0$,@Ring1[][0],[5ch.chain_space[0,c++]+!,sk,>,sc]*8,ss@[-1,-1]',
+      '$t=0,c=0$,ch,[sc,hdc,dc,p,tr.Tip[t++],dc,p,hdc,>,sc]@chain_space[0,c++]*8,ss@[%,0]',
+      'COLOR: Green',
+      '$t=0,c=0$,dc4bobble_start_new@Tip[t],[dc4bobble@Tip[t],<,2ch.chsp[c++]+!,tr4bobble@Tip[t],2ch.chsp[c++]+!,dc4bobble@Tip[t],4ch.chsp[c++]+!,hdc@Tip[++t],4ch.chsp[c++]+!,$t++$]*4,sc@[%,3]',
+      'COLOR: Pink',
+      '$c=0$,3ch,[3tr@chsp[c++],3ch,3tr@chsp[c++],ch,>,(4dc@chsp[c++],ch)*2]*4,4dc@chsp[c++],ch,3dc@chsp[c++],ss@[%,1]',
+      'COLOR: Green',
+      'ch,2sk,5sc,[sc,dc@[@],sc@[@],13sc,>,6sc]*4,ss@[%,0]',
+      'DOT: start=1',
+    ].join('\n')
+
+    const parsed = parsePattern(parade)
+    expect(parsed.notes?.some((n) => n.includes('Pink, Violet'))).toBe(true)
+    expect(parsed.rounds).toHaveLength(7)
+    // round 1: 6 chains + slip stitch
+    expect(parsed.rounds[0].total).toBe(7)
+    // picot DEF mapped to the picot symbol (petal round: 2 picots × 8)
+    const petal = parsed.rounds.find((r) => r.runs.some((run) => run.symbolId === 'picot'))
+    expect(petal).toBeDefined()
+    const picots = petal!.runs.filter((run) => run.symbolId === 'picot').reduce((s, r) => s + r.count, 0)
+    expect(picots).toBe(16)
+    // bobble DEFs mapped to bobble
+    const bobbles = parsed.rounds.flatMap((r) => r.runs).filter((r) => r.symbolId === 'bobble')
+    expect(bobbles.reduce((s, r) => s + r.count, 0)).toBeGreaterThanOrEqual(9)
+  })
+
+  it('charts a CrochetPARADE pattern into a round layout', () => {
+    const parade = [
+      '6ch.Ring+1!,ss@[%,0]',
+      '[ch,15sc].Ring1[]@Ring,ss@[%,0]',
+      '[5ch.chain_space[0,c++]+!,sk,>,sc]*8,ss@[-1,-1]',
+    ].join('\n')
+    const parsed = parsePattern(parade)
+    const { doc } = patternToChart(parsed, { title: 'Parade flower' })
+    expect(doc.placements.length).toBeGreaterThan(20)
+    expect(doc.guides.length).toBe(parsed.rounds.length)
+  })
 })
 
 describe('pattern → chart layout', () => {

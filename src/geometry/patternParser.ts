@@ -1,6 +1,7 @@
 import { BUILT_IN_MAP } from '../symbols/definitions'
 import { LADDER_IDS, TERMINOLOGY_PRESETS } from '../symbols/terminology'
 import { smallestPeriod } from './instructions'
+import { preprocessCrochetParade } from './paradeAdapter'
 
 export interface PatternStitchRun {
   symbolId: string
@@ -21,6 +22,8 @@ export interface PatternParseResult {
   rounds: ParsedRound[]
   warnings: string[]
   title?: string
+  /** adapter notes (e.g. CrochetPARADE approximations, colors found) */
+  notes?: string[]
 }
 
 export interface ParseOptions {
@@ -34,8 +37,14 @@ export interface ParseOptions {
  */
 export function buildAliases(terminology = 'us'): Record<string, string> {
   const map: Record<string, string> = {}
-  // built-in symbols by label first (popcorn, puff, dc2tog, ...)
-  for (const def of BUILT_IN_MAP.values()) map[def.label.toLowerCase()] = def.id
+  // built-in symbols by label first (popcorn 'pc', bobble 'bo', ...)
+  for (const def of BUILT_IN_MAP.values()) {
+    map[def.label.toLowerCase()] = def.id
+    // full words too, so prose-like tokens ("bobble", "popcorn") resolve
+    for (const word of def.name.toLowerCase().split(/\s+/)) {
+      if (word.length > 2 && !map[word]) map[word] = def.id
+    }
+  }
   // preset ladder overrides (regional abbreviations)
   const preset = TERMINOLOGY_PRESETS.find((p) => p.id === terminology) ?? TERMINOLOGY_PRESETS[0]
   for (const id of LADDER_IDS) {
@@ -80,15 +89,17 @@ const IGNORE_WORDS = new Set([
   'all', 'begin', 'beginning', 'working', 'work', 'st', 'sts', 'stitch', 'stitches', 'space',
   'sp', 'rnd', 'round', 'row', 'and', 'with', 'same', 'first', 'last', 'end', 'mark', 'marker',
   'repeat', 'times', 'more', 'across', 'remaining', 'close', 'pull', 'tight', 'finish',
+  'sk', 'skip', 'chsp', 'tip', 'ring1', 'ring', 'chain-space', 'bobble-start',
 ])
 
-function mergeRuns(target: PatternStitchRun[], runs: PatternStitchRun[]): PatternStitchRun[] {
+function mergeRuns(target: PatternStitchRun[] | undefined, runs: PatternStitchRun[]): PatternStitchRun[] {
+  const t = target ?? []
   for (const run of runs) {
-    const last = target[target.length - 1]
+    const last = t[t.length - 1]
     if (last && last.symbolId === run.symbolId) last.count += run.count
-    else target.push({ ...run })
+    else t.push({ ...run })
   }
-  return target
+  return t
 }
 
 function multiplyRuns(runs: PatternStitchRun[], times: number): PatternStitchRun[] {
@@ -137,7 +148,7 @@ export function expandRoundBody(
     if (countFirst) {
       const sym = aliases[countFirst[2].toLowerCase()]
       if (sym) mergeRuns(stack[stack.length - 1], [{ symbolId: sym, count: parseInt(countFirst[1]) }])
-      else warnings.add(countFirst[2].toLowerCase())
+      else if (!IGNORE_WORDS.has(countFirst[2].toLowerCase())) warnings.add(countFirst[2].toLowerCase())
       i += countFirst[0].length
       continue
     }
@@ -170,7 +181,7 @@ export function expandRoundBody(
   }
 
   if (sawAsterisk) warnings.add('asterisk-repeat')
-  const runs = stack[0]
+  const runs = stack[0] ?? []
   // collapse adjacent identical runs for a cleaner total
   return mergeRuns(runs, [])
 }
@@ -184,6 +195,14 @@ const START_CHAIN_RE = /\b(?:ch|lm)\s*\d\b[^.]*\b(?:join|sl st|slst|ss)\b|\bjoin
 export function parsePattern(text: string, opts: ParseOptions = {}): PatternParseResult {
   const aliases = buildAliases(opts.terminology)
   const warnings = new Set<string>()
+  let notes: string[] = []
+
+  // CrochetPARADE-style input is auto-detected and preprocessed
+  if (/\bDEF:|\bCOLOR:|\bDOT:|@\[|@\w+\[|\$\w+\s*=/.test(text)) {
+    const pre = preprocessCrochetParade(text)
+    text = pre.text
+    notes = pre.notes
+  }
 
   const start: PatternParseResult['start'] = START_MAGIC_RE.test(text)
     ? 'magic-ring'
@@ -233,5 +252,6 @@ export function parsePattern(text: string, opts: ParseOptions = {}): PatternPars
     rounds,
     warnings: [...warnings],
     title,
+    notes: notes.length ? notes : undefined,
   }
 }
