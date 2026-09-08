@@ -9,6 +9,7 @@ import { InstructionsDialog } from './InstructionsDialog'
 import { LicensesDialog } from './LicensesDialog'
 import { PatternImportDialog } from './PatternImportDialog'
 import { StitchMotionDialog } from './StitchMotionDialog'
+import { createShortLink, sidecarAvailable } from '../export/secureShare'
 import type { RotationMode } from '../model/types'
 import type { SvgExportOptions } from '../export/svg'
 import type { PaperFormat, PageOrientation } from '../export/pdf'
@@ -172,8 +173,35 @@ export function ExportDialog() {
   const [busy, setBusy] = useState(false)
   const [shareLink, setShareLink] = useState<string | null>(null)
   const [shareBusy, setShareBusy] = useState(false)
+  const [sidecarUrl, setSidecarUrl] = useState(
+    () => localStorage.getItem('dimcrochet.sidecarUrl') ?? location.origin,
+  )
+  const [shortLink, setShortLink] = useState<string | null>(null)
+  const [shortBusy, setShortBusy] = useState(false)
+  const [shortError, setShortError] = useState<string | null>(null)
 
   const gauge = doc.unitsPer10cm ?? null
+  const cryptoOk = sidecarAvailable()
+
+  const createShort = async () => {
+    setShortBusy(true)
+    setShortError(null)
+    try {
+      localStorage.setItem('dimcrochet.sidecarUrl', sidecarUrl.trim())
+      const { url } = await createShortLink(sidecarUrl.trim(), {
+        id: projectId ?? 'proj-share',
+        name: projectName,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        doc,
+      })
+      setShortLink(url)
+    } catch (err) {
+      setShortError(err instanceof Error ? err.message : String(err))
+    } finally {
+      setShortBusy(false)
+    }
+  }
 
   const createShareLink = async () => {
     setShareBusy(true)
@@ -352,11 +380,67 @@ export function ExportDialog() {
               {shareLink.length > 20000 && (
                 <p className="hint">
                   This link is very long ({shareLink.length} characters) — some apps truncate long
-                  URLs. For big charts, prefer the file export.
+                  URLs. For big charts, prefer the short link below or the file export.
                 </p>
               )}
             </>
           )}
+        </div>
+
+        <div className="share-section">
+          <div className="panel-title">Short link (self-hosted sidecar)</div>
+          <Row2 label="Sidecar">
+            <input
+              value={sidecarUrl}
+              onChange={(e) => setSidecarUrl(e.target.value)}
+              placeholder="https://charts.example.com"
+              spellCheck={false}
+            />
+          </Row2>
+          {!shortLink ? (
+            <button
+              className="btn wide"
+              disabled={shortBusy || !cryptoOk || !sidecarUrl.trim()}
+              title={
+                cryptoOk
+                  ? 'Encrypt the chart here, store only ciphertext on your sidecar'
+                  : 'Encrypted links need a secure context — open DimCrochet via HTTPS or localhost'
+              }
+              data-testid="create-short-link"
+              onClick={() => void createShort()}
+            >
+              {shortBusy ? 'Encrypting…' : 'Create short link'}
+            </button>
+          ) : (
+            <>
+              <input
+                className="share-link"
+                readOnly
+                value={shortLink}
+                onFocus={(e) => e.target.select()}
+                onClick={(e) => (e.target as HTMLInputElement).select()}
+              />
+              <div className="modal-actions">
+                <button
+                  className="btn"
+                  onClick={() => {
+                    void navigator.clipboard.writeText(shortLink).catch(() => {})
+                  }}
+                >
+                  Copy link
+                </button>
+                <button className="btn" onClick={() => setShortLink(null)}>
+                  New link
+                </button>
+              </div>
+            </>
+          )}
+          {shortError && <p className="hint">Short link failed: {shortError}</p>}
+          <p className="hint">
+            The chart is encrypted in your browser (AES-GCM) — the sidecar stores only ciphertext it
+            cannot read, and the decryption key rides in the link fragment. Links expire (default 30
+            days since last opening).
+          </p>
         </div>
 
         <FileLoadRow />

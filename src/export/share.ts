@@ -22,14 +22,21 @@ function base64UrlDecode(s: string): Uint8Array {
   return bytes
 }
 
-async function deflateToBase64Url(text: string): Promise<string> {
-  const stream = new Blob([text]).stream().pipeThrough(new CompressionStream('deflate'))
-  const bytes = new Uint8Array(await new Response(stream).arrayBuffer())
+export async function deflateToBase64Url(text: string): Promise<string> {
+  const bytes = await deflateBytes(text)
   return base64UrlEncode(bytes)
 }
 
-async function inflateFromBase64Url(encoded: string): Promise<string> {
-  const bytes = base64UrlDecode(encoded)
+export async function deflateBytes(text: string): Promise<Uint8Array> {
+  const stream = new Blob([text]).stream().pipeThrough(new CompressionStream('deflate'))
+  return new Uint8Array(await new Response(stream).arrayBuffer())
+}
+
+export async function inflateFromBase64Url(encoded: string): Promise<string> {
+  return inflateBytes(base64UrlDecode(encoded))
+}
+
+export async function inflateBytes(bytes: Uint8Array): Promise<string> {
   const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate'))
   return await new Response(stream).text()
 }

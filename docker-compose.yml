@@ -1,8 +1,10 @@
 # DimCrochet — deployable as a Portainer stack (Stacks → Add stack → Repository,
 # pointing at this repo) or locally with: docker compose up -d --build
 #
-# The container is stateless: charts live in each user's browser (IndexedDB),
-# so upgrading is just a redeploy and there is nothing to back up on the host.
+# The named volume keeps self-hosted encrypted short links; charts themselves
+# live in each user's browser (IndexedDB), so upgrading is just a redeploy.
+# Optional env: DIMCROCHET_MAX_AGE_HOURS — days an unused short link survives
+# (default 720 = 30 days, refreshed every time the link is opened).
 
 services:
   dimcrochet:
@@ -13,3 +15,8 @@ services:
     ports:
       # change the host port in Portainer's environment editor (DIMCROCHET_PORT)
       - "${DIMCROCHET_PORT:-8080}:80"
+    volumes:
+      - dimcrochet-data:/data
+
+volumes:
+  dimcrochet-data:

@@ -11,11 +11,17 @@ COPY . .
 RUN npm run build
 
 # ---- runtime stage ---------------------------------------------------------
-FROM nginx:1.27-alpine
-COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist /usr/share/nginx/html
-
+# One Node process serves both the app and the self-hosted encrypted
+# short-link sidecar (POST/GET /api/links, /x/<id> receive route).
+FROM node:22-alpine
+WORKDIR /app
+ENV NODE_ENV=production PORT=80 DATA_DIR=/data DIST_DIR=/app/dist DIMCROCHET_MAX_AGE_HOURS=720
+COPY sidecar/server.mjs ./sidecar/server.mjs
+COPY --from=build /app/dist ./dist
+VOLUME /data
 EXPOSE 80
 
 HEALTHCHECK --interval=30s --timeout=4s --start-period=5s --retries=3 \
-  CMD wget -qO- http://127.0.0.1/ >/dev/null 2>&1 || exit 1
+  CMD node -e "fetch('http://127.0.0.1/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+
+CMD ["node", "sidecar/server.mjs"]

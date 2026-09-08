@@ -9,6 +9,7 @@ import { SharedChartDialog } from './panels/SharedChartDialog'
 import { SymbolPalette } from './panels/SymbolPalette'
 import { useStore } from './state/store'
 import { decodeShareFragment } from './export/share'
+import { parseShortLinkLocation, fetchShortLink } from './export/secureShare'
 import { loadProject, saveProject } from './storage/db'
 import { StatusBar } from './ui/StatusBar'
 import { Toolbar } from './ui/Toolbar'
@@ -42,8 +43,18 @@ export default function App() {
     return () => clearTimeout(t)
   }, [projectId])
 
-  // a shared chart embedded in the URL fragment (never sent to any server)
+  // shared charts: either embedded in the fragment (#c=..., never sent to a
+  // server) or fetched encrypted from a self-hosted sidecar (/x/<id>#k=...,
+  // where the server only ever saw ciphertext)
   useEffect(() => {
+    const short = parseShortLinkLocation(location.pathname, location.hash)
+    if (short) {
+      fetchShortLink(location.origin, short.id, short.key).then((res) => {
+        if (res) useStore.getState().setSharedChart(res)
+        history.replaceState(null, '', location.pathname.replace(/\/x\/[^/]+$/, '/') + location.search)
+      })
+      return
+    }
     if (!location.hash.startsWith('#c=')) return
     decodeShareFragment(location.hash).then((res) => {
       if (res) useStore.getState().setSharedChart(res)
