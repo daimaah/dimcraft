@@ -2,26 +2,27 @@
 
 **Crochet round & motif chart composer** — draw granny squares, doilies, lace motifs and circular crochet charts in the browser, then export a clean SVG, transparent PNG or print-ready PDF. No account, no uploads: every chart lives in your browser's local storage.
 
-See [ROADMAP.md](ROADMAP.md) for what's planned next — including optional shareable links and a unified chart/symbol-pack file format.
+See [ROADMAP.md](ROADMAP.md) for what's planned next and notes on design decisions.
 
 ## Features
 
-- **Vector canvas** with pan/zoom, grid, and keyboard-first editing (`V` select, `P` place, `B` bracket, `T` text, `1–5` guides)
-- **19 standard crochet symbols** (chain → triple treble, clusters, popcorn/puff/bobble, picot, shell, crossed dc, front/back post, magic ring) drawn as crisp stroke paths, plus **custom SVG symbol import**
+- **Vector canvas** with pan/zoom, grid, and keyboard-first editing (`V` select, `P` place, `B` bracket, `T` text, `1–5` guides); **collapsible side panels** and a **full-screen mode** for maximum chart space
+- **90+ crochet symbols** in four bundled sets — Standard (CYC-style), Japanese-style, Solid print, and **International variants** (70 symbols from Wikimedia Commons, per-file attribution included) — plus **custom SVG symbol import**
+- **Regional terminology presets**: one-click legend relabelling for US/UK English, Svenska, Norsk, Dansk, Suomi, Deutsch, Nederlands, Français, Español, Italiano and Русский; import/export symbol packs as JSON so communities can share authentic national sets
 - **Guides**: circle, arc, spiral, line and regular polygon — drawn on canvas, edited numerically or by dragging handles
 - **“Place N stitches evenly along a guide”** with true arc-length spacing and three stitch orientations (radiate out / follow path / upright)
 - **Backstitch lines**: draw chart line-work (surface/backstitch rows) from stitch to stitch with anchor snapping; reshape by dragging point handles, insert/remove points, close into loops; exported as solid strokes and listed in the legend
-- **Follow mode**: step through the chart round by round — the current round's stitches stay in full ink while the rest fade, the round text shows in a bar on the canvas, and progress is saved with the project (`F`)
-- **Regional symbol sets & terminology**: switch the whole chart between bundled symbol sets (Standard CYC-style, Japanese-style, Solid print) instantly; one-click terminology presets for US/UK English, Svenska, Norsk, Dansk, Suomi, Deutsch, Nederlands, Français, Español, Italiano and Русский; import/export symbol packs as JSON so communities can share authentic national sets
-- **Written pattern → chart**: paste round-based instructions ("R1: [3 dc, ch 2] × 4 …") and get a suggested chart — stitch abbreviations, counts and bracketed repeats are parsed via regional terminology presets, rounds are laid out radially, and everything stays fully editable
+- **Follow mode**: step through the chart round by round — the current round's stitches stay in full ink while the rest fade, the round text shows in a **movable, resizable bar** whose position is saved, and progress is saved with the project (`F`)
+- **Written pattern → chart**: paste round-based instructions ("R1: [3 dc, ch 2] × 4 …") and get a suggested chart — stitch abbreviations, counts and bracketed repeats are parsed via regional terminology presets, rounds are laid out radially, and everything stays fully editable. CrochetPARADE-style patterns (with `DEF:`, `COLOR:` and position anchors) are auto-detected and converted too
 - **Written instructions**: the Rounds dialog derives round-by-round text from the chart ("R1: [3 dc, ch 2] × 4"), detecting rounds by distance from the centre and collapsing repeating units — copy or download as .txt
 - **Stitch groups**: even-placement rounds, groups and loose stitches appear as toggleable layers (hide/show; hidden stitches are skipped in exports, legend and the fabric preview)
 - **Gauge & true-scale PDF**: set a gauge (units per 10 cm) to see the finished size and print the PDF at true scale
 - **2D fabric preview**: see the motif as simulated crocheted fabric — yarn-styled stitches with a sheen, optional handmade jitter, yarn & background colours, one-click PNG download
 - **Editing**: marquee + shift multi-select, move/rotate/scale, nudge, duplicate, group, mirror H/V, distribute, align edges/centers (left/center/right/top/middle/bottom), snapping to guide points & anchors, full undo/redo
 - **Repeat brackets** with automatic “× N” counts and an **automatic legend** (symbol swatch, editable labels, stitch counts)
-- **Export**: standalone SVG (tight viewBox, editor chrome stripped), transparent PNG at 2×/4×, vector PDF (A4/Letter, portrait/landscape), and project `.json` files for backup/sharing
-- **Local projects**: gallery with rename/duplicate/delete, debounced autosave to IndexedDB, bundled granny-square starter chart
+- **Export**: standalone SVG (tight viewBox, editor chrome stripped), transparent PNG at 2×/4×, vector PDF (A4/Letter, portrait/landscape, true-scale option), and project/symbol-pack `.json` files
+- **Share links**: embed a compressed copy of the chart in a URL — no server, no upload; opening a link imports it as a new local copy
+- **Local projects**: gallery with rename/duplicate/delete, drag-and-drop import of chart and symbol-pack files, debounced autosave to IndexedDB, bundled granny-square starter chart
 - Works fully offline once loaded (PWA / service worker)
 
 ## Run locally (development)
@@ -109,6 +110,7 @@ docker compose up -d --build   # build & run on http://localhost:8080
 3. Press `B`, click the first and last stitch of a repeated section — the bracket suggests a count you can edit.
 4. The legend updates automatically; drag it where you want it on the page.
 5. `Ctrl+E` → export SVG (for editing/printing), PNG (for patterns and Etsy listings) or PDF.
+6. `Ctrl+E` → **Create share link** to send the chart to someone — it travels inside the link, no server involved.
 
 ## File format & compatibility
 
@@ -128,8 +130,8 @@ Everything stays in your browser by default: charts live in IndexedDB, exports d
 
 ## AI assistance disclosure
 
-DimCrochet was designed and developed with the assistance of AI tools (including code generation, symbol artwork drafting, and documentation). All code is human-reviewed and released under the [MIT License](LICENSE) without warranty. The bundled symbol artwork was drawn for this project; symbol packs imported by users keep their own licenses and attributions.
+DimCrochet was designed and developed with the assistance of AI tools (including code generation, symbol artwork drafting, and documentation). All code is human-reviewed and released under the [MIT License](LICENSE) without warranty. The Standard, Japanese-style and Solid print symbol sets were drawn for this project; the International variants set consists of third-party Wikimedia Commons artwork under its own per-file licenses.
 
 ## License & symbols
 
-DimCrochet is released under the **MIT License** (see [LICENSE](LICENSE)). The bundled symbol sets are original artwork created for DimCrochet under the same license — no third-party symbol artwork is bundled. Imported symbol packs keep **their own licenses**; attribution (authors, license, source) travels inside the pack file and is shown in-app under **Licenses & attributions** (ⓘ in the toolbar, or the link on the projects screen). Terminology follows widely published chart conventions; labels are editable per chart for regional differences (e.g. “tr” vs “dtr” UK/US conventions).
+DimCrochet is released under the **MIT License** (see [LICENSE](LICENSE)). The Standard (CYC-style), Japanese-style and Solid print symbol sets are original artwork created for DimCrochet under the same license. The **International variants (Commons)** set contains third-party Wikimedia Commons artwork under per-file licenses (CC BY-SA / CC BY / CC0 / Public Domain) — attribution for every symbol is shown in-app under **Licenses & attributions** (ⓘ in the toolbar, or the link on the projects screen), and travels inside exported packs. Imported symbol packs keep **their own licenses** the same way. Terminology follows widely published chart conventions; labels are editable per chart for regional differences (e.g. “tr” vs “dtr” UK/US conventions).
