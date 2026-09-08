@@ -1637,12 +1637,15 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  padding-right: 3px;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 8px;
+  /* slightly lighter than the bar so the always-visible island reads as its own area */
+  background: rgba(255, 255, 255, 0.08);
   cursor: grab;
   touch-action: none;
   user-select: none;
+  flex: none;
 }
 
 .tool-palette.dragging .tp-side {
@@ -1650,16 +1653,21 @@ button {
 }
 
 .tp-grip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
   color: var(--text-dim);
-  font-size: 16px;
+  font-size: 15px;
   letter-spacing: -2px;
 }
 
-/* the island's collapse/expand toggle is the primary control — keep it prominent */
+/* the island's collapse/expand toggle: same cell size, prominent glyph */
 .tp-side .tool-btn {
-  width: 34px;
-  height: 34px;
-  font-size: 24px;
+  width: 32px;
+  height: 32px;
+  font-size: 22px;
   font-weight: 700;
   line-height: 1;
 }
