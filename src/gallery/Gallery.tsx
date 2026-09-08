@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { ChartDoc, ProjectRecord } from '../model/types'
-import { createStarterDoc } from '../model/starter'
+import { STARTERS } from '../model/starters'
 import { deleteProject, listProjects, saveProject } from '../storage/db'
 import { useStore } from '../state/store'
 import { FileLoadRow } from '../panels/dialogs'
@@ -11,15 +11,36 @@ import { placementTransform } from '../geometry/transform'
 import { lineSvg } from '../render/markup'
 
 const LAST_KEY = 'dimcrochet.lastProject'
+const SEEN_MINE_KEY = 'dimcrochet.seenMine'
+
+type Tab = 'starters' | 'mine'
 
 export function Gallery() {
   const [projects, setProjects] = useState<ProjectRecord[] | null>(null)
   const [renamingId, setRenamingId] = useState<string | null>(null)
   const [renameValue, setRenameValue] = useState('')
   const [dragOver, setDragOver] = useState(false)
+  // no designs yet → lead with the starters; otherwise lead with the user's own work
+  const [tab, setTab] = useState<Tab | null>(null)
+  const [mineSeen, setMineSeen] = useState(() => localStorage.getItem(SEEN_MINE_KEY) === '1')
 
   const refresh = () => void listProjects().then(setProjects)
   useEffect(refresh, [])
+
+  const starterDocs = useMemo(() => STARTERS.map((s) => ({ def: s, doc: s.build() })), [])
+
+  const activeTab: Tab = tab ?? (projects && projects.length > 0 ? 'mine' : 'starters')
+  const showMineBadge = (projects?.length ?? 0) > 0 && !mineSeen
+
+  // seeing the My designs tab (by click or by default) counts as "noticed"
+  useEffect(() => {
+    if (activeTab === 'mine' && !mineSeen) {
+      localStorage.setItem(SEEN_MINE_KEY, '1')
+      setMineSeen(true)
+    }
+  }, [activeTab, mineSeen])
+
+  const openMine = () => setTab('mine')
 
   /** purely client-side import: dropped files are read into memory, never uploaded */
   const importFiles = async (files: File[]) => {
@@ -108,9 +129,6 @@ export function Gallery() {
           <button className="btn accent" onClick={() => create('Untitled chart')}>
             + New chart
           </button>
-          <button className="btn" onClick={() => create('Granny square starter', createStarterDoc())}>
-            + Starter: granny square
-          </button>
           <button
             className="btn"
             onClick={() => {
@@ -125,65 +143,125 @@ export function Gallery() {
         </div>
       </header>
 
-      {projects === null && <p className="hint center">Loading projects…</p>}
+      <div className="gallery-tabs" role="tablist" data-testid="gallery-tabs">
+        <button
+          role="tab"
+          aria-selected={activeTab === 'starters'}
+          className={`gallery-tab${activeTab === 'starters' ? ' on' : ''}`}
+          onClick={() => setTab('starters')}
+          data-testid="tab-starters"
+        >
+          Learn with starters
+        </button>
+        <button
+          role="tab"
+          aria-selected={activeTab === 'mine'}
+          className={`gallery-tab${activeTab === 'mine' ? ' on' : ''}`}
+          onClick={openMine}
+          data-testid="tab-mine"
+        >
+          My designs
+          {showMineBadge && <span className="tab-badge" aria-hidden />}
+        </button>
+      </div>
 
-      {projects !== null && projects.length === 0 && (
+      {projects !== null && activeTab === 'starters' && projects.length > 0 && (
+        <p className="hint mine-hint" data-testid="mine-hint">
+          Everything you save lands under <strong>My designs</strong> →
+        </p>
+      )}
+
+      {activeTab === 'starters' && (
+        <>
+          <p className="hint starters-intro">
+            New to crochet? Open a starter in increasing difficulty, hit play in follow mode to watch
+            the chart build stitch by stitch, and use ▶ How stitches work for the physical moves.
+          </p>
+          <div className="starter-grid" data-testid="starter-grid">
+            {starterDocs.map(({ def, doc }) => (
+              <article
+                key={def.id}
+                className="starter-card"
+                data-testid={`starter-${def.id}`}
+                onClick={() => create(def.title, doc)}
+                title={`Open “${def.title}” as a new chart`}
+              >
+                <MiniChart doc={doc} />
+                <div className="starter-meta">
+                  <div className="starter-title-row">
+                    <strong>{def.title}</strong>
+                    <span className={`level-chip level-${def.level}`}>{def.levelLabel}</span>
+                  </div>
+                  <p className="hint">{def.tagline}</p>
+                  <span className="starter-open">Open starter →</span>
+                </div>
+              </article>
+            ))}
+          </div>
+        </>
+      )}
+
+      {projects === null && activeTab === 'mine' && <p className="hint center">Loading projects…</p>}
+
+      {projects !== null && activeTab === 'mine' && projects.length === 0 && (
         <div className="empty">
-          <p>No projects yet.</p>
+          <p>No designs yet.</p>
           <p className="hint">
-            Start from the granny-square starter, or draw your own: place a circle or square guide, drop stitches
-            evenly along it, and export a clean SVG, PNG or PDF. Charts are saved in this browser only.
+            Open a starter under <strong>Learn with starters</strong> and make it yours — every chart
+            you edit is saved here automatically. Charts are stored in this browser only.
           </p>
         </div>
       )}
 
-      <div className="cards-list">
-        {(projects ?? []).map((rec) => (
-          <article key={rec.id} className="project-card" onDoubleClick={() => open(rec)}>
-            <div className="project-main" onClick={() => open(rec)}>
-              <MiniChart doc={rec.doc} />
-              <div className="project-meta">
-                {renamingId === rec.id ? (
-                  <input
-                    autoFocus
-                    value={renameValue}
-                    onChange={(e) => setRenameValue(e.target.value)}
-                    onBlur={() => void rename(rec)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') void rename(rec)
-                      if (e.key === 'Escape') setRenamingId(null)
-                    }}
-                  />
-                ) : (
-                  <strong>{rec.name}</strong>
-                )}
-                <span className="hint">
-                  {rec.doc.placements.length} stitches · {rec.doc.guides.length} guides · edited{' '}
-                  {new Date(rec.updatedAt).toLocaleDateString()}
-                </span>
+      {activeTab === 'mine' && (
+        <div className="cards-list">
+          {(projects ?? []).map((rec) => (
+            <article key={rec.id} className="project-card" onDoubleClick={() => open(rec)}>
+              <div className="project-main" onClick={() => open(rec)}>
+                <MiniChart doc={rec.doc} />
+                <div className="project-meta">
+                  {renamingId === rec.id ? (
+                    <input
+                      autoFocus
+                      value={renameValue}
+                      onChange={(e) => setRenameValue(e.target.value)}
+                      onBlur={() => void rename(rec)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') void rename(rec)
+                        if (e.key === 'Escape') setRenamingId(null)
+                      }}
+                    />
+                  ) : (
+                    <strong>{rec.name}</strong>
+                  )}
+                  <span className="hint">
+                    {rec.doc.placements.length} stitches · {rec.doc.guides.length} guides · edited{' '}
+                    {new Date(rec.updatedAt).toLocaleDateString()}
+                  </span>
+                </div>
               </div>
-            </div>
-            <div className="project-actions">
-              <button
-                className="icon-btn"
-                title="Rename"
-                onClick={() => {
-                  setRenamingId(rec.id)
-                  setRenameValue(rec.name)
-                }}
-              >
-                ✎
-              </button>
-              <button className="icon-btn" title="Duplicate" onClick={() => void duplicate(rec)}>
-                ⧉
-              </button>
-              <button className="icon-btn danger" title="Delete" onClick={() => void del(rec.id)}>
-                ✕
-              </button>
-            </div>
-          </article>
-        ))}
-      </div>
+              <div className="project-actions">
+                <button
+                  className="icon-btn"
+                  title="Rename"
+                  onClick={() => {
+                    setRenamingId(rec.id)
+                    setRenameValue(rec.name)
+                  }}
+                >
+                  ✎
+                </button>
+                <button className="icon-btn" title="Duplicate" onClick={() => void duplicate(rec)}>
+                  ⧉
+                </button>
+                <button className="icon-btn danger" title="Delete" onClick={() => void del(rec.id)}>
+                  ✕
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
       <footer className="gallery-foot">
         <p className="hint">
           Charts are stored only in this browser. Drop a .dimcrochet.json export or a symbol pack

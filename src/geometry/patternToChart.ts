@@ -49,7 +49,9 @@ export function patternToChart(
       return
     }
     const needed = (round.total * W) / TAU
-    radius = index === 0 ? Math.max(needed, 24) : Math.max(radius + W * 0.9, needed)
+    // keep consecutive rounds far enough apart that follow mode's round
+    // grouping (default tolerance 18) sees them as separate rounds
+    radius = index === 0 ? Math.max(needed, 24) : Math.max(radius + Math.max(W * 0.9, 20), needed)
 
     // Layout: a repeating round places each unit run at its own base angle
     // with members side by side along the tangent (granny-cluster style).
