@@ -625,43 +625,50 @@ export function OptionsDialog() {
       <div className="options-content">
       {tab === 'general' && (
         <div className="form">
-          <div className="form-row opacity-slider" data-testid="opt-toolbar-opacity">
+          <div className="form-row" data-testid="opt-toolbar-opacity">
             <span>
-              <strong>Toolbar opacity at rest</strong>
+              <strong>Toolbar opacity</strong>
               <br />
-              <span className="hint">Make the floating palette more subtle. Never fully invisible — 30% keeps it findable.</span>
+              <span className="hint">
+                Rest value dims the floating palette; it brightens to the hover value while you
+                point at it. 30% minimum keeps it findable.
+              </span>
             </span>
-            <span className="opacity-slider">
-              <input
-                type="range"
-                min={30}
-                max={100}
-                step={5}
-                value={toolbarOpacity}
-                data-testid="opt-toolbar-opacity-slider"
-                onChange={(e) => useStore.getState().setToolbarOpacity(Number(e.target.value))}
-              />
-              <span className="opacity-value">{toolbarOpacity}%</span>
-            </span>
-          </div>
-          <div className="form-row" data-testid="opt-toolbar-hover">
-            <span>
-              <strong>Toolbar opacity on hover</strong>
-              <br />
-              <span className="hint">Brightens while the pointer is over the palette. Cannot go below the resting value.</span>
-            </span>
-            <span className="opacity-slider">
-              <input
-                type="range"
-                min={toolbarOpacity}
-                max={100}
-                step={5}
-                value={toolbarHoverOpacity}
-                data-testid="opt-toolbar-hover-slider"
-                onChange={(e) => useStore.getState().setToolbarHoverOpacity(Number(e.target.value))}
-              />
-              <span className="opacity-value">{toolbarHoverOpacity}%</span>
-            </span>
+            <div className="dual-wrap" data-testid="opt-toolbar-opacity-slider">
+              <div className="dual-range">
+                <div className="dual-track" />
+                <div
+                  className="dual-band"
+                  style={{
+                    left: `${((toolbarOpacity - 30) / 70) * 100}%`,
+                    width: `${((toolbarHoverOpacity - toolbarOpacity) / 70) * 100}%`,
+                  }}
+                />
+                <input
+                  type="range"
+                  min={30}
+                  max={100}
+                  step={5}
+                  value={toolbarOpacity}
+                  aria-label="Toolbar opacity at rest"
+                  style={{ zIndex: toolbarOpacity === toolbarHoverOpacity ? 4 : 2 }}
+                  onChange={(e) => useStore.getState().setToolbarOpacity(Number(e.target.value))}
+                />
+                <input
+                  type="range"
+                  min={30}
+                  max={100}
+                  step={5}
+                  value={toolbarHoverOpacity}
+                  aria-label="Toolbar opacity on hover"
+                  style={{ zIndex: 3 }}
+                  onChange={(e) => useStore.getState().setToolbarHoverOpacity(Number(e.target.value))}
+                />
+              </div>
+              <div className="dual-values">
+                At rest {toolbarOpacity}% · On hover {toolbarHoverOpacity}%
+              </div>
+            </div>
           </div>
           <label className="check" data-testid="opt-animations">
             <input
