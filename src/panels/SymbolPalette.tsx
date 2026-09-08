@@ -39,6 +39,14 @@ export function SymbolPalette() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
+      <button
+        className="btn wide"
+        title="Animated, step-by-step technique guide for the core stitches"
+        onClick={() => useStore.getState().openDialog('stitch-motions')}
+        data-testid="open-motion-dialog"
+      >
+        ▶ How stitches work
+      </button>
       <div className="symbol-grid">
         {filtered.map((s) => (
           <button

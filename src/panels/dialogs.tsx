@@ -8,14 +8,25 @@ import { PreviewDialog } from './PreviewDialog'
 import { InstructionsDialog } from './InstructionsDialog'
 import { LicensesDialog } from './LicensesDialog'
 import { PatternImportDialog } from './PatternImportDialog'
+import { StitchMotionDialog } from './StitchMotionDialog'
 import type { RotationMode } from '../model/types'
 import type { SvgExportOptions } from '../export/svg'
 import type { PaperFormat, PageOrientation } from '../export/pdf'
 
-function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+export function Modal({
+  title,
+  onClose,
+  children,
+  wide,
+}: {
+  title: string
+  onClose: () => void
+  children: React.ReactNode
+  wide?: boolean
+}) {
   return (
     <div className="modal-backdrop" onPointerDown={onClose}>
-      <div className="modal" onPointerDown={(e) => e.stopPropagation()}>
+      <div className={wide ? 'modal wide' : 'modal'} onPointerDown={(e) => e.stopPropagation()}>
         <div className="modal-head">
           <h2>{title}</h2>
           <button className="icon-btn" onClick={onClose}>
@@ -394,5 +405,6 @@ export function Dialogs() {
   if (dialog === 'instructions') return <InstructionsDialog />
   if (dialog === 'licenses') return <LicensesDialog />
   if (dialog === 'pattern-import') return <PatternImportDialog />
+  if (dialog === 'stitch-motions') return <StitchMotionDialog />
   return null
 }
