@@ -34,7 +34,7 @@ export interface Viewport {
   zoom: number
 }
 
-export type DialogKind = 'place-evenly' | 'export' | 'preview' | 'instructions' | 'licenses' | 'pattern-import' | null
+export type DialogKind = 'place-evenly' | 'export' | 'preview' | 'instructions' | 'licenses' | 'pattern-import' | 'stitch-motions' | null
 
 export interface DragPositions {
   placements: { id: string; x: number; y: number }[]
@@ -132,9 +132,18 @@ interface EditorState {
   followActive: boolean
   followRound: number
   followTolerance: number
+  /** index into the current round's working order; null = round granularity */
+  followStitch: number | null
+  followPlaying: boolean
+  /** playback rate multiplier: 0.5 | 1 | 2 */
+  followSpeed: number
   setFollow: (active: boolean) => void
   setFollowRound: (n: number) => void
   setFollowTolerance: (t: number) => void
+  setFollowPlaying: (p: boolean) => void
+  setFollowSpeed: (x: number) => void
+  /** jump to a round + stitch cursor; persists only round changes to the doc */
+  seekFollow: (round: number, stitch: number | null, playing?: boolean) => void
 
   setPlacementsVisible: (ids: string[], visible: boolean) => void
   setSymbolSet: (id: string) => void
@@ -689,13 +698,17 @@ export const useStore = create<EditorState>()((set, get) => {
       }),
 
     // follow mode: progress + tolerance live in the doc (autosaved) but are
-    // navigation, so they deliberately bypass undo history
+    // navigation, so they deliberately bypass undo history. The stitch cursor
+    // and playback state are session-only, so the chart schema stays untouched.
     sharedChart: null,
     setSharedChart: (s) => set({ sharedChart: s }),
 
     followActive: false,
     followRound: 0,
     followTolerance: 18,
+    followStitch: null,
+    followPlaying: false,
+    followSpeed: 1,
 
     setFollow: (active) =>
       set((st) => {
@@ -705,6 +718,8 @@ export const useStore = create<EditorState>()((set, get) => {
           followActive: true,
           followRound: f?.round ?? 0,
           followTolerance: f?.tolerance ?? 18,
+          followStitch: null,
+          followPlaying: false,
         }
       }),
 
@@ -713,14 +728,27 @@ export const useStore = create<EditorState>()((set, get) => {
         const round = Math.max(0, n)
         const doc = structuredClone(st.doc)
         doc.follow = { round, tolerance: st.followTolerance }
-        return { followRound: round, doc }
+        return { followRound: round, doc, followStitch: null, followPlaying: false }
       }),
 
     setFollowTolerance: (t) =>
       set((st) => {
         const doc = structuredClone(st.doc)
         doc.follow = { round: st.followRound, tolerance: t }
-        return { followTolerance: t, doc }
+        return { followTolerance: t, doc, followStitch: null, followPlaying: false }
+      }),
+
+    setFollowPlaying: (p) => set({ followPlaying: p }),
+
+    setFollowSpeed: (x) => set({ followSpeed: x }),
+
+    seekFollow: (round, stitch, playing) =>
+      set((st) => {
+        const nav = { followStitch: stitch, ...(playing === undefined ? null : { followPlaying: playing }) }
+        if (round === st.followRound) return { ...nav }
+        const doc = structuredClone(st.doc)
+        doc.follow = { round, tolerance: st.followTolerance }
+        return { followRound: round, doc, ...nav }
       }),
 
     setGauge: (unitsPer10cm) =>

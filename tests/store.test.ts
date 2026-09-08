@@ -164,3 +164,56 @@ describe('store editing operations', () => {
     }
   })
 })
+
+describe('follow playback state', () => {
+  it('seekFollow moves the stitch cursor without rewriting the doc within a round', () => {
+    useStore.getState().setFollow(true)
+    const before = useStore.getState().doc
+    useStore.getState().seekFollow(0, 3, true)
+    const s = useStore.getState()
+    expect(s.followRound).toBe(0)
+    expect(s.followStitch).toBe(3)
+    expect(s.followPlaying).toBe(true)
+    expect(s.doc).toBe(before)
+    // omitting the playing arg keeps playback running
+    useStore.getState().seekFollow(0, 4)
+    expect(useStore.getState().followPlaying).toBe(true)
+  })
+
+  it('seekFollow persists round changes and can pause', () => {
+    useStore.getState().setFollow(true)
+    useStore.getState().seekFollow(1, 0, true)
+    let s = useStore.getState()
+    expect(s.followRound).toBe(1)
+    expect(s.doc.follow).toMatchObject({ round: 1 })
+    useStore.getState().seekFollow(1, 5, false)
+    s = useStore.getState()
+    expect(s.followStitch).toBe(5)
+    expect(s.followPlaying).toBe(false)
+  })
+
+  it('round navigation and tolerance changes reset the cursor and stop playback', () => {
+    useStore.getState().setFollow(true)
+    useStore.getState().seekFollow(0, 2, true)
+    useStore.getState().setFollowRound(1)
+    let s = useStore.getState()
+    expect(s.followStitch).toBeNull()
+    expect(s.followPlaying).toBe(false)
+    useStore.getState().seekFollow(1, 2, true)
+    useStore.getState().setFollowTolerance(10)
+    s = useStore.getState()
+    expect(s.followStitch).toBeNull()
+    expect(s.followPlaying).toBe(false)
+  })
+
+  it('re-entering follow mode starts fresh at round granularity', () => {
+    useStore.getState().setFollow(true)
+    useStore.getState().seekFollow(0, 2, true)
+    useStore.getState().setFollow(false)
+    useStore.getState().setFollow(true)
+    const s = useStore.getState()
+    expect(s.followActive).toBe(true)
+    expect(s.followStitch).toBeNull()
+    expect(s.followPlaying).toBe(false)
+  })
+})

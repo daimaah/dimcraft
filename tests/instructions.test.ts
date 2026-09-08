@@ -114,3 +114,61 @@ describe('follow steps', () => {
     for (const s of steps) expect(text).toContain(s.text)
   })
 })
+
+describe('working order', () => {
+  /** angle of a placement id, in degrees */
+  const angleOf = (stitches: Placement[], id: string) => {
+    const p = stitches.find((s) => s.id === id)!
+    return (Math.atan2(p.y, p.x) * 180) / Math.PI
+  }
+
+  /** signed angular step from → to, folded into (-180, 180] */
+  const signedStep = (from: number, to: number) => {
+    const d = (((to - from) % 360) + 540) % 360 - 180
+    return d
+  }
+
+  it('orders each round counterclockwise for the right-handed default', () => {
+    const doc = createEmptyDoc()
+    doc.guides.push(circle(100))
+    const stitches = ring('dc', 6, 100)
+    doc.placements.push(...stitches)
+    const steps = followSteps(doc)
+    expect(steps).toHaveLength(1)
+    const { ids, order } = steps[0]
+    expect([...order].sort()).toEqual([...ids].sort())
+    // descending atan2 angle = counterclockwise on screen (SVG y is down)
+    for (let i = 0; i < order.length; i++) {
+      const from = angleOf(stitches, order[i])
+      const to = angleOf(stitches, order[(i + 1) % order.length])
+      expect(signedStep(from, to)).toBeCloseTo(-60)
+    }
+  })
+
+  it('mirrors to clockwise for left-handed charts', () => {
+    const doc = createEmptyDoc()
+    doc.guides.push(circle(100))
+    const stitches = ring('dc', 6, 100)
+    doc.placements.push(...stitches)
+    const order = followSteps(doc, 18, 'cw')[0].order
+    for (let i = 0; i < order.length; i++) {
+      const from = angleOf(stitches, order[i])
+      const to = angleOf(stitches, order[(i + 1) % order.length])
+      expect(signedStep(from, to)).toBeCloseTo(60)
+    }
+  })
+
+  it('does not turn between joined rounds — every round keeps the same direction', () => {
+    const doc = createEmptyDoc()
+    doc.guides.push(circle(100))
+    const inner = ring('sc', 8, 55)
+    const outer = ring('dc', 16, 110)
+    doc.placements.push(...inner, ...outer)
+    const [r1, r2] = followSteps(doc)
+    expect(r1.order).toHaveLength(8)
+    expect(r2.order).toHaveLength(16)
+    // negative signed step = counterclockwise, for both rounds
+    expect(signedStep(angleOf(inner, r1.order[0]), angleOf(inner, r1.order[1]))).toBeLessThan(0)
+    expect(signedStep(angleOf(outer, r2.order[0]), angleOf(outer, r2.order[1]))).toBeLessThan(0)
+  })
+})

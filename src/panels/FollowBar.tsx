@@ -18,15 +18,74 @@ function loadBarState(): Partial<FollowBarState> {
   }
 }
 
+/** Move the stitch cursor within the round's working order, crossing round boundaries. */
+export function stepFollow(delta: 1 | -1) {
+  const st = useStore.getState()
+  const steps = followSteps(st.doc, st.followTolerance)
+  if (steps.length === 0) return
+  const idx = Math.min(st.followRound, steps.length - 1)
+  const order = steps[idx].order
+  const cursor = st.followStitch
+  if (delta === 1) {
+    if (cursor == null) st.seekFollow(idx, 0)
+    else if (cursor + 1 < order.length) st.seekFollow(idx, cursor + 1)
+    else if (idx + 1 < steps.length) st.seekFollow(idx + 1, 0)
+  } else {
+    if (cursor == null) st.seekFollow(idx, 0)
+    else if (cursor > 0) st.seekFollow(idx, cursor - 1)
+    else if (idx > 0) st.seekFollow(idx - 1, steps[idx - 1].order.length - 1)
+  }
+}
+
+/** Play/pause the stitch-by-stitch build; replaying from R1 when already at the end. */
+export function toggleFollowPlayback() {
+  const st = useStore.getState()
+  if (!st.followActive) return
+  if (st.followPlaying) {
+    st.setFollowPlaying(false)
+    return
+  }
+  const steps = followSteps(st.doc, st.followTolerance)
+  if (steps.length === 0) return
+  const idx = Math.min(st.followRound, steps.length - 1)
+  const order = steps[idx].order
+  const atEnd = idx === steps.length - 1 && st.followStitch != null && st.followStitch >= order.length - 1
+  if (st.followStitch == null) st.seekFollow(idx, 0, true)
+  else if (atEnd) st.seekFollow(0, 0, true)
+  else st.setFollowPlaying(true)
+}
+
 /** Bottom-of-canvas bar for stepping through the chart round by round. */
 export function FollowBar() {
   const doc = useStore((s) => s.doc)
   const round = useStore((s) => s.followRound)
   const tolerance = useStore((s) => s.followTolerance)
+  const followStitch = useStore((s) => s.followStitch)
+  const playing = useStore((s) => s.followPlaying)
+  const speed = useStore((s) => s.followSpeed)
 
   const steps = useMemo(() => followSteps(doc, tolerance), [doc, tolerance])
   const idx = steps.length === 0 ? 0 : Math.min(round, steps.length - 1)
   const step = steps[idx]
+  const order = step?.order ?? []
+  const cursor = followStitch == null || order.length === 0 ? null : Math.min(followStitch, order.length - 1)
+
+  // playback: light one stitch per tick, crossing into the next round, then stop
+  useEffect(() => {
+    if (!playing) return
+    const t = window.setTimeout(() => {
+      const st = useStore.getState()
+      const cur = followSteps(st.doc, st.followTolerance)
+      if (cur.length === 0) return st.setFollowPlaying(false)
+      const i = Math.min(st.followRound, cur.length - 1)
+      const ord = cur[i].order
+      const c = st.followStitch == null ? -1 : Math.min(st.followStitch, ord.length - 1)
+      if (c + 1 < ord.length) st.seekFollow(i, c + 1, true)
+      else if (i + 1 < cur.length) st.seekFollow(i + 1, 0, true)
+      else st.setFollowPlaying(false)
+    }, 550 / speed)
+    return () => window.clearTimeout(t)
+  }, [playing, speed, followStitch, round, steps])
 
   const barRef = useRef<HTMLDivElement>(null)
   const saved = useRef(loadBarState())
@@ -125,9 +184,47 @@ export function FollowBar() {
       >
         ‹
       </button>
+      <button
+        className="btn"
+        title="Previous stitch"
+        data-testid="follow-prev-stitch"
+        disabled={!step}
+        onClick={() => stepFollow(-1)}
+      >
+        ⟨
+      </button>
+      <button
+        className="btn"
+        title={playing ? 'Pause' : 'Play — build the chart stitch by stitch'}
+        data-testid="follow-play"
+        disabled={!step}
+        onClick={() => toggleFollowPlayback()}
+      >
+        {playing ? '⏸' : '▶'}
+      </button>
+      <button
+        className="btn"
+        title="Next stitch"
+        data-testid="follow-next-stitch"
+        disabled={!step}
+        onClick={() => stepFollow(1)}
+      >
+        ⟩
+      </button>
+      <button
+        className="btn"
+        title="Playback speed (click to cycle)"
+        data-testid="follow-speed"
+        onClick={() => useStore.getState().setFollowSpeed(speed === 0.5 ? 1 : speed === 1 ? 2 : 0.5)}
+      >
+        {speed === 0.5 ? '0.5×' : speed === 1 ? '1×' : '2×'}
+      </button>
       <div className="follow-main">
         <span className="follow-step">
-          {step ? `Step ${idx + 1} of ${steps.length} · ${step.label}` : 'No rounds detected'}
+          {step
+            ? `Step ${idx + 1} of ${steps.length} · ${step.label}` +
+              (cursor != null ? ` · stitch ${cursor + 1}/${order.length}` : '')
+            : 'No rounds detected'}
         </span>
         <span className="follow-text">{step?.text ?? '—'}</span>
         <div className="seg follow-tolerance">

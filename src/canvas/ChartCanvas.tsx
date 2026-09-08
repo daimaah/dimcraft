@@ -442,14 +442,26 @@ export function ChartCanvas() {
   const followActive = useStore((s) => s.followActive)
   const followRound = useStore((s) => s.followRound)
   const followTolerance = useStore((s) => s.followTolerance)
+  const followStitch = useStore((s) => s.followStitch)
 
-  // follow mode: the current round's stitches stay at full ink, the rest fade
-  const followHighlight = useMemo(() => {
+  // follow mode: worked stitches stay at full ink, the rest fade. With a
+  // stitch cursor active, everything up to and including the cursor is lit
+  // and the next stitch to work gets a pulsing marker.
+  const followView = useMemo(() => {
     if (!followActive) return null
     const steps = followSteps(doc, followTolerance)
     if (steps.length === 0) return null
-    return new Set(steps[Math.min(followRound, steps.length - 1)].ids)
-  }, [doc, followActive, followRound, followTolerance])
+    const idx = Math.min(followRound, steps.length - 1)
+    if (followStitch == null) {
+      return { full: new Set(steps[idx].ids), currentId: null as string | null }
+    }
+    const order = steps[idx].order
+    const cursor = Math.min(followStitch, order.length - 1)
+    const full = new Set<string>()
+    for (const s of steps.slice(0, idx)) for (const id of s.ids) full.add(id)
+    for (let i = 0; i <= cursor; i++) full.add(order[i])
+    return { full, currentId: order[cursor] ?? null }
+  }, [doc, followActive, followRound, followTolerance, followStitch])
   const selectedGuide = selGuides.length === 1 ? doc.guides.find((g) => g.id === selGuides[0]) : undefined
   const handles = selectedGuide ? guideHandles(selectedGuide) : []
   const legendBox = legendSize(doc, defMap)
@@ -538,14 +550,25 @@ export function ChartCanvas() {
                 opacity={
                   selected
                     ? 1
-                    : followHighlight
-                      ? followHighlight.has(p.id)
+                    : followView
+                      ? followView.full.has(p.id)
                         ? 1
                         : 0.15
                       : undefined
                 }
               >
                 <g dangerouslySetInnerHTML={{ __html: symbolInner(def, ink) }} />
+                {followView?.currentId === p.id && (
+                  <circle
+                    className="follow-cursor-ring"
+                    cx={def.bbox.x + def.bbox.w / 2}
+                    cy={def.bbox.y + def.bbox.h / 2}
+                    r={Math.max(def.bbox.w, def.bbox.h) / 2 + 4}
+                    fill="none"
+                    stroke="#d96f4e"
+                    strokeWidth={1.6 / vp.zoom}
+                  />
+                )}
                 <rect
                   x={def.bbox.x}
                   y={def.bbox.y}

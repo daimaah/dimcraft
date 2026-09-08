@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { ChartCanvas } from './canvas/ChartCanvas'
 import { Gallery } from './gallery/Gallery'
-import { FollowBar } from './panels/FollowBar'
+import { FollowBar, stepFollow, toggleFollowPlayback } from './panels/FollowBar'
 import { Inspector } from './panels/Inspector'
 import { Dialogs } from './panels/dialogs'
 import { LayersPanel } from './panels/LayersPanel'
@@ -173,6 +173,23 @@ export default function App() {
       if (st.dialog) {
         if (e.key === 'Escape') st.closeDialog()
         return
+      }
+      // follow mode playback: arrows step stitches when nothing is selected, space plays
+      if (st.followActive && st.selPlacements.length === 0) {
+        switch (e.key) {
+          case 'ArrowLeft':
+            e.preventDefault()
+            stepFollow(-1)
+            return
+          case 'ArrowRight':
+            e.preventDefault()
+            stepFollow(1)
+            return
+          case ' ':
+            e.preventDefault()
+            if (!e.repeat) toggleFollowPlayback()
+            return
+        }
       }
       switch (e.key) {
         case 'Delete':

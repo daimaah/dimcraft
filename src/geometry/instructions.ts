@@ -80,17 +80,33 @@ export interface FollowStep {
   label: string
   text: string
   ids: string[]
+  /** ids in true working order, for stitch-by-stitch playback */
+  order: string[]
   radius: number | null
 }
 
+/**
+ * Direction stitches are worked around a round, as seen on the chart (which
+ * faces the crocheter). Right-handed crocheters work counterclockwise; joined
+ * rounds are not turned between rounds, so every round keeps the same
+ * direction. Left-handed charts mirror to clockwise.
+ */
+export type WorkingDir = 'ccw' | 'cw'
+
 /** Round-by-round steps for follow mode: each step's text plus its stitch ids for highlighting. */
-export function followSteps(doc: ChartDoc, tolerance = 18): FollowStep[] {
+export function followSteps(doc: ChartDoc, tolerance = 18, dir: WorkingDir = 'ccw'): FollowStep[] {
   const defMap: Map<string, SymbolDef> = getDefMap(doc)
   const steps: FollowStep[] = []
 
   const ring = doc.placements.filter((p) => p.symbolId === 'magicring' && p.visible !== false)
   if (ring.length) {
-    steps.push({ label: 'Start', text: 'Start with a magic ring.', ids: ring.map((p) => p.id), radius: 0 })
+    steps.push({
+      label: 'Start',
+      text: 'Start with a magic ring.',
+      ids: ring.map((p) => p.id),
+      order: ring.map((p) => p.id),
+      radius: 0,
+    })
   }
 
   const { rounds } = groupRounds(doc, tolerance)
@@ -122,10 +138,15 @@ export function followSteps(doc: ChartDoc, tolerance = 18): FollowStep[] {
     const ordered = [...runs.slice(start), ...runs.slice(0, start)]
     const body =
       period > 0 ? `[${renderRuns(ordered.slice(0, period))}] × ${runs.length / period}` : renderRuns(ordered)
+    // working order runs the other way around the circle than the ascending
+    // angle sort used for the text (screen y is down, so descending atan2
+    // angle is counterclockwise for the viewer)
+    const workOrder = dir === 'ccw' ? [...round.items].sort((x, y) => y.a - x.a) : round.items
     steps.push({
       label: `R${i + 1}`,
       text: `R${i + 1}: ${body}`,
       ids: round.items.map((it) => it.p.id),
+      order: workOrder.map((it) => it.p.id),
       radius: round.meanRadius,
     })
   })
