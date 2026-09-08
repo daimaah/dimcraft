@@ -6,8 +6,8 @@ import { createEmptyDoc } from '../src/model/doc'
 import type { ChartDoc, CustomSet } from '../src/model/types'
 
 describe('symbol sets', () => {
-  it('ships three bundled sets and standard has no overrides', () => {
-    expect(BUILTIN_SETS.map((s) => s.id)).toEqual(['standard', 'japanese', 'solid'])
+  it('ships four bundled sets and standard has no overrides', () => {
+    expect(BUILTIN_SETS.map((s) => s.id)).toEqual(['standard', 'japanese', 'solid', 'commons-variants'])
     expect(BUILTIN_SETS[0].artwork).toEqual({})
     expect(Object.keys(BUILTIN_SETS[1].artwork).length).toBeGreaterThanOrEqual(8)
   })
@@ -44,8 +44,12 @@ describe('symbol sets', () => {
 
   it('bundled sets carry provenance', () => {
     for (const s of BUILTIN_SETS) {
-      expect(s.license).toContain('MIT')
+      expect(s.license.length).toBeGreaterThan(0)
     }
+    // original artwork sets are MIT; the Commons pack is per-file licensed
+    expect(BUILTIN_SETS[0].license).toContain('MIT')
+    expect(BUILTIN_SETS[3].license).toContain('CC')
+    expect(BUILTIN_SETS[3].sourceUrl).toContain('commons.wikimedia.org')
   })
 })
 
@@ -64,6 +68,35 @@ describe('terminology presets', () => {
     for (const id of ['uk', 'sv', 'no', 'da', 'fi', 'de', 'nl', 'fr', 'es', 'it', 'ru']) {
       expect(ids).toContain(id)
     }
+  })
+
+  it('bundles the Commons variants pack with per-file attribution', async () => {
+    const { commonsVariantsPack } = await import('../src/symbols/generated/commons-variants')
+    expect(Object.keys(commonsVariantsPack.artwork).length).toBeGreaterThanOrEqual(10)
+    expect(commonsVariantsPack.attributions.length).toBeGreaterThanOrEqual(10)
+    expect(commonsVariantsPack.license).toContain('CC')
+    expect(commonsVariantsPack.sourceUrl).toContain('commons.wikimedia.org')
+    // per-symbol attribution lines exist for every symbol in the pack
+    for (const id of Object.keys(commonsVariantsPack.artwork)) {
+      expect(commonsVariantsPack.attributions.some((a) => a.id === id)).toBe(true)
+    }
+  })
+
+  it('applySetToDefs adds unknown ids as new palette symbols', () => {
+    const doc = createEmptyDoc()
+    const defs = getDefMap(doc)
+    const withNew = applySetToDefs(defs, { 'dc': defs.get('dc')!.content, 'blo-commons': '<circle r="2" fill="@INK@"/>' })
+    expect(withNew.has('blo-commons')).toBe(true)
+    expect(withNew.get('blo-commons')!.label).toBe('blo-commons')
+    expect(withNew.get('blo-commons')!.bbox).toEqual({ x: 3, y: 4, w: 18, h: 26 })
+  })
+
+  it('selecting the Commons set exposes its added symbols through getDefMap', () => {
+    const doc = createEmptyDoc()
+    doc.symbolSet = 'commons-variants'
+    const ids = [...getDefMap(doc).keys()]
+    expect(ids).toContain('blo')
+    expect(ids).toContain('ch') // existing ids remain
   })
 
   it('maps the US↔UK ladder correctly', () => {

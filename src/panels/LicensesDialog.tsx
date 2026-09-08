@@ -1,4 +1,5 @@
 import { useStore } from '../state/store'
+import { BUILTIN_SETS } from '../symbols/sets'
 
 const DEPS: { name: string; license: string; url: string }[] = [
   { name: 'React / React DOM', license: 'MIT', url: 'https://react.dev' },
@@ -35,6 +36,24 @@ export function LicensesDialog() {
             created for DimCrochet under the same MIT license. Symbol shapes follow widely published
             chart conventions; no third-party symbol artwork is bundled.
           </p>
+
+          <h3>Bundled symbol sets</h3>
+          <ul className="license-list">
+            {BUILTIN_SETS.map((s) => (
+              <li key={s.id}>
+                <strong>{s.name}</strong> — {s.license}
+                {s.sourceUrl && (
+                  <div>
+                    Source:{' '}
+                    <a href={s.sourceUrl} target="_blank" rel="noreferrer">
+                      {s.sourceUrl}
+                    </a>
+                  </div>
+                )}
+                {s.notes && <div>{s.notes}</div>}
+              </li>
+            ))}
+          </ul>
 
           <h3>Symbol packs in this chart</h3>
           {(doc.customSets ?? []).length === 0 && (

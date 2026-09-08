@@ -1,0 +1,28 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: fig2dev Version 3.2 Patchlevel 5-alpha7 -->
+<!-- CreationDate: Fri Jan  4 00:25:32 2008 -->
+<!-- Magnification: 1.050 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1.7in" height="3.7in" viewBox="3677 3205 2093 4455">
+<g style="stroke-width:.025in; stroke:black; fill:none">
+<!-- Line -->
+<polyline points="3779,4251
+5669,3307
+" style="stroke:#000000;stroke-width:126;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="4251,5905
+5196,5433
+" style="stroke:#000000;stroke-width:126;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="4724,3779
+4724,7559
+" style="stroke:#000000;stroke-width:126;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+</g>
+</svg>

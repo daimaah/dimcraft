@@ -1,4 +1,5 @@
 import type { CustomSet, SymbolDef } from '../model/types'
+import { commonsVariantsPack } from './generated/commons-variants'
 
 /**
  * Bundled symbol sets: alternative artwork per built-in symbol id.
@@ -10,6 +11,9 @@ export interface BuiltinSet {
   name: string
   description: string
   license: string
+  authors?: string
+  sourceUrl?: string
+  notes?: string
   artwork: Record<string, string>
 }
 
@@ -60,6 +64,18 @@ export const BUILTIN_SETS: BuiltinSet[] = [
       magicring: `<circle cx="12" cy="22" r="6.2" stroke="@INK@" stroke-width="5.4" fill="none"/><path d="M 16.6 17 L 19.6 13.6" fill="none" stroke="@INK@" stroke-width="4.4" stroke-linecap="round"/>`,
     },
   },
+  {
+    id: commonsVariantsPack.id,
+    name: commonsVariantsPack.name,
+    description:
+      commonsVariantsPack.notes ??
+      'International and variant stitch symbols curated from Wikimedia Commons.',
+    license: commonsVariantsPack.license ?? 'Per-file free licenses (see attributions)',
+    authors: commonsVariantsPack.authors,
+    sourceUrl: commonsVariantsPack.sourceUrl,
+    notes: commonsVariantsPack.notes,
+    artwork: commonsVariantsPack.artwork,
+  },
 ]
 
 /** A doc may reference bundled sets by id or carry its own imported packs. */
@@ -78,12 +94,13 @@ export function resolveSet(doc: { symbolSet?: string; customSets?: CustomSet[] }
   return BUILTIN_SETS.find((s) => s.id === id) ?? BUILTIN_SETS[0]
 }
 
-/** Return a new map with the set's artwork substituted per symbol id. */
+/** A set may also *add* symbols: unknown ids become new palette entries. */
 export function applySetToDefs(defs: Map<string, SymbolDef>, artwork: Record<string, string>): Map<string, SymbolDef> {
   const out = new Map(defs)
   for (const [id, content] of Object.entries(artwork)) {
-    const def = out.get(id)
-    if (def) out.set(id, { ...def, content })
+    const existing = out.get(id)
+    if (existing) out.set(id, { ...existing, content })
+    else out.set(id, { id, name: id, label: id, content, bbox: { x: 3, y: 4, w: 18, h: 26 } })
   }
   return out
 }

@@ -109,9 +109,30 @@ the regional difference is *terminology*, which the built-in sv/no/da/fi presets
 A distinct Nordic *glyph* pack has low value; a Nordic **terminology-verified standard pack**
 is the deliverable. The Commons "variant symbols" are where real glyph differences live.
 
-**Plan:** when community packs ship — extend pack schema with license/attribution, build a
-one-off Commons importer (fetch → normalize viewBox → @INK@ tokens → pack JSON), and start a
-`packs/` folder in the repo as the distribution channel (works with Portainer/Git Hub, no backend).
+**Plan / how to finish the Commons pack:** the fetch pipeline exists and is resumable —
+`scripts/build-commons-pack.mjs` (also `npm run commons-pack`). It complies with
+[Wikimedia's access policy](https://www.mediawiki.org/wiki/Wikimedia_APIs/Access_policy) and
+[rates limits](https://www.mediawiki.org/wiki/Wikimedia_APIs/Rate_limits): compliant User-Agent
+with contact address, strictly serial requests, ≥1.2 s between media downloads, and 429/503
+handled by waiting the `Retry-After` header's value (≥5 s otherwise).
+
+**Current status:** the pack builds with **11 symbols** (blo, ch, Tunisian basics, decrease…);
+the remaining ~59 are pending because an earlier unthrottled run tripped the media rate limiter
+and this IP is temporarily blocked on `upload.wikimedia.org`.
+
+**How to keep trying until complete:**
+
+1. Set a contact address once: `set DIMCROCHET_CONTACT=you@example.com` (or edit the `UA` line
+   in the script) — Wikimedia's policy requires a reachable contact.
+2. Run `npm run commons-pack`. Cached files are reused instantly; only missing files are fetched.
+   If still rate-limited, the script waits per `Retry-After` and retries, then exits.
+3. Re-run it later — blocks on `upload.wikimedia.org` typically lift within the hour, and every
+   run keeps whatever is already cached. Each successful run rewrites
+   `src/symbols/generated/commons-variants.ts`; `npm run build` picks it up.
+4. Repeat until the script reports `pack: 70 symbols, 0 skipped` (or curate the skip list if a
+   specific file should stay out).
+5. Commit the regenerated file together with the script's attribution list (already embedded in
+   the pack and shown in-app under Licenses & attributions).
 
 **Licensing decision (recorded):** approved — attribution-based inclusion is acceptable. Done:
 pack files now carry `license` / `authors` / `sourceUrl` / `notes`, provenance survives

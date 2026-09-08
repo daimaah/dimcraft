@@ -1,0 +1,22 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: fig2dev Version 3.2 Patchlevel 5-alpha7 -->
+<!-- CreationDate: Fri Jan  4 00:28:18 2008 -->
+<!-- Magnification: 1.050 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="2.7in" height="2.6in" viewBox="3093 4181 3260 3070">
+<g style="stroke-width:.025in; stroke:black; fill:none">
+<!-- Arc -->
+<path style="stroke:#000000;stroke-width:126;stroke-linecap:butt"
+d="M 3779,7181 A 944 944  0  0  1  5669  7181 " />
+<!-- Ellipse -->
+<ellipse transform="translate(4724,4724) rotate(-0.00000000)" rx="944" ry="472"
+ style="stroke:#000000;stroke-width:126;"/>
+<!-- Ellipse -->
+<ellipse transform="translate(5811,5763) rotate(-270.00063138)" rx="944" ry="472"
+ style="stroke:#000000;stroke-width:126;"/>
+<!-- Ellipse -->
+<ellipse transform="translate(3637,5763) rotate(-270.00063138)" rx="944" ry="472"
+ style="stroke:#000000;stroke-width:126;"/>
+</g>
+</svg>

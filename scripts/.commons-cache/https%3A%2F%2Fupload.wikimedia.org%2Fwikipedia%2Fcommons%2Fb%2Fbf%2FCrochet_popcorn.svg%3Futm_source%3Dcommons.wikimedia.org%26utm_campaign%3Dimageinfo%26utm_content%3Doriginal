@@ -1,0 +1,61 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: fig2dev Version 3.2 Patchlevel 5-alpha7 -->
+<!-- CreationDate: Fri Jan  4 00:29:36 2008 -->
+<!-- Magnification: 1.050 -->
+<svg xmlns="http://www.w3.org/2000/svg" width="4.1in" height="4.5in" viewBox="2260 2764 4928 5369">
+<g style="stroke-width:.025in; stroke:black; fill:none">
+<!-- Arc -->
+<path style="stroke:#000000;stroke-width:126;stroke-linecap:butt"
+d="M 3779,3307 A 2773 2773  0  0  0  4724  8031 " />
+<!-- Arc -->
+<path style="stroke:#000000;stroke-width:126;stroke-linecap:butt"
+d="M 5669,3307 A 2773 2773  0  0  1  4724  8031 " />
+<!-- Arc -->
+<path style="stroke:#000000;stroke-width:126;stroke-linecap:butt"
+d="M 5291,3685 A 3113 3113  0  0  1  4724  8031 " />
+<!-- Arc -->
+<path style="stroke:#000000;stroke-width:126;stroke-linecap:butt"
+d="M 4157,3685 A 3113 3113  0  0  0  4724  8031 " />
+<!-- Ellipse -->
+<ellipse transform="translate(4724,3307) rotate(-0.00000000)" rx="944" ry="472"
+ style="stroke:#000000;stroke-width:126;"/>
+<!-- Line -->
+<polyline points="4724,3779
+4724,8031
+" style="stroke:#000000;stroke-width:126;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="4299,5905
+5244,5433
+" style="stroke:#000000;stroke-width:126;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="5433,5905
+6377,5433
+" style="stroke:#000000;stroke-width:126;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="3070,5905
+4015,5433
+" style="stroke:#000000;stroke-width:126;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="6141,5905
+7086,5433
+" style="stroke:#000000;stroke-width:126;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="2362,5905
+3307,5433
+" style="stroke:#000000;stroke-width:126;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+</g>
+</svg>
