@@ -1,13 +1,13 @@
-name: Build and publish Docker image
+name: Test and publish Docker image
 
-# Optional: publishes ghcr.io/<owner>/<repo> so Portainer stacks can pull the
-# image directly (Stacks → Add stack → Web editor). Runs on pushes to main and
-# on version tags, or manually from the Actions tab.
+# Tests run on every push and pull request; the Docker image is published only
+# after the tests (including the golden compatibility fixtures) pass.
 
 on:
   push:
     branches: [main]
     tags: ['v*']
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -15,7 +15,19 @@ permissions:
   packages: write
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
   docker:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -36,7 +48,7 @@ jobs:
       - uses: docker/build-push-action@v6
         with:
           context: .
-          push: true
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha

@@ -65,6 +65,22 @@ extension; older v1 files keep importing forever via the existing
 
 ---
 
+## File-format compatibility policy (adopted)
+
+1. **Additive-only within a schema version** — new fields get defaults; never rename
+   or remove an exported field.
+2. **Breaking change ⇒ bump `schemaVersion` + a migration** in `sanitizeDoc`
+   (the single gate for file import, IndexedDB load, and future URL fragments).
+   Migrations are never deleted.
+3. **Preserve unknown fields** — future files degrade safely in the current app,
+   and older app versions round-trip newer files without data loss.
+4. **Golden fixtures** — `tests/fixtures/` holds real serialized exports; the test
+   suite imports them on every run (and CI gates every build on it). On schema
+   changes: `GEN_FIXTURES=1 npx vitest run tests/fixtures/gen-fixtures.test.ts`
+   to regenerate, after committing/keeping fixtures from the previous era.
+
+---
+
 ## 2. Backlog (unprioritised)
 
 - **Cross-project copy/paste** — a clipboard store so motifs can move between

@@ -109,6 +109,18 @@ docker compose up -d --build   # build & run on http://localhost:8080
 4. The legend updates automatically; drag it where you want it on the page.
 5. `Ctrl+E` → export SVG (for editing/printing), PNG (for patterns and Etsy listings) or PDF.
 
+## File format & compatibility
+
+Chart and symbol-pack files use a versioned envelope (`{ app, version, name, doc }`). Every import path — file picker, drag-and-drop, IndexedDB — funnels through one migration gate, so files exported by older versions of DimCrochet keep opening, and unknown fields from newer versions are preserved rather than dropped. Real export fixtures live in `tests/fixtures/` and are exercised by the test suite on every run, so format drift is caught before it ships. When the schema changes, regenerate or hand-commit fixtures from the previous version:
+
+```bash
+GEN_FIXTURES=1 npx vitest run tests/fixtures/gen-fixtures.test.ts
+```
+
+## AI assistance disclosure
+
+DimCrochet was designed and developed with the assistance of AI tools (including code generation, symbol artwork drafting, and documentation). All code is human-reviewed and released under the [MIT License](LICENSE) without warranty. The bundled symbol artwork was drawn for this project; symbol packs imported by users keep their own licenses and attributions.
+
 ## License & symbols
 
 DimCrochet is released under the **MIT License** (see [LICENSE](LICENSE)). The bundled symbol sets are original artwork created for DimCrochet under the same license — no third-party symbol artwork is bundled. Imported symbol packs keep **their own licenses**; attribution (authors, license, source) travels inside the pack file and is shown in-app under **Licenses & attributions** (ⓘ in the toolbar, or the link on the projects screen). Terminology follows widely published chart conventions; labels are editable per chart for regional differences (e.g. “tr” vs “dtr” UK/US conventions).

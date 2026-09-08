@@ -1,0 +1,259 @@
+{
+  "app": "dimcrochet",
+  "version": 1,
+  "name": "Golden starter (v1 era)",
+  "savedAt": 1757000000000,
+  "doc": {
+    "schemaVersion": 1,
+    "title": "Granny square — round 1",
+    "placements": [
+      {
+        "id": "p-183gc391",
+        "symbolId": "magicring",
+        "x": 0,
+        "y": 0,
+        "rotation": 0,
+        "scale": 1,
+        "flip": false
+      },
+      {
+        "id": "p-0er917t3",
+        "symbolId": "dc",
+        "x": 120,
+        "y": -14,
+        "rotation": 90,
+        "scale": 1,
+        "flip": false,
+        "groupId": "grp-w4ko2rm2"
+      },
+      {
+        "id": "p-4u6y7wv4",
+        "symbolId": "dc",
+        "x": 120,
+        "y": 0,
+        "rotation": 90,
+        "scale": 1,
+        "flip": false,
+        "groupId": "grp-w4ko2rm2"
+      },
+      {
+        "id": "p-828t1iu5",
+        "symbolId": "dc",
+        "x": 120,
+        "y": 14,
+        "rotation": 90,
+        "scale": 1,
+        "flip": false,
+        "groupId": "grp-w4ko2rm2"
+      },
+      {
+        "id": "p-4nw0ua27",
+        "symbolId": "dc",
+        "x": 14.000000000000007,
+        "y": 120,
+        "rotation": 180,
+        "scale": 1,
+        "flip": false,
+        "groupId": "grp-i6nutlh6"
+      },
+      {
+        "id": "p-xy1sfxw8",
+        "symbolId": "dc",
+        "x": 7.34788079488412e-15,
+        "y": 120,
+        "rotation": 180,
+        "scale": 1,
+        "flip": false,
+        "groupId": "grp-i6nutlh6"
+      },
+      {
+        "id": "p-dsntaqf9",
+        "symbolId": "dc",
+        "x": -13.999999999999993,
+        "y": 120,
+        "rotation": 180,
+        "scale": 1,
+        "flip": false,
+        "groupId": "grp-i6nutlh6"
+      },
+      {
+        "id": "p-aa9slczb",
+        "symbolId": "dc",
+        "x": -120,
+        "y": 14.000000000000014,
+        "rotation": 270,
+        "scale": 1,
+        "flip": false,
+        "groupId": "grp-g82s5w1a"
+      },
+      {
+        "id": "p-dt6pv7zc",
+        "symbolId": "dc",
+        "x": -120,
+        "y": 1.469576158976824e-14,
+        "rotation": 270,
+        "scale": 1,
+        "flip": false,
+        "groupId": "grp-g82s5w1a"
+      },
+      {
+        "id": "p-yxpz9pxd",
+        "symbolId": "dc",
+        "x": -120,
+        "y": -13.999999999999986,
+        "rotation": 270,
+        "scale": 1,
+        "flip": false,
+        "groupId": "grp-g82s5w1a"
+      },
+      {
+        "id": "p-38zywghf",
+        "symbolId": "dc",
+        "x": -14.000000000000021,
+        "y": -120,
+        "rotation": 0,
+        "scale": 1,
+        "flip": false,
+        "groupId": "grp-nxwtuphe"
+      },
+      {
+        "id": "p-rxop3vig",
+        "symbolId": "dc",
+        "x": -2.2043642384652355e-14,
+        "y": -120,
+        "rotation": 0,
+        "scale": 1,
+        "flip": false,
+        "groupId": "grp-nxwtuphe"
+      },
+      {
+        "id": "p-w0fxayzh",
+        "symbolId": "dc",
+        "x": 13.999999999999979,
+        "y": -120,
+        "rotation": 0,
+        "scale": 1,
+        "flip": false,
+        "groupId": "grp-nxwtuphe"
+      },
+      {
+        "id": "p-k8nqskti",
+        "symbolId": "ch",
+        "x": 79.90306627407988,
+        "y": 79.90306627407986,
+        "rotation": 135,
+        "scale": 1,
+        "flip": false
+      },
+      {
+        "id": "p-064x958j",
+        "symbolId": "ch",
+        "x": 89.80256121069154,
+        "y": 89.80256121069152,
+        "rotation": 135,
+        "scale": 1,
+        "flip": false
+      },
+      {
+        "id": "p-w58nvpbk",
+        "symbolId": "ch",
+        "x": -79.90306627407986,
+        "y": 79.90306627407988,
+        "rotation": 225,
+        "scale": 1,
+        "flip": false
+      },
+      {
+        "id": "p-z1hfkbjl",
+        "symbolId": "ch",
+        "x": -89.80256121069152,
+        "y": 89.80256121069154,
+        "rotation": 225,
+        "scale": 1,
+        "flip": false
+      },
+      {
+        "id": "p-rpiirakm",
+        "symbolId": "ch",
+        "x": -79.90306627407989,
+        "y": -79.90306627407986,
+        "rotation": 315,
+        "scale": 1,
+        "flip": false
+      },
+      {
+        "id": "p-gp0cgyvn",
+        "symbolId": "ch",
+        "x": -89.80256121069155,
+        "y": -89.80256121069152,
+        "rotation": 315,
+        "scale": 1,
+        "flip": false
+      },
+      {
+        "id": "p-kxeecb0o",
+        "symbolId": "ch",
+        "x": 79.90306627407985,
+        "y": -79.90306627407989,
+        "rotation": 45,
+        "scale": 1,
+        "flip": false
+      },
+      {
+        "id": "p-51c49n4p",
+        "symbolId": "ch",
+        "x": 89.80256121069151,
+        "y": -89.80256121069155,
+        "rotation": 45,
+        "scale": 1,
+        "flip": false
+      }
+    ],
+    "guides": [
+      {
+        "id": "g-square",
+        "kind": "polygon",
+        "cx": 0,
+        "cy": 0,
+        "r": 120,
+        "n": 4,
+        "rot": 45,
+        "visible": true,
+        "name": "Square guide"
+      }
+    ],
+    "lines": [],
+    "brackets": [
+      {
+        "id": "b-6t6vmf6q",
+        "x1": -14,
+        "y1": -120,
+        "x2": 14,
+        "y2": -120,
+        "side": -1,
+        "count": 4
+      }
+    ],
+    "texts": [
+      {
+        "id": "t-shn4rg4r",
+        "x": -108,
+        "y": -218,
+        "content": "Granny square — round 1",
+        "size": 20,
+        "rotation": 0
+      }
+    ],
+    "customSymbols": [],
+    "labelOverrides": {},
+    "legend": {
+      "visible": true,
+      "x": 152,
+      "y": -158,
+      "title": "Legend",
+      "showCounts": true,
+      "scale": 1
+    },
+    "ink": "#26221f"
+  }
+}
