@@ -62,11 +62,11 @@ export function Modal({
     }
     const onUp = () => {
       head.dataset.dragging = 'false'
-      head.removeEventListener('pointermove', onMove)
-      head.removeEventListener('pointerup', onUp)
+      window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('pointerup', onUp)
     }
-    head.addEventListener('pointermove', onMove)
-    head.addEventListener('pointerup', onUp)
+    window.addEventListener('pointermove', onMove)
+    window.addEventListener('pointerup', onUp)
   }
 
   return (
