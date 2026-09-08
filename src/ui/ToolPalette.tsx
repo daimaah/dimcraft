@@ -147,6 +147,7 @@ export function ToolPalette() {
   const st = useStore
   const zoomPct = Math.round(viewport.zoom * 100)
   const viewAnimationsOn = useStore((s) => s.viewAnimations)
+  const toolbarOpacity = useStore((s) => s.toolbarOpacity)
   const fit = () => {
     const el = document.querySelector('.canvas-wrap')
     if (el) {
@@ -328,7 +329,7 @@ export function ToolPalette() {
       className={`tool-palette bar-pop${collapsed ? ' compact' : ''}${rows === 2 ? ' two-rows' : ''}${
         dragging ? ' dragging' : ''
       }`}
-      style={{ left: pos?.x, top: pos?.y }}
+      style={{ left: pos?.x, top: pos?.y, opacity: toolbarOpacity / 100 }}
       data-testid="tool-palette"
     >
       {/* always-visible left island: drag to move + collapse/expand, same spot in both states */}

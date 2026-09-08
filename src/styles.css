@@ -1549,10 +1549,41 @@ button {
   flex: none;
 }
 
+.modal.options .options-tabs {
+  margin-bottom: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  margin-right: -2px;
+}
+
 .modal.options .options-content {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  padding-top: 14px;
+}
+
+.options-divider {
+  height: 1px;
+  background: var(--line);
+  margin: 12px 0;
+}
+
+.opacity-slider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.opacity-slider input[type='range'] {
+  width: 160px;
+  accent-color: var(--accent);
+}
+
+.opacity-slider .opacity-value {
+  min-width: 40px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-dim);
 }
 
 .options-tabs button.danger {

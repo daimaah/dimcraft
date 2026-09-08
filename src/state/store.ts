@@ -88,6 +88,8 @@ interface EditorState {
   }
   /** status bar clock in 24-hour format */
   clock24h: boolean
+  /** opacity of the floating tool palette, percent (30 minimum stays findable) */
+  toolbarOpacity: number
   /** symbol id a "show me how" button asked the stitch-motions dialog to open */
   motionRequest: string | null
   leftCollapsed: boolean
@@ -197,6 +199,7 @@ interface EditorState {
   setPalette: (patch: Partial<EditorState['palette']>) => void
   resetPalette: () => void
   setClock24h: (v: boolean) => void
+  setToolbarOpacity: (v: number) => void
   requestMotion: (symbolId: string) => void
   requestMotionDone: () => void
   setGrid: (v: boolean) => void
@@ -275,6 +278,7 @@ export const useStore = create<EditorState>()((set, get) => {
     viewAnimations: true,
     palette: { rows: 1, pos: null, collapsed: false, order: null, hidden: [] },
     clock24h: false,
+    toolbarOpacity: 100,
     motionRequest: null,
 
     dialog: null,
@@ -946,6 +950,7 @@ export const useStore = create<EditorState>()((set, get) => {
     resetPalette: () =>
       set({ palette: { rows: 1, pos: null, collapsed: false, order: null, hidden: [] } }),
     setClock24h: (v) => set({ clock24h: v }),
+    setToolbarOpacity: (v) => set({ toolbarOpacity: Math.round(Math.min(100, Math.max(30, v))) }),
     requestMotion: (symbolId) => set({ motionRequest: symbolId, dialog: 'stitch-motions' }),
     requestMotionDone: () => set({ motionRequest: null }),
     setGrid: (v) => set({ gridVisible: v }),

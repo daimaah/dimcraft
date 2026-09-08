@@ -510,6 +510,7 @@ export function OptionsDialog() {
   const lefty = useStore((s) => s.lefty)
   const palette = useStore((s) => s.palette)
   const clock24h = useStore((s) => s.clock24h)
+  const toolbarOpacity = useStore((s) => s.toolbarOpacity)
   const tool = useStore((s) => s.tool)
   const snapEnabled = useStore((s) => s.snapEnabled)
   const gridVisible = useStore((s) => s.gridVisible)
@@ -617,9 +618,30 @@ export function OptionsDialog() {
         </button>
       </div>
 
+      <div className="options-divider" />
+
       <div className="options-content">
       {tab === 'general' && (
         <div className="form">
+          <div className="form-row opacity-slider" data-testid="opt-toolbar-opacity">
+            <span>
+              <strong>Toolbar opacity</strong>
+              <br />
+              <span className="hint">Make the floating palette more subtle. Never fully invisible — 30% keeps it findable.</span>
+            </span>
+            <span className="opacity-slider">
+              <input
+                type="range"
+                min={30}
+                max={100}
+                step={5}
+                value={toolbarOpacity}
+                data-testid="opt-toolbar-opacity-slider"
+                onChange={(e) => useStore.getState().setToolbarOpacity(Number(e.target.value))}
+              />
+              <span className="opacity-value">{toolbarOpacity}%</span>
+            </span>
+          </div>
           <label className="check" data-testid="opt-animations">
             <input
               type="checkbox"
