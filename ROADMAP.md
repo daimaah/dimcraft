@@ -7,6 +7,20 @@ in rough priority order, with design notes where the "how" matters.
 
 ## Recently shipped
 
+- **Beginner starter path** — five starter charts in increasing difficulty (chain → sc
+  coaster → dc coaster → granny square → granny circle) on a "Learn with starters" gallery
+  tab; "My designs" tab defaults by saved-project count with a pulsing badge until first
+  seen. Round starters are generated through the written-pattern pipeline (which also got
+  a fix: consecutive rounds now keep a minimum radial gap so follow mode's round grouping
+  never merges them).
+- **2D stitch animations** — three-part feature: (1) follow-mode playback builds the chart
+  stitch by stitch in true working order (counterclockwise right-handed; rounds not turned);
+  (2) "How stitches work" dialog animates the physical hook/yarn technique per stitch as
+  data-driven primitive compositions (yarn over / insert / pull up / pull through), with
+  captions and loop counts; (3) full palette coverage via family-stitch blocks (shells,
+  popcorn, puff, bobble, post stitches, decreases…) plus a height-based approximate
+  fallback, follow-mode "Show me how", and a left-handed mirror. Decompositions are
+  unit-tested against the standard instructions.
 - **Shareable URLs** — charts embedded (deflate + base64url) in the URL fragment; opt-in
   "Create share link" in the Export dialog; "Open as my copy" import at startup. Privacy copy
   in the dialog and the README ("Privacy & sharing").
