@@ -12,6 +12,7 @@ import { StitchMotionDialog } from './StitchMotionDialog'
 import { createShortLink, sidecarAvailable } from '../export/secureShare'
 import { recentChangelog } from '../export/changelog'
 import { DEFAULT_ORDER, PALETTE_BUTTONS } from '../ui/ToolPalette'
+import { Icon } from '../ui/icons'
 import changelogRaw from '../../CHANGELOG.md?raw'
 import type { RotationMode } from '../model/types'
 import type { SvgExportOptions } from '../export/svg'
@@ -22,15 +23,20 @@ export function Modal({
   onClose,
   children,
   wide,
+  className,
 }: {
   title: string
   onClose: () => void
   children: React.ReactNode
   wide?: boolean
+  className?: string
 }) {
   return (
     <div className="modal-backdrop" onPointerDown={onClose}>
-      <div className={wide ? 'modal wide' : 'modal'} onPointerDown={(e) => e.stopPropagation()}>
+      <div
+        className={['modal', wide ? 'wide' : '', className ?? ''].filter(Boolean).join(' ')}
+        onPointerDown={(e) => e.stopPropagation()}
+      >
         <div className="modal-head">
           <h2>{title}</h2>
           <button className="icon-btn" onClick={onClose}>
@@ -499,21 +505,28 @@ export function FileLoadRow() {
 
 // ---- universal options: view animations, handedness, sidecar, danger zone --
 
-const PALETTE_BUTTON_LABELS: Record<string, string> = Object.fromEntries(
-  PALETTE_BUTTONS.map((b) => [b.id, b.label]),
-)
-
 export function OptionsDialog() {
   const viewAnimations = useStore((s) => s.viewAnimations)
   const lefty = useStore((s) => s.lefty)
   const palette = useStore((s) => s.palette)
   const clock24h = useStore((s) => s.clock24h)
+  const tool = useStore((s) => s.tool)
+  const snapEnabled = useStore((s) => s.snapEnabled)
+  const gridVisible = useStore((s) => s.gridVisible)
+  const guidesVisible = useStore((s) => s.guidesVisible)
+  const canUndo = useStore((s) => s.past.length > 0)
+  const canRedo = useStore((s) => s.future.length > 0)
+  const zoomPct = Math.round(useStore((s) => s.viewport.zoom) * 100)
   const [tab, setTab] = useState<'general' | 'buttons' | 'danger'>('general')
   const [confirmText, setConfirmText] = useState('')
   const [wiping, setWiping] = useState(false)
   const [sidecarUrl, setSidecarUrl] = useState(
     () => localStorage.getItem('dimcrochet.sidecarUrl') ?? location.origin,
   )
+  const byId = new Map(PALETTE_BUTTONS.map((b) => [b.id, b]))
+  const [items, setItems] = useState(() => (palette.order ?? DEFAULT_ORDER).map((id) => byId.get(id) ?? { id, label: id }))
+  const [hiddenL, setHiddenL] = useState<string[]>(palette.hidden)
+  const [dragId, setDragId] = useState<string | null>(null)
 
   const wipe = async () => {
     setWiping(true)
@@ -528,8 +541,53 @@ export function OptionsDialog() {
 
   const unlock = confirmText.trim().toLowerCase() === 'reset'
 
+  /** same visual state the real toolbar button would have right now */
+  const previewState = (id: string): { active: boolean; disabled: boolean } => {
+    switch (id) {
+      case 'select':
+      case 'pan':
+      case 'place':
+      case 'line':
+      case 'guide-circle':
+      case 'guide-arc':
+      case 'guide-spiral':
+      case 'guide-line':
+      case 'guide-polygon':
+      case 'bracket':
+      case 'text':
+        return { active: tool === id, disabled: false }
+      case 'undo':
+        return { active: false, disabled: !canUndo }
+      case 'redo':
+        return { active: false, disabled: !canRedo }
+      case 'snap':
+        return { active: snapEnabled, disabled: false }
+      case 'grid':
+        return { active: gridVisible, disabled: false }
+      case 'guides':
+        return { active: guidesVisible, disabled: false }
+      case 'fullscreen':
+        return { active: document.fullscreenElement != null, disabled: false }
+      default:
+        return { active: false, disabled: false }
+    }
+  }
+
+  const preview = (id: string) => {
+    const b = byId.get(id)!
+    const { active, disabled } = previewState(id)
+    return (
+      <span
+        className={`tool-btn preview-btn${active ? ' active' : ''}${disabled ? ' dimmed' : ''}`}
+        title={b.label}
+      >
+        {id === 'zoom' ? `${zoomPct}%` : b.icon ? <Icon name={b.icon} /> : b.glyph}
+      </span>
+    )
+  }
+
   return (
-    <Modal title="Options" onClose={() => useStore.getState().closeDialog()} wide>
+    <Modal title="Options" onClose={() => useStore.getState().closeDialog()} wide className="options">
       <div className="seg options-tabs" role="tablist">
         <button
           role="tab"
@@ -559,6 +617,7 @@ export function OptionsDialog() {
         </button>
       </div>
 
+      <div className="options-content">
       {tab === 'general' && (
         <div className="form">
           <label className="check" data-testid="opt-animations">
@@ -651,55 +710,62 @@ export function OptionsDialog() {
             </div>
           </div>
           <p className="hint">
-            Show or hide buttons, and reorder them with the arrows. Hidden buttons come back here
-            anytime. Select, Pan, Place and Text stay on the palette even when it is collapsed.
+            Drag to reorder the buttons exactly as they appear on the palette, and use the checkbox
+            to hide ones you don't use. Select, Pan, Place and Text stay on the palette even when it
+            is collapsed.
           </p>
-          <div className="palette-custom-list">
-            {(palette.order ?? DEFAULT_ORDER).map((id, i) => {
-              const hidden = palette.hidden.includes(id)
-              const label = PALETTE_BUTTON_LABELS[id] ?? id
-              const order = palette.order ?? DEFAULT_ORDER
+          <div className="palette-dd-list" data-testid="palette-dd-list">
+            {items.map((b) => {
+              const isHidden = hiddenL.includes(b.id)
               return (
-                <div key={id} className={`btnrow${hidden ? ' off' : ''}`}>
-                  <span className="btnrow-order">
-                    <button
-                      className="tool-btn"
-                      title="Move up"
-                      disabled={i === 0}
-                      onClick={() => {
-                        const next = [...order]
-                        ;[next[i - 1], next[i]] = [next[i], next[i - 1]]
-                        useStore.getState().setPalette({ order: next })
-                      }}
-                    >
-                      ↑
-                    </button>
-                    <button
-                      className="tool-btn"
-                      title="Move down"
-                      disabled={i === order.length - 1}
-                      onClick={() => {
-                        const next = [...order]
-                        ;[next[i + 1], next[i]] = [next[i], next[i + 1]]
-                        useStore.getState().setPalette({ order: next })
-                      }}
-                    >
-                      ↓
-                    </button>
+                <div
+                  key={b.id}
+                  className={`palette-dd-row${isHidden ? ' off' : ''}${dragId === b.id ? ' dragging' : ''}`}
+                  draggable
+                  onDragStart={(e) => {
+                    setDragId(b.id)
+                    e.dataTransfer.effectAllowed = 'move'
+                    try {
+                      e.dataTransfer.setData('text/plain', b.id)
+                    } catch {
+                      /* some engines refuse setData */
+                    }
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault()
+                    if (!dragId || dragId === b.id) return
+                    const from = items.findIndex((i) => i.id === dragId)
+                    const to = items.findIndex((i) => i.id === b.id)
+                    if (from < 0 || to < 0 || from === to) return
+                    const next = [...items]
+                    next.splice(to, 0, next.splice(from, 1)[0])
+                    setItems(next)
+                    useStore.getState().setPalette({ order: next.map((i) => i.id) })
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault()
+                    setDragId(null)
+                  }}
+                  onDragEnd={() => setDragId(null)}
+                >
+                  <span className="dd-handle" title="Drag to reorder">
+                    ⠿
                   </span>
-                  <span className="btnrow-label">{label}</span>
+                  {preview(b.id)}
+                  <span className="btnrow-label">{b.label}</span>
                   <label className="check">
                     <input
                       type="checkbox"
-                      checked={!hidden}
+                      checked={!isHidden}
                       onChange={(e) => {
                         const nextHidden = e.target.checked
-                          ? palette.hidden.filter((h) => h !== id)
-                          : [...palette.hidden, id]
+                          ? hiddenL.filter((h) => h !== b.id)
+                          : [...hiddenL, b.id]
+                        setHiddenL(nextHidden)
                         useStore.getState().setPalette({ hidden: nextHidden })
                       }}
                     />
-                    <span>{hidden ? 'hidden' : 'shown'}</span>
+                    <span>{isHidden ? 'hidden' : 'shown'}</span>
                   </label>
                 </div>
               )
@@ -715,6 +781,8 @@ export function OptionsDialog() {
                 )
               ) {
                 useStore.getState().resetPalette()
+                setItems(PALETTE_BUTTONS.map((b) => ({ ...b })))
+                setHiddenL([])
               }
             }}
           >
@@ -731,7 +799,7 @@ export function OptionsDialog() {
             never visited the site. Anything you did not back up is gone for good.
           </p>
           <div className="form-row" data-testid="danger-confirm-row">
-            <span>Type “reset” to confirm:</span>
+            <span>Type \u201creset\u201d to confirm:</span>
             <input
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
@@ -750,6 +818,7 @@ export function OptionsDialog() {
           </button>
         </div>
       )}
+      </div>
     </Modal>
   )
 }

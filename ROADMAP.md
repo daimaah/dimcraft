@@ -7,6 +7,10 @@ in rough priority order, with design notes where the "how" matters.
 
 ## Recently shipped
 
+- **Visual button customization** — the Options Buttons tab lists palette buttons with
+  their live icons and highlight state, drag & drop reordering, show/hide checkboxes, and
+  the two-row + position-reset controls consolidated in one place. The Options dialog now
+  holds a consistent 640×640 size across tabs.
 - **Options tabs + danger zone + version history view** — Options now has General and
   Danger zone tabs: the danger tab deletes all local data (charts, prefs, clipboard) behind
   a type-"reset" confirmation that unlocks the final button. Collapsed tool palette keeps

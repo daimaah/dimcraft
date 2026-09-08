@@ -20,20 +20,20 @@ const TOOLS: { id: string; icon: IconName; label: string; key: string }[] = [
 const ESSENTIAL_TOOLS = ['select', 'pan', 'place', 'text']
 
 /** customizable buttons in default display order */
-export const PALETTE_BUTTONS: { id: string; label: string }[] = [
-  ...TOOLS.map((t) => ({ id: t.id, label: t.label })),
-  { id: 'undo', label: 'Undo' },
-  { id: 'redo', label: 'Redo' },
-  { id: 'snap', label: 'Snapping' },
-  { id: 'grid', label: 'Grid' },
-  { id: 'guides', label: 'Show guides' },
-  { id: 'zoom-out', label: 'Zoom out' },
-  { id: 'zoom', label: 'Zoom percentage' },
-  { id: 'zoom-in', label: 'Zoom in' },
-  { id: 'fit', label: 'Fit chart' },
-  { id: 'fullscreen', label: 'Full screen' },
-  { id: 'info', label: 'Licenses' },
-  { id: 'options', label: 'Options' },
+export const PALETTE_BUTTONS: { id: string; label: string; icon?: IconName; glyph?: string }[] = [
+  ...TOOLS.map((t) => ({ id: t.id, label: t.label, icon: t.icon })),
+  { id: 'undo', label: 'Undo', icon: 'undo' },
+  { id: 'redo', label: 'Redo', icon: 'redo' },
+  { id: 'snap', label: 'Snapping', icon: 'snap' },
+  { id: 'grid', label: 'Grid', icon: 'grid' },
+  { id: 'guides', label: 'Show guides', icon: 'guides' },
+  { id: 'zoom-out', label: 'Zoom out', glyph: '−' },
+  { id: 'zoom', label: 'Zoom percentage', glyph: '%' },
+  { id: 'zoom-in', label: 'Zoom in', glyph: '+' },
+  { id: 'fit', label: 'Fit chart', icon: 'fit' },
+  { id: 'fullscreen', label: 'Full screen', icon: 'expand' },
+  { id: 'info', label: 'Licenses', icon: 'info' },
+  { id: 'options', label: 'Options', icon: 'gear' },
 ]
 
 export const DEFAULT_ORDER = PALETTE_BUTTONS.map((b) => b.id)

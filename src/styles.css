@@ -1492,35 +1492,6 @@ button {
 }
 
 /* ---- options tabs, danger zone, changelog, version link ------------------- */
-.options-tabs {
-  margin-bottom: 12px;
-}
-
-.options-tabs button.danger {
-  color: var(--danger);
-}
-
-.options-tabs button.danger.on {
-  background: var(--danger);
-  color: #fff;
-}
-
-.danger-zone {
-  border: 1px solid var(--danger);
-  border-radius: 10px;
-  padding: 12px;
-  background: rgba(201, 90, 78, 0.06);
-}
-
-.danger-btn {
-  background: var(--danger);
-  color: #fff;
-}
-
-.danger-btn:disabled {
-  opacity: 0.45;
-}
-
 .version-link {
   background: none;
   border: none;
@@ -1570,4 +1541,89 @@ button {
 
 .changelog-li {
   padding-left: 10px;
+}
+
+/* ---- options dialog: consistent size across tabs -------------------------- */
+.modal.options {
+  width: 640px;
+  height: 640px;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal.options .modal-head,
+.modal.options .options-tabs {
+  flex: none;
+}
+
+.modal.options .options-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.options-tabs button.danger {
+  color: var(--danger);
+}
+
+.options-tabs button.danger.on {
+  background: var(--danger);
+  color: #fff;
+}
+
+.danger-zone {
+  border: 1px solid var(--danger);
+  border-radius: 10px;
+  padding: 12px;
+  background: rgba(201, 90, 78, 0.06);
+}
+
+.danger-btn {
+  background: var(--danger);
+  color: #fff;
+}
+
+.danger-btn:disabled {
+  opacity: 0.45;
+}
+
+/* ---- drag & drop button list ---------------------------------------------- */
+.palette-dd-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.palette-dd-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 3px 8px;
+  background: var(--bg-raised);
+  cursor: grab;
+}
+
+.palette-dd-row.dragging {
+  opacity: 0.4;
+}
+
+.palette-dd-row.off {
+  opacity: 0.55;
+}
+
+.dd-handle {
+  color: var(--text-dim);
+  cursor: grab;
+  user-select: none;
+}
+
+.preview-btn {
+  cursor: default;
+}
+
+.preview-btn.dimmed {
+  opacity: 0.4;
 }
