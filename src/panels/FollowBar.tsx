@@ -119,6 +119,14 @@ export function FollowBar() {
   const [width, setWidth] = useState<number | undefined>(saved.current.w)
   const [dragging, setDragging] = useState(false)
 
+  const persist = (p: { x: number; y: number }, w: number | undefined) => {
+    try {
+      localStorage.setItem(POS_KEY, JSON.stringify({ ...p, w }))
+    } catch {
+      /* storage unavailable */
+    }
+  }
+
   // default position: centered near the bottom (measured once after mount)
   useEffect(() => {
     if (pos) return
@@ -132,13 +140,32 @@ export function FollowBar() {
     setPos({ x, y })
   }, [pos])
 
-  const persist = (p: { x: number; y: number }, w: number | undefined) => {
-    try {
-      localStorage.setItem(POS_KEY, JSON.stringify({ ...p, w }))
-    } catch {
-      /* storage unavailable */
+  // keep the saved position inside the canvas area: it may have been stored
+  // under a different window size (e.g. before entering fullscreen), which
+  // would otherwise push the bar out of view
+  useEffect(() => {
+    if (!pos) return
+    const clamp = () => {
+      const bar = barRef.current
+      const parent = bar?.parentElement
+      if (!bar || !parent) return
+      const nx = Math.min(Math.max(0, pos.x), Math.max(0, parent.clientWidth - bar.offsetWidth))
+      const ny = Math.min(Math.max(0, pos.y), Math.max(0, parent.clientHeight - bar.offsetHeight))
+      if (nx !== pos.x || ny !== pos.y) {
+        setPos({ x: nx, y: ny })
+        persist({ x: nx, y: ny }, width)
+      }
     }
-  }
+    clamp()
+    // defer to the next frame so the layout has settled after a size change
+    const deferred = () => requestAnimationFrame(clamp)
+    window.addEventListener('resize', deferred)
+    document.addEventListener('fullscreenchange', deferred)
+    return () => {
+      window.removeEventListener('resize', deferred)
+      document.removeEventListener('fullscreenchange', deferred)
+    }
+  }, [pos, width])
 
   const startDrag = (e: React.PointerEvent) => {
     const bar = barRef.current
