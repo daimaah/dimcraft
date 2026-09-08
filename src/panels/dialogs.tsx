@@ -55,10 +55,17 @@ export function Modal({
     const startX = e.clientX
     const startY = e.clientY
     const startLeft = rect.left
-    const startTop = Math.max(6, rect.top)
+    const startTop = rect.top
+    // keep the whole dialog inside the viewport while dragging
     const onMove = (ev: PointerEvent) => {
-      el.style.left = `${startLeft + ev.clientX - startX}px`
-      el.style.top = `${Math.max(6, startTop + ev.clientY - startY)}px`
+      const w = el.offsetWidth
+      const h = el.offsetHeight
+      const maxLeft = Math.max(8, window.innerWidth - w - 8)
+      const maxTop = Math.max(8, window.innerHeight - h - 8)
+      const left = Math.min(Math.max(8, startLeft + ev.clientX - startX), maxLeft)
+      const top = Math.min(Math.max(8, startTop + ev.clientY - startY), maxTop)
+      el.style.left = `${left}px`
+      el.style.top = `${top}px`
     }
     const onUp = () => {
       head.dataset.dragging = 'false'
