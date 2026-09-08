@@ -289,7 +289,16 @@ export function Inspector() {
     : null
   return (
     <>
-      <div className="panel-title">Chart</div>
+      <div className="panel-head">
+        <div className="panel-title">Chart</div>
+        <button
+          className="icon-btn collapse-btn"
+          title="Hide inspector & layers"
+          onClick={() => useStore.getState().setRightCollapsed(true)}
+        >
+          »
+        </button>
+      </div>
       <Row>
         <label className="field grow">
           <span>Ink colour</span>

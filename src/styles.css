@@ -804,31 +804,6 @@ button {
   border-color: var(--accent-soft);
 }
 
-.col-head .icon-btn {
-  font-size: 20px;
-  padding: 4px 10px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--bg-raised);
-  color: var(--text);
-}
-
-.col-head .icon-btn:hover {
-  color: var(--accent-soft);
-  border-color: var(--accent-soft);
-}
-
-.right-col {
-  position: relative;
-}
-
-.col-head {
-  display: flex;
-  justify-content: flex-end;
-  padding: 3px 6px 0;
-  flex: none;
-}
-
 .edge-tab {
   position: absolute;
   top: 50%;

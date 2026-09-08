@@ -393,15 +393,6 @@ export default function App() {
         </div>
         <div className={`side-wrap right${rightCollapsed ? ' closed' : ''}`}>
           <div className="right-col">
-            <div className="col-head">
-              <button
-                className="icon-btn"
-                title="Hide inspector & layers"
-                onClick={() => useStore.getState().setRightCollapsed(true)}
-              >
-                ›
-              </button>
-            </div>
             <section className="panel inspector-panel">
               <Inspector />
             </section>
