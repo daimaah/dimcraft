@@ -7,6 +7,12 @@ in rough priority order, with design notes where the "how" matters.
 
 ## Recently shipped
 
+- **Options dialog + editable zoom + bar animations** — the tool palette ⚙ button opens
+  Options: design-view animations on/off (gates bar collapse pops and the zoom bounce via a
+  root data-anim attribute), left-handed view, and the sidecar URL (consolidated from the
+  export dialog). The zoom percentage is now an editable field (type + Enter, clamped,
+  bounce on apply); typing digits in it can no longer collide with number-bound tool
+  hotkeys. Animations are one fixed, tuned speed by design.
 - **Floating tool palette** — the crowded top toolbar split: editing/view tools (tools,
   undo/redo, snapping/grid/guides, zoom, fullscreen) moved into a draggable, collapsible
   palette over the canvas (default: top-anchored; ⟲ resets the position; persisted).

@@ -18,6 +18,8 @@ const TOOLS: { id: string; icon: IconName; label: string; key: string }[] = [
 
 const KEY = 'dimcrochet.toolPalette'
 
+const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
+
 interface PaletteState {
   x?: number
   y?: number
@@ -161,12 +163,30 @@ export function ToolPalette() {
   }
   const zoom = (f: number) => st.getState().zoomAt(f, window.innerWidth / 2, window.innerHeight / 2)
 
+  // editable zoom indicator: type a percentage, Enter/blur applies it with a bounce
+  const viewAnimations = useStore((s) => s.viewAnimations)
+  const [zoomEdit, setZoomEdit] = useState<string | null>(null)
+  const [bounce, setBounce] = useState(false)
+  const commitZoom = () => {
+    if (zoomEdit == null) return
+    const v = parseFloat(zoomEdit.replace('%', '').trim())
+    setZoomEdit(null)
+    if (Number.isFinite(v)) {
+      st.getState().zoomAt(clamp(v / 100, 0.04, 24) / viewport.zoom, window.innerWidth / 2, window.innerHeight / 2)
+      if (viewAnimations) {
+        setBounce(true)
+        window.setTimeout(() => setBounce(false), 400)
+      }
+    }
+  }
+
   const activeTool = TOOLS.find((t) => t.id === tool)
 
   return (
     <div
+      key={collapsed ? 'min' : 'max'}
       ref={barRef}
-      className={`tool-palette${collapsed ? ' compact' : ''}${dragging ? ' dragging' : ''}`}
+      className={`tool-palette bar-pop${collapsed ? ' compact' : ''}${dragging ? ' dragging' : ''}`}
       style={{ left: pos?.x, top: pos?.y }}
       data-testid="tool-palette"
     >
@@ -247,7 +267,28 @@ export function ToolPalette() {
             <button className="tool-btn" title="Zoom out" onClick={() => zoom(1 / 1.2)}>
               −
             </button>
-            <span className="zoom-label">{zoomPct}%</span>
+            <input
+              className={`zoom-label zoom-input${bounce ? ' zoom-bounce' : ''}`}
+              value={zoomEdit ?? `${zoomPct}%`}
+              onChange={(e) => setZoomEdit(e.target.value)}
+              onFocus={() => setZoomEdit(`${zoomPct}%`)}
+              onBlur={() => commitZoom()}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  commitZoom()
+                  ;(e.target as HTMLInputElement).blur()
+                }
+                if (e.key === 'Escape') {
+                  setZoomEdit(null)
+                  ;(e.target as HTMLInputElement).blur()
+                }
+              }}
+              size={5}
+              inputMode="decimal"
+              spellCheck={false}
+              title="Zoom — type a percentage and press Enter"
+              data-testid="zoom-input"
+            />
             <button className="tool-btn" title="Zoom in" onClick={() => zoom(1.2)}>
               +
             </button>
@@ -267,6 +308,14 @@ export function ToolPalette() {
               onClick={() => st.getState().openDialog('licenses')}
             >
               <Icon name="info" />
+            </button>
+            <button
+              className="tool-btn"
+              title="Options — animations, left-handed view, sidecar"
+              data-testid="open-options"
+              onClick={() => st.getState().openDialog('options')}
+            >
+              <Icon name="gear" />
             </button>
           </div>
           <div className="tb-sep" />

@@ -35,7 +35,7 @@ export interface Viewport {
   zoom: number
 }
 
-export type DialogKind = 'place-evenly' | 'export' | 'preview' | 'instructions' | 'licenses' | 'pattern-import' | 'stitch-motions' | null
+export type DialogKind = 'place-evenly' | 'export' | 'preview' | 'instructions' | 'licenses' | 'pattern-import' | 'stitch-motions' | 'options' | null
 
 export interface DragPositions {
   placements: { id: string; x: number; y: number }[]
@@ -74,6 +74,8 @@ interface EditorState {
   guidesVisible: boolean
   /** mirror the technique animations and follow order for left-handed crocheters */
   lefty: boolean
+  /** animate collapsible bars and the zoom indicator in the design view */
+  viewAnimations: boolean
   /** symbol id a "show me how" button asked the stitch-motions dialog to open */
   motionRequest: string | null
   leftCollapsed: boolean
@@ -179,6 +181,7 @@ interface EditorState {
 
   setSnap: (v: boolean) => void
   setLefty: (v: boolean) => void
+  setViewAnimations: (v: boolean) => void
   requestMotion: (symbolId: string) => void
   requestMotionDone: () => void
   setGrid: (v: boolean) => void
@@ -254,6 +257,7 @@ export const useStore = create<EditorState>()((set, get) => {
     gridVisible: true,
     guidesVisible: true,
     lefty: false,
+    viewAnimations: true,
     motionRequest: null,
 
     dialog: null,
@@ -920,6 +924,7 @@ export const useStore = create<EditorState>()((set, get) => {
 
     setSnap: (v) => set({ snapEnabled: v }),
     setLefty: (v) => set({ lefty: v }),
+    setViewAnimations: (v) => set({ viewAnimations: v }),
     requestMotion: (symbolId) => set({ motionRequest: symbolId, dialog: 'stitch-motions' }),
     requestMotionDone: () => set({ motionRequest: null }),
     setGrid: (v) => set({ gridVisible: v }),

@@ -24,6 +24,9 @@ const ICONS: Record<string, React.ReactNode> = {
   play: <path d="M6.5 4 L15.5 10 L6.5 16 Z" />,
   expand: <path d="M3 7 V3 H7 M13 3 H17 V7 M17 13 V17 H13 M7 17 H3 V13 M7.5 7.5 H12.5 V12.5 H7.5 Z" />,
   info: <path d="M10 17.5 A 7.5 7.5 0 1 0 10 2.5 A 7.5 7.5 0 1 0 10 17.5 M10 8.8 V14 M10 5.8 h0.01" />,
+  gear: (
+    <path d="M10 7 A 3 3 0 1 0 10 13 A 3 3 0 1 0 10 7 M10 2.5 V4.5 M10 15.5 V17.5 M17.5 10 H15.5 M4.5 10 H2.5 M15.3 4.7 L13.9 6.1 M6.1 13.9 L4.7 15.3 M15.3 15.3 L13.9 13.9 M6.1 6.1 L4.7 4.7" />
+  ),
 }
 
 export type IconName = keyof typeof ICONS

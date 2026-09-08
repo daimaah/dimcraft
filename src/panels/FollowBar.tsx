@@ -203,8 +203,9 @@ export function FollowBar() {
 
   return (
     <div
+      key={minimized ? 'min' : 'max'}
       ref={barRef}
-      className={`follow-bar${minimized ? ' compact' : ''}${dragging ? ' dragging' : ''}`}
+      className={`follow-bar bar-pop${minimized ? ' compact' : ''}${dragging ? ' dragging' : ''}`}
       style={{ left: pos?.x, top: pos?.y }}
       data-testid="follow-bar"
     >

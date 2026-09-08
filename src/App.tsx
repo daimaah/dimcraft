@@ -36,6 +36,12 @@ export default function App() {
   const leftCollapsed = useStore((s) => s.leftCollapsed)
   const rightCollapsed = useStore((s) => s.rightCollapsed)
   const sharedChart = useStore((s) => s.sharedChart)
+  const viewAnimations = useStore((s) => s.viewAnimations)
+
+  // collapsible-bar / zoom animations read this off the root element
+  useEffect(() => {
+    document.documentElement.dataset.anim = viewAnimations ? 'on' : 'off'
+  }, [viewAnimations])
 
   // centre the view on the chart whenever a project opens
   useEffect(() => {
@@ -79,6 +85,7 @@ export default function App() {
       if (typeof prefs.leftCollapsed === 'boolean') useStore.setState({ leftCollapsed: prefs.leftCollapsed })
       if (typeof prefs.rightCollapsed === 'boolean') useStore.setState({ rightCollapsed: prefs.rightCollapsed })
       if (typeof prefs.lefty === 'boolean') useStore.setState({ lefty: prefs.lefty })
+      if (typeof prefs.viewAnimations === 'boolean') useStore.setState({ viewAnimations: prefs.viewAnimations })
     } catch {
       /* ignore bad prefs */
     }
@@ -100,7 +107,8 @@ export default function App() {
         s.guidesVisible !== prev.guidesVisible ||
         s.leftCollapsed !== prev.leftCollapsed ||
         s.rightCollapsed !== prev.rightCollapsed ||
-        s.lefty !== prev.lefty
+        s.lefty !== prev.lefty ||
+        s.viewAnimations !== prev.viewAnimations
       ) {
         localStorage.setItem(
           PREFS_KEY,
@@ -111,6 +119,7 @@ export default function App() {
             leftCollapsed: s.leftCollapsed,
             rightCollapsed: s.rightCollapsed,
             lefty: s.lefty,
+            viewAnimations: s.viewAnimations,
           }),
         )
       }

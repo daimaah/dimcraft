@@ -217,3 +217,13 @@ describe('follow playback state', () => {
     expect(s.followPlaying).toBe(false)
   })
 })
+
+describe('view animation preference', () => {
+  it('defaults on and toggles off', () => {
+    expect(useStore.getState().viewAnimations).toBe(true)
+    useStore.getState().setViewAnimations(false)
+    expect(useStore.getState().viewAnimations).toBe(false)
+    useStore.getState().setViewAnimations(true)
+    expect(useStore.getState().viewAnimations).toBe(true)
+  })
+})

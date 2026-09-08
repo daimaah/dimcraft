@@ -494,6 +494,75 @@ export function FileLoadRow() {
   )
 }
 
+// ---- universal options: view animations, handedness, sidecar --------------
+
+export function OptionsDialog() {
+  const viewAnimations = useStore((s) => s.viewAnimations)
+  const lefty = useStore((s) => s.lefty)
+  const [sidecarUrl, setSidecarUrl] = useState(
+    () => localStorage.getItem('dimcrochet.sidecarUrl') ?? location.origin,
+  )
+  return (
+    <Modal title="Options" onClose={() => useStore.getState().closeDialog()} wide>
+      <div className="form">
+        <label className="check" data-testid="opt-animations">
+          <input
+            type="checkbox"
+            checked={viewAnimations}
+            onChange={(e) => useStore.getState().setViewAnimations(e.target.checked)}
+          />
+          <span>
+            <strong>Design view animations</strong>
+            <br />
+            <span className="hint">
+              Animate collapsible bars (tool palette, follow bar) and add a bounce when a typed zoom
+              is applied. Turn off for instant transitions.
+            </span>
+          </span>
+        </label>
+        <label className="check" data-testid="opt-lefty">
+          <input
+            type="checkbox"
+            checked={lefty}
+            onChange={(e) => useStore.getState().setLefty(e.target.checked)}
+          />
+          <span>
+            <strong>Left-handed view</strong>
+            <br />
+            <span className="hint">
+              Mirrors the stitch-motion animations and switches follow-mode playback to clockwise.
+            </span>
+          </span>
+        </label>
+        <div className="form-row" data-testid="opt-sidecar">
+          <span>
+            <strong>Sidecar URL</strong>
+            <br />
+            <span className="hint">
+              Base URL of the self-hosted short-link sidecar used by Export → Short link
+              (defaults to this app's own address).
+            </span>
+          </span>
+          <input
+            value={sidecarUrl}
+            onChange={(e) => setSidecarUrl(e.target.value)}
+            onBlur={() => {
+              try {
+                localStorage.setItem('dimcrochet.sidecarUrl', sidecarUrl.trim())
+              } catch {
+                /* storage unavailable */
+              }
+            }}
+            placeholder="https://charts.example.com"
+            spellCheck={false}
+            data-testid="opt-sidecar-url"
+          />
+        </div>
+      </div>
+    </Modal>
+  )
+}
+
 export function Dialogs() {
   const dialog = useStore((s) => s.dialog)
   if (dialog === 'place-evenly') return <PlaceEvenlyDialog />
@@ -503,5 +572,6 @@ export function Dialogs() {
   if (dialog === 'licenses') return <LicensesDialog />
   if (dialog === 'pattern-import') return <PatternImportDialog />
   if (dialog === 'stitch-motions') return <StitchMotionDialog />
+  if (dialog === 'options') return <OptionsDialog />
   return null
 }
