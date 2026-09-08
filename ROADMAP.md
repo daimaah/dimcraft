@@ -7,6 +7,12 @@ in rough priority order, with design notes where the "how" matters.
 
 ## Recently shipped
 
+- **One-file backup/restore** — gallery footer buttons download every chart plus all
+  dimcrochet.* settings (prefs, follow-bar position, sidecar URL, clipboard) as a single
+  JSON file, and restore it in any browser (merge by chart id, invalid entries dropped,
+  other charts untouched). New `dimcrochet-backup` interchange kind.
+- **Bigger panel collapse affordances** — panel «/› buttons and the collapsed edge tabs
+  are larger, bordered and easier to notice.
 - **Cross-project copy/paste** — Ctrl+C/X/V on the current selection; fragments live in
   localStorage so they survive project switches and restarts; pasted stitches keep their
   grouping and layer tags (fresh guide ids are carried along) and land selected with a small

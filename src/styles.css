@@ -650,6 +650,31 @@ button {
   top: 7px;
   right: 4px;
   z-index: 2;
+  font-size: 20px;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg-raised);
+  color: var(--text);
+}
+
+.collapse-btn:hover {
+  color: var(--accent-soft);
+  border-color: var(--accent-soft);
+}
+
+.col-head .icon-btn {
+  font-size: 20px;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg-raised);
+  color: var(--text);
+}
+
+.col-head .icon-btn:hover {
+  color: var(--accent-soft);
+  border-color: var(--accent-soft);
 }
 
 .right-col {
@@ -667,17 +692,19 @@ button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 20px;
-  height: 60px;
+  width: 30px;
+  height: 100px;
   border: 1px solid var(--line);
   background: var(--bg-raised);
-  color: var(--text-dim);
+  color: var(--text);
   cursor: pointer;
   z-index: 5;
-  font-size: 14px;
+  font-size: 22px;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .edge-tab:hover {
@@ -707,6 +734,13 @@ button {
   flex-wrap: wrap;
   border-top: 1px solid var(--line);
   padding-top: 16px;
+}
+
+.gallery-foot-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .licenses-body h3 {

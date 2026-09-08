@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import type { ChartDoc, ProjectRecord } from '../model/types'
 import { STARTERS } from '../model/starters'
 import { docFromClipboard, hasClipboard } from '../model/clipboard'
+import { applyBackup, downloadBackup } from '../export/backup'
 import { deleteProject, listProjects, saveProject } from '../storage/db'
 import { useStore } from '../state/store'
 import { FileLoadRow } from '../panels/dialogs'
@@ -56,6 +57,14 @@ export function Gallery() {
         useStore.getState().addCustomSet(parsed.set)
         useStore.getState().setSymbolSet(parsed.set.id)
         window.alert(`Symbol pack “${parsed.set.name}” imported and selected.`)
+        continue
+      }
+      if (parsed.type === 'backup') {
+        const n = parsed.backup.projects.length
+        if (!window.confirm(`Restore this backup: ${n} chart(s) and your settings? Charts with the same id are replaced; your other charts are kept. The page reloads afterwards.`)) continue
+        const restored = await applyBackup(parsed.backup)
+        window.alert(`Restored ${restored} chart(s). Reloading…`)
+        location.reload()
         continue
       }
       create(parsed.name, parsed.doc)
@@ -282,9 +291,36 @@ export function Gallery() {
           anywhere on this page to import it — purely client-side, nothing is uploaded. DimCrochet is
           open source (MIT); symbol packs keep their own licenses.
         </p>
-        <button className="btn" onClick={() => useStore.getState().openDialog('licenses')}>
-          Licenses &amp; attributions
-        </button>
+        <div className="gallery-foot-actions">
+          <button
+            className="btn"
+            data-testid="backup-download"
+            title="Download all charts and settings as one file"
+            onClick={() => void downloadBackup()}
+          >
+            ⭳ Backup everything
+          </button>
+          <label
+            className="btn"
+            data-testid="backup-restore"
+            title="Restore a backup file: adds charts, replaces charts with the same id, applies settings"
+          >
+            ⭱ Restore backup…
+            <input
+              type="file"
+              accept=".json,application/json"
+              hidden
+              onChange={(e) => {
+                const f = e.target.files?.[0]
+                e.target.value = ''
+                if (f) void importFiles([f])
+              }}
+            />
+          </label>
+          <button className="btn" onClick={() => useStore.getState().openDialog('licenses')}>
+            Licenses &amp; attributions
+          </button>
+        </div>
       </footer>
     </div>
   )

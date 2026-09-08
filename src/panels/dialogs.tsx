@@ -462,14 +462,27 @@ export function FileLoadRow() {
           e.target.value = ''
           if (!f) return
           const { importInterchangeFile } = await import('../export/projectFile')
+          const { applyBackup } = await import('../export/backup')
           const parsed = await importInterchangeFile(f)
           if (!parsed) {
-            window.alert(`Could not read ${f.name}. Expected a DimCrochet chart or symbol pack export.`)
+            window.alert(`Could not read ${f.name}. Expected a DimCrochet chart, pack or backup export.`)
             return
           }
           const st = useStore.getState()
           if (parsed.type === 'chart') {
             st.newProject(parsed.name, parsed.doc)
+          } else if (parsed.type === 'backup') {
+            const n = parsed.backup.projects.length
+            if (
+              !window.confirm(
+                `Restore this backup: ${n} chart(s) and your settings? Charts with the same id are replaced; your other charts are kept. The page reloads afterwards.`,
+              )
+            ) {
+              return
+            }
+            const restored = await applyBackup(parsed.backup)
+            window.alert(`Restored ${restored} chart(s). Reloading…`)
+            location.reload()
           } else {
             st.addCustomSet(parsed.set)
             st.setSymbolSet(parsed.set.id)

@@ -55,6 +55,53 @@ export async function readSymbolPackFile(file: File): Promise<CustomSet | null> 
 export type InterchangeImport =
   | { type: 'chart'; name: string; doc: ChartDoc }
   | { type: 'pack'; set: CustomSet }
+  | { type: 'backup'; backup: BackupFile }
+
+/** A full-user backup: every project plus the app's dimcrochet.* settings. */
+export interface BackupFile {
+  app: 'dimcrochet-backup'
+  version: 1
+  savedAt: number
+  settings: Record<string, string>
+  projects: Array<{ id: string; name: string; createdAt: number; updatedAt: number; doc: ChartDoc }>
+}
+
+export function parseBackupText(text: string): BackupFile | null {
+  try {
+    const parsed = JSON.parse(text) as Partial<BackupFile>
+    if (!parsed || parsed.app !== 'dimcrochet-backup' || parsed.version !== 1 || !Array.isArray(parsed.projects)) {
+      return null
+    }
+    const projects: BackupFile['projects'] = []
+    for (const p of parsed.projects) {
+      if (!p || typeof p.id !== 'string' || typeof p.name !== 'string' || !p.doc) continue
+      const doc = sanitizeDoc(p.doc)
+      if (!doc) continue
+      projects.push({
+        id: p.id,
+        name: p.name,
+        createdAt: typeof p.createdAt === 'number' ? p.createdAt : Date.now(),
+        updatedAt: typeof p.updatedAt === 'number' ? p.updatedAt : Date.now(),
+        doc,
+      })
+    }
+    const settings: Record<string, string> = {}
+    if (parsed.settings && typeof parsed.settings === 'object') {
+      for (const [k, v] of Object.entries(parsed.settings)) {
+        if (k.startsWith('dimcrochet.') && typeof v === 'string') settings[k] = v
+      }
+    }
+    return {
+      app: 'dimcrochet-backup',
+      version: 1,
+      savedAt: typeof parsed.savedAt === 'number' ? parsed.savedAt : Date.now(),
+      settings,
+      projects,
+    }
+  } catch {
+    return null
+  }
+}
 
 function parseProjectText(text: string): ProjectFile | null {
   try {
@@ -95,7 +142,7 @@ function parsePackText(text: string): CustomSet | null {
   }
 }
 
-/** Accepts chart exports, symbol packs and future bundle kinds. */
+/** Accepts chart exports, symbol packs, and full-user backups. */
 export function parseInterchangeText(text: string): InterchangeImport | null {
   try {
     const parsed = JSON.parse(text) as Record<string, unknown>
@@ -103,6 +150,10 @@ export function parseInterchangeText(text: string): InterchangeImport | null {
     if (parsed.app === 'dimcrochet-symbol-pack') {
       const set = parsePackText(text)
       return set ? { type: 'pack', set } : null
+    }
+    if (parsed.app === 'dimcrochet-backup') {
+      const backup = parseBackupText(text)
+      return backup ? { type: 'backup', backup } : null
     }
     if (parsed.app === 'dimcrochet') {
       const project = parseProjectText(text)
