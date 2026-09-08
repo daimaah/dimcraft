@@ -1722,30 +1722,40 @@ button {
   margin: 3px 4px;
 }
 
-/* toolbar opacity: rest vs hover values from Options */
+/* toolbar opacity: rest/hover alphas drive the bar chrome, buttons and island
+   separately, so the island can stay fully visible while everything dims */
 .tool-palette {
-  opacity: var(--bar-rest, 1);
-  transition: opacity 0.2s ease;
+  background: rgba(46, 41, 53, var(--o-rest, 1));
+  border-color: rgba(61, 55, 70, var(--o-rest, 1));
+  box-shadow: 0 6px 22px rgba(0, 0, 0, calc(0.35 * var(--o-rest, 1)));
 }
 
 .tool-palette:hover {
-  opacity: var(--bar-hover, 1);
+  background: rgba(46, 41, 53, var(--o-hover, 1));
+  border-color: rgba(61, 55, 70, var(--o-hover, 1));
+  box-shadow: 0 6px 22px rgba(0, 0, 0, calc(0.35 * var(--o-hover, 1)));
 }
 
-:root[data-anim='off'] .tool-palette {
-  transition: none;
-}
-
-/* toolbar opacity: rest vs hover values from Options */
-.tool-palette {
-  opacity: var(--bar-rest, 1);
+.tp-content {
+  opacity: var(--o-rest, 1);
   transition: opacity 0.2s ease;
 }
 
-.tool-palette:hover {
-  opacity: var(--bar-hover, 1);
+.tool-palette:hover .tp-content {
+  opacity: var(--o-hover, 1);
 }
 
-:root[data-anim='off'] .tool-palette {
-  transition: none;
+.tp-side {
+  opacity: var(--island-rest, 1);
+  transition: opacity 0.2s ease;
+}
+
+.tool-palette:hover .tp-side {
+  opacity: var(--island-hover, 1);
+}
+
+:root[data-anim='off'] .tool-palette,
+:root[data-anim='off'] .tp-content,
+:root[data-anim='off'] .tp-side {
+  transition: none !important;
 }

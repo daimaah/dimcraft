@@ -88,6 +88,8 @@ interface EditorState {
   }
   /** status bar clock in 24-hour format */
   clock24h: boolean
+  /** the drag/collapse island ignores toolbar opacity and stays fully visible */
+  islandFullOpacity: boolean
   /** opacity of the floating tool palette at rest, percent (30 minimum stays findable) */
   toolbarOpacity: number
   /** opacity while the pointer hovers the palette (>= resting value) */
@@ -201,6 +203,7 @@ interface EditorState {
   setPalette: (patch: Partial<EditorState['palette']>) => void
   resetPalette: () => void
   setClock24h: (v: boolean) => void
+  setIslandFullOpacity: (v: boolean) => void
   setToolbarOpacity: (v: number) => void
   setToolbarHoverOpacity: (v: number) => void
   requestMotion: (symbolId: string) => void
@@ -281,6 +284,7 @@ export const useStore = create<EditorState>()((set, get) => {
     viewAnimations: true,
     palette: { rows: 1, pos: null, collapsed: false, order: null, hidden: [] },
     clock24h: false,
+    islandFullOpacity: true,
     toolbarOpacity: 100,
     toolbarHoverOpacity: 100,
     motionRequest: null,
@@ -954,6 +958,7 @@ export const useStore = create<EditorState>()((set, get) => {
     resetPalette: () =>
       set({ palette: { rows: 1, pos: null, collapsed: false, order: null, hidden: [] } }),
     setClock24h: (v) => set({ clock24h: v }),
+    setIslandFullOpacity: (v) => set({ islandFullOpacity: v }),
     setToolbarOpacity: (v) =>
       set((st) => {
         const rest = Math.round(Math.min(100, Math.max(30, v)))

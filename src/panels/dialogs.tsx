@@ -510,6 +510,7 @@ export function OptionsDialog() {
   const lefty = useStore((s) => s.lefty)
   const palette = useStore((s) => s.palette)
   const clock24h = useStore((s) => s.clock24h)
+  const islandFullOpacity = useStore((s) => s.islandFullOpacity)
   const toolbarOpacity = useStore((s) => s.toolbarOpacity)
   const toolbarHoverOpacity = useStore((s) => s.toolbarHoverOpacity)
   const tool = useStore((s) => s.tool)
@@ -675,6 +676,18 @@ export function OptionsDialog() {
                 Animate collapsible bars, side panels, and the tool palette collapse, and add a
                 bounce when a typed zoom is applied. Turn off for instant transitions.
               </span>
+            </span>
+          </label>
+          <label className="check" data-testid="opt-island-full">
+            <input
+              type="checkbox"
+              checked={islandFullOpacity}
+              onChange={(e) => useStore.getState().setIslandFullOpacity(e.target.checked)}
+            />
+            <span>
+              <strong>Keep the drag &amp; collapse island fully visible</strong>
+              <br />
+              <span className="hint">The island ignores the toolbar opacity, so drag and collapse stay easy to find on dimmed palettes.</span>
             </span>
           </label>
           <label className="check" data-testid="opt-clock24h">

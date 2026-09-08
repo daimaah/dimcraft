@@ -149,6 +149,7 @@ export function ToolPalette() {
   const viewAnimationsOn = useStore((s) => s.viewAnimations)
   const toolbarOpacity = useStore((s) => s.toolbarOpacity)
   const toolbarHoverOpacity = useStore((s) => s.toolbarHoverOpacity)
+  const islandFullOpacity = useStore((s) => s.islandFullOpacity)
   const fit = () => {
     const el = document.querySelector('.canvas-wrap')
     if (el) {
@@ -334,9 +335,10 @@ export function ToolPalette() {
         {
           left: pos?.x,
           top: pos?.y,
-          opacity: toolbarOpacity / 100,
-          '--bar-rest': toolbarOpacity / 100,
-          '--bar-hover': Math.max(toolbarOpacity, toolbarHoverOpacity) / 100,
+          '--o-rest': toolbarOpacity / 100,
+          '--o-hover': Math.max(toolbarOpacity, toolbarHoverOpacity) / 100,
+          '--island-rest': islandFullOpacity ? 1 : toolbarOpacity / 100,
+          '--island-hover': islandFullOpacity ? 1 : Math.max(toolbarOpacity, toolbarHoverOpacity) / 100,
         } as React.CSSProperties
       }
       data-testid="tool-palette"

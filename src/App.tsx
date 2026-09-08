@@ -87,6 +87,7 @@ export default function App() {
       if (typeof prefs.lefty === 'boolean') useStore.setState({ lefty: prefs.lefty })
       if (typeof prefs.viewAnimations === 'boolean') useStore.setState({ viewAnimations: prefs.viewAnimations })
       if (typeof prefs.clock24h === 'boolean') useStore.setState({ clock24h: prefs.clock24h })
+      if (typeof prefs.islandFullOpacity === 'boolean') useStore.setState({ islandFullOpacity: prefs.islandFullOpacity })
       if (typeof prefs.toolbarOpacity === 'number') useStore.getState().setToolbarOpacity(prefs.toolbarOpacity)
       if (typeof prefs.toolbarHoverOpacity === 'number') useStore.getState().setToolbarHoverOpacity(prefs.toolbarHoverOpacity)
       const legacy = (() => {
@@ -138,6 +139,7 @@ export default function App() {
         s.palette !== prev.palette ||
         s.clock24h !== prev.clock24h ||
         s.toolbarOpacity !== prev.toolbarOpacity ||
+        s.islandFullOpacity !== prev.islandFullOpacity ||
         s.toolbarHoverOpacity !== prev.toolbarHoverOpacity
       ) {
         localStorage.setItem(
@@ -153,6 +155,7 @@ export default function App() {
             palette: s.palette,
             clock24h: s.clock24h,
             toolbarOpacity: s.toolbarOpacity,
+            islandFullOpacity: s.islandFullOpacity,
             toolbarHoverOpacity: s.toolbarHoverOpacity,
           }),
         )
