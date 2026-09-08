@@ -7,6 +7,11 @@ in rough priority order, with design notes where the "how" matters.
 
 ## Recently shipped
 
+- **Floating tool palette** — the crowded top toolbar split: editing/view tools (tools,
+  undo/redo, snapping/grid/guides, zoom, fullscreen) moved into a draggable, collapsible
+  palette over the canvas (default: top-anchored; ⟲ resets the position; persisted).
+  The top bar now holds only project identity + Follow/Rounds/Preview/Export. The symbols
+  panel « collapse button moved into a header row so it no longer overlaps the search box.
 - **One-file backup/restore** — gallery footer buttons download every chart plus all
   dimcrochet.* settings (prefs, follow-bar position, sidecar URL, clipboard) as a single
   JSON file, and restore it in any browser (merge by chart id, invalid entries dropped,

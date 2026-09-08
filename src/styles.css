@@ -646,16 +646,64 @@ button {
 }
 
 .collapse-btn {
-  position: absolute;
-  top: 7px;
-  right: 4px;
-  z-index: 2;
   font-size: 20px;
-  padding: 4px 10px;
+  padding: 2px 9px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--bg-raised);
   color: var(--text);
+}
+
+.collapse-btn:hover {
+  color: var(--accent-soft);
+  border-color: var(--accent-soft);
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.collapse-btn:hover {
+  color: var(--accent-soft);
+  border-color: var(--accent-soft);
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* ---- floating tool palette ------------------------------------------------ */
+.tool-palette {
+  position: absolute;
+  top: 8px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: max-content;
+  max-width: calc(100% - 16px);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 6px 10px;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+  z-index: 5;
+}
+
+.tool-palette.dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.tool-palette.compact {
+  gap: 6px;
+  padding: 5px 8px;
 }
 
 .collapse-btn:hover {

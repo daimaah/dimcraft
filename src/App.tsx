@@ -13,6 +13,7 @@ import { parseShortLinkLocation, fetchShortLink } from './export/secureShare'
 import { loadProject, saveProject } from './storage/db'
 import { StatusBar } from './ui/StatusBar'
 import { Toolbar } from './ui/Toolbar'
+import { ToolPalette } from './ui/ToolPalette'
 
 const LAST_KEY = 'dimcrochet.lastProject'
 const PREFS_KEY = 'dimcrochet.prefs'
@@ -320,6 +321,7 @@ export default function App() {
         {!leftCollapsed && <SymbolPalette />}
         <div className="canvas-wrap">
           <ChartCanvas />
+          <ToolPalette />
           {leftCollapsed && (
             <button
               className="edge-tab left"
