@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { ChartDoc, ProjectRecord } from '../model/types'
 import { STARTERS } from '../model/starters'
+import { docFromClipboard, hasClipboard } from '../model/clipboard'
 import { deleteProject, listProjects, saveProject } from '../storage/db'
 import { useStore } from '../state/store'
 import { FileLoadRow } from '../panels/dialogs'
@@ -126,6 +127,19 @@ export function Gallery() {
           </div>
         </div>
         <div className="gallery-actions">
+          {hasClipboard() && (
+            <button
+              className="btn"
+              title="Paste a copied chart fragment as a new project"
+              data-testid="paste-new-chart"
+              onClick={() => {
+                const doc = docFromClipboard()
+                if (doc) create(doc.title, doc)
+              }}
+            >
+              + Paste as new chart
+            </button>
+          )}
           <button className="btn accent" onClick={() => create('Untitled chart')}>
             + New chart
           </button>

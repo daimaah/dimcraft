@@ -13,6 +13,7 @@ import { createEmptyDoc, sanitizeDoc, uid } from '../model/doc'
 import { guideCenter, guideSample } from '../geometry/guides'
 import { placeEvenly } from '../geometry/placeEvenly'
 import { legendItems } from '../geometry/legend'
+import { buildClipboard, loadClipboard, pasteClipboardInto, saveClipboard } from '../model/clipboard'
 import { contentBBox } from '../geometry/bounds'
 import {
   bboxCenter,
@@ -105,6 +106,9 @@ interface EditorState {
   clearSelection: () => void
   deleteSelection: () => void
   duplicateSelection: () => void
+  copySelection: () => void
+  cutSelection: () => void
+  pasteClipboard: () => void
   groupSelection: () => void
   ungroupSelection: () => void
   mirrorSelection: (axis: 'h' | 'v') => void
@@ -361,6 +365,29 @@ export const useStore = create<EditorState>()((set, get) => {
           doc: { ...st.doc, placements: [...st.doc.placements, ...copies] },
           selPlacements: copies.map((c) => c.id),
         })
+      }),
+
+    // cross-project clipboard: fragment is saved to localStorage so it
+    // survives switching projects (and browser restarts)
+    copySelection: () =>
+      set((st) => {
+        const clip = buildClipboard(st.doc, st)
+        if (clip) saveClipboard(clip)
+        return {}
+      }),
+
+    cutSelection: () => {
+      const clip = buildClipboard(get().doc, get())
+      if (clip) saveClipboard(clip)
+      get().deleteSelection()
+    },
+
+    pasteClipboard: () =>
+      set((st) => {
+        const clip = loadClipboard()
+        if (!clip) return {}
+        const { doc, selected } = pasteClipboardInto(st.doc, clip)
+        return mutateDoc(st, { doc, ...selected })
       }),
 
     groupSelection: () =>

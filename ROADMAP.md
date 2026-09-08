@@ -7,6 +7,10 @@ in rough priority order, with design notes where the "how" matters.
 
 ## Recently shipped
 
+- **Cross-project copy/paste** — Ctrl+C/X/V on the current selection; fragments live in
+  localStorage so they survive project switches and restarts; pasted stitches keep their
+  grouping and layer tags (fresh guide ids are carried along) and land selected with a small
+  offset. The gallery offers "Paste as new chart" while the clipboard holds a fragment.
 - **Self-hosted encrypted short links (sidecar in the image)** — for sharing through chat
   apps where long fragment links get mangled: the browser encrypts the chart (AES-GCM-256,
   key in the fragment) and the sidecar stores only ciphertext it cannot read. One container
@@ -52,7 +56,6 @@ in rough priority order, with design notes where the "how" matters.
 
 ## Backlog (unprioritised)
 
-- **Cross-project copy/paste** — a clipboard store so motifs can move between
   charts, closing the copy/paste complaints aimed at Stitch Fiddle.
 - **Z-ordering** — bring forward / send backward for placements; today layer
   order is fixed (guides → brackets → stitches → lines → text).

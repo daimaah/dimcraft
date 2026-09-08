@@ -163,6 +163,18 @@ export default function App() {
             e.preventDefault()
             st.duplicateSelection()
             return
+          case 'c':
+            e.preventDefault()
+            st.copySelection()
+            return
+          case 'x':
+            e.preventDefault()
+            st.cutSelection()
+            return
+          case 'v':
+            e.preventDefault()
+            st.pasteClipboard()
+            return
           case 'g':
             e.preventDefault()
             if (e.shiftKey) st.ungroupSelection()
