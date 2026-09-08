@@ -7,7 +7,8 @@ const POS_KEY = 'dimcrochet.followBar'
 interface FollowBarState {
   x: number
   y: number
-  w: number
+  /** compact pill mode — same spot, less screen */
+  min?: boolean
 }
 
 function loadBarState(): Partial<FollowBarState> {
@@ -73,7 +74,8 @@ export function showHowForCurrentRound() {
   if (pick) st.requestMotion(pick)
 }
 
-/** Bottom-of-canvas bar for stepping through the chart round by round. */
+/** Bottom-of-canvas bar for stepping through the chart. Auto-fits the canvas;
+ *  can shrink to a compact pill in the same spot. */
 export function FollowBar() {
   const doc = useStore((s) => s.doc)
   const round = useStore((s) => s.followRound)
@@ -116,12 +118,12 @@ export function FollowBar() {
       ? { x: saved.current.x, y: saved.current.y }
       : null,
   )
-  const [width, setWidth] = useState<number | undefined>(saved.current.w)
+  const [minimized, setMinimized] = useState(saved.current.min === true)
   const [dragging, setDragging] = useState(false)
 
-  const persist = (p: { x: number; y: number }, w: number | undefined) => {
+  const persist = (patch: Partial<FollowBarState>) => {
     try {
-      localStorage.setItem(POS_KEY, JSON.stringify({ ...p, w }))
+      localStorage.setItem(POS_KEY, JSON.stringify({ ...loadBarState(), ...patch }))
     } catch {
       /* storage unavailable */
     }
@@ -153,7 +155,7 @@ export function FollowBar() {
       const ny = Math.min(Math.max(0, pos.y), Math.max(0, parent.clientHeight - bar.offsetHeight))
       if (nx !== pos.x || ny !== pos.y) {
         setPos({ x: nx, y: ny })
-        persist({ x: nx, y: ny }, width)
+        persist({ x: nx, y: ny })
       }
     }
     clamp()
@@ -165,7 +167,7 @@ export function FollowBar() {
       window.removeEventListener('resize', deferred)
       document.removeEventListener('fullscreenchange', deferred)
     }
-  }, [pos, width])
+  }, [pos, minimized])
 
   const startDrag = (e: React.PointerEvent) => {
     const bar = barRef.current
@@ -183,7 +185,7 @@ export function FollowBar() {
       const ny = Math.min(Math.max(0, startPos.y + (ev.clientY - startY)), Math.max(0, ph - bar.offsetHeight))
       const next = { x: nx, y: ny }
       setPos(next)
-      persist(next, width)
+      persist(next)
     }
     const onUp = () => {
       setDragging(false)
@@ -194,28 +196,17 @@ export function FollowBar() {
     window.addEventListener('pointerup', onUp)
   }
 
-  const persistWidth = (w: number) => {
-    setWidth(w)
-    persist(pos ?? { x: 0, y: 0 }, w)
-  }
+  const stepCounter = () =>
+    cursor != null ? ` · ${cursor + 1}/${order.length}` : steps.length > 0 ? ` · ${idx + 1}/${steps.length}` : ''
 
-  // track user resizing via the CSS handle
-  useEffect(() => {
-    const bar = barRef.current
-    if (!bar || typeof ResizeObserver === 'undefined') return
-    const ro = new ResizeObserver((entries) => {
-      const w = Math.round(entries[0].contentRect.width)
-      if (w > 0 && w !== width) persistWidth(w)
-    })
-    ro.observe(bar)
-    return () => ro.disconnect()
-  })
+  const compactLabel = step ? `${step.label}${stepCounter()}` : 'Follow'
 
   return (
     <div
       ref={barRef}
-      className={`follow-bar${dragging ? ' dragging' : ''}`}
-      style={{ left: pos?.x, top: pos?.y, width }}
+      className={`follow-bar${minimized ? ' compact' : ''}${dragging ? ' dragging' : ''}`}
+      style={{ left: pos?.x, top: pos?.y }}
+      data-testid="follow-bar"
     >
       <div
         className="follow-grip"
@@ -225,98 +216,142 @@ export function FollowBar() {
       >
         ⠿
       </div>
-      <button
-        className="btn"
-        title="Previous round"
-        disabled={idx <= 0}
-        onClick={() => useStore.getState().setFollowRound(idx - 1)}
-      >
-        ‹
-      </button>
-      <button
-        className="btn"
-        title="Previous stitch"
-        data-testid="follow-prev-stitch"
-        disabled={!step}
-        onClick={() => stepFollow(-1)}
-      >
-        ⟨
-      </button>
-      <button
-        className="btn"
-        title={playing ? 'Pause' : 'Play — build the chart stitch by stitch'}
-        data-testid="follow-play"
-        disabled={!step}
-        onClick={() => toggleFollowPlayback()}
-      >
-        {playing ? '⏸' : '▶'}
-      </button>
-      <button
-        className="btn"
-        title="Next stitch"
-        data-testid="follow-next-stitch"
-        disabled={!step}
-        onClick={() => stepFollow(1)}
-      >
-        ⟩
-      </button>
-      <button
-        className="btn"
-        title="Playback speed (click to cycle)"
-        data-testid="follow-speed"
-        onClick={() => useStore.getState().setFollowSpeed(speed === 0.5 ? 1 : speed === 1 ? 2 : 0.5)}
-      >
-        {speed === 0.5 ? '0.5×' : speed === 1 ? '1×' : '2×'}
-      </button>
-      <div className="follow-main">
-        <span className="follow-step">
-          {step
-            ? `Step ${idx + 1} of ${steps.length} · ${step.label}` +
-              (cursor != null ? ` · stitch ${cursor + 1}/${order.length}` : '')
-            : 'No rounds detected'}
-        </span>
-        <span className="follow-text">{step?.text ?? '—'}</span>
-        <div className="follow-toggles">
-          <div className="seg follow-tolerance">
-            {(
-              [
-                [10, 'Tight'],
-                [18, 'Normal'],
-                [28, 'Loose'],
-              ] as const
-            ).map(([v, label]) => (
+      {minimized ? (
+        <>
+          <button
+            className="btn"
+            title="Expand the follow bar"
+            data-testid="follow-expand"
+            onClick={() => {
+              setMinimized(false)
+              persist({ min: false })
+            }}
+          >
+            ▴
+          </button>
+          <span className="follow-compact-label" data-testid="follow-compact-label">
+            {compactLabel}
+          </span>
+          <button
+            className="btn"
+            title={playing ? 'Pause' : 'Play'}
+            data-testid="follow-play"
+            disabled={!step}
+            onClick={() => toggleFollowPlayback()}
+          >
+            {playing ? '⏸' : '▶'}
+          </button>
+          <button className="icon-btn" title="Exit follow mode" onClick={() => useStore.getState().setFollow(false)}>
+            ✕
+          </button>
+        </>
+      ) : (
+        <>
+          <button
+            className="btn"
+            title="Previous round"
+            disabled={idx <= 0}
+            onClick={() => useStore.getState().setFollowRound(idx - 1)}
+          >
+            ‹
+          </button>
+          <button
+            className="btn"
+            title="Previous stitch"
+            data-testid="follow-prev-stitch"
+            disabled={!step}
+            onClick={() => stepFollow(-1)}
+          >
+            ⟨
+          </button>
+          <button
+            className="btn"
+            title={playing ? 'Pause' : 'Play — build the chart stitch by stitch'}
+            data-testid="follow-play"
+            disabled={!step}
+            onClick={() => toggleFollowPlayback()}
+          >
+            {playing ? '⏸' : '▶'}
+          </button>
+          <button
+            className="btn"
+            title="Next stitch"
+            data-testid="follow-next-stitch"
+            disabled={!step}
+            onClick={() => stepFollow(1)}
+          >
+            ⟩
+          </button>
+          <button
+            className="btn"
+            title="Playback speed (click to cycle)"
+            data-testid="follow-speed"
+            onClick={() => useStore.getState().setFollowSpeed(speed === 0.5 ? 1 : speed === 1 ? 2 : 0.5)}
+          >
+            {speed === 0.5 ? '0.5×' : speed === 1 ? '1×' : '2×'}
+          </button>
+          <div className="follow-main">
+            <span className="follow-step">
+              {step
+                ? `Step ${idx + 1} of ${steps.length} · ${step.label}` +
+                  (cursor != null ? ` · stitch ${cursor + 1}/${order.length}` : '')
+                : 'No rounds detected'}
+            </span>
+            <span className="follow-text">{step?.text ?? '—'}</span>
+            <div className="follow-toggles">
+              <div className="seg follow-tolerance">
+                {(
+                  [
+                    [10, 'Tight'],
+                    [18, 'Normal'],
+                    [28, 'Loose'],
+                  ] as const
+                ).map(([v, label]) => (
+                  <button
+                    key={v}
+                    className={tolerance === v ? 'on' : ''}
+                    title={`Round grouping: ${label.toLowerCase()}`}
+                    onClick={() => useStore.getState().setFollowTolerance(v)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
               <button
-                key={v}
-                className={tolerance === v ? 'on' : ''}
-                title={`Round grouping: ${label.toLowerCase()}`}
-                onClick={() => useStore.getState().setFollowTolerance(v)}
+                className="btn follow-how"
+                title="Show the technique animation for this round's stitches"
+                data-testid="follow-show-how"
+                disabled={!step}
+                onClick={() => showHowForCurrentRound()}
               >
-                {label}
+                ▶ Show me how
               </button>
-            ))}
+            </div>
           </div>
           <button
-            className="btn follow-how"
-            title="Show the technique animation for this round's stitches"
-            data-testid="follow-show-how"
-            disabled={!step}
-            onClick={() => showHowForCurrentRound()}
+            className="btn"
+            title="Next round"
+            disabled={idx >= steps.length - 1}
+            onClick={() => useStore.getState().setFollowRound(idx + 1)}
           >
-            ▶ Show me how
+            ›
           </button>
-        </div>
-      </div>
-      <button
-        className="btn"
-        title="Next round"
-        disabled={idx >= steps.length - 1}
-        onClick={() => useStore.getState().setFollowRound(idx + 1)}
-      >
-        ›
-      </button>
-      <button className="icon-btn" title="Exit follow mode" onClick={() => useStore.getState().setFollow(false)}>
-        ✕
-      </button>
+          <button
+            className="btn"
+            title="Shrink — stays in this spot"
+            data-testid="follow-minimize"
+            onClick={() => {
+              setMinimized(true)
+              persist({ min: true })
+            }}
+          >
+            ▾
+          </button>
+          <button className="icon-btn" title="Exit follow mode" onClick={() => useStore.getState().setFollow(false)}>
+            ✕
+          </button>
+        </>
+      )}
     </div>
   )
 }

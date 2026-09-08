@@ -735,18 +735,28 @@ button {
   position: absolute;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
-  min-width: 530px;
-  min-height: 64px;
-  max-width: 92%;
+  width: max-content;
+  max-width: calc(100% - 16px);
   background: var(--bg-raised);
   border: 1px solid var(--accent);
   border-radius: 12px;
   padding: 10px 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   z-index: 5;
-  resize: both;
-  overflow: auto;
+}
+
+.follow-bar.compact {
+  gap: 6px;
+  padding: 6px 10px;
+}
+
+.follow-compact-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
 }
 
 .follow-bar.dragging {
@@ -774,7 +784,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  min-width: 200px;
+  min-width: 0;
   flex: 1;
 }
 
@@ -1201,6 +1211,7 @@ button {
   align-items: center;
   gap: 10px;
   margin-top: 2px;
+  flex-wrap: wrap;
 }
 
 .follow-toggles button {
