@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useRef, useState } from 'react'
 import { useStore } from '../state/store'
 import { getDefMap } from '../symbols/registry'
 import { guideSample } from '../geometry/guides'
@@ -31,13 +31,52 @@ export function Modal({
   wide?: boolean
   className?: string
 }) {
+  const boxRef = useRef<HTMLDivElement>(null)
+  const headRef = useRef<HTMLDivElement>(null)
+
+  /** Drag the dialog by its title bar: converts the centered modal to
+   *  absolute positioning on first grab, then follows the pointer. */
+  const startHeadDrag = (e: React.PointerEvent) => {
+    if (e.button !== 0 || (e.target as HTMLElement).closest('button')) return
+    const el = boxRef.current
+    const head = headRef.current
+    if (!el || !head) return
+    const rect = el.getBoundingClientRect()
+    el.style.position = 'absolute'
+    el.style.left = `${rect.left}px`
+    el.style.top = `${rect.top}px`
+    el.style.margin = '0'
+    try {
+      head.setPointerCapture(e.pointerId)
+    } catch {
+      /* pointer id may be unavailable for synthetic events */
+    }
+    head.dataset.dragging = 'true'
+    const startX = e.clientX
+    const startY = e.clientY
+    const startLeft = rect.left
+    const startTop = Math.max(6, rect.top)
+    const onMove = (ev: PointerEvent) => {
+      el.style.left = `${startLeft + ev.clientX - startX}px`
+      el.style.top = `${Math.max(6, startTop + ev.clientY - startY)}px`
+    }
+    const onUp = () => {
+      head.dataset.dragging = 'false'
+      head.removeEventListener('pointermove', onMove)
+      head.removeEventListener('pointerup', onUp)
+    }
+    head.addEventListener('pointermove', onMove)
+    head.addEventListener('pointerup', onUp)
+  }
+
   return (
     <div className="modal-backdrop" onPointerDown={onClose}>
       <div
+        ref={boxRef}
         className={['modal', wide ? 'wide' : '', className ?? ''].filter(Boolean).join(' ')}
         onPointerDown={(e) => e.stopPropagation()}
       >
-        <div className="modal-head">
+        <div className="modal-head" ref={headRef} onPointerDown={startHeadDrag} data-testid="modal-drag-handle">
           <h2>{title}</h2>
           <button className="icon-btn" onClick={onClose}>
             ✕
