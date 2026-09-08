@@ -1651,8 +1651,17 @@ button {
 
 .tp-grip {
   color: var(--text-dim);
-  font-size: 14px;
+  font-size: 16px;
   letter-spacing: -2px;
+}
+
+/* the island's collapse/expand toggle is the primary control — keep it prominent */
+.tp-side .tool-btn {
+  width: 34px;
+  height: 34px;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .tp-content {
