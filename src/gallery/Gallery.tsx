@@ -9,7 +9,6 @@ import { contentBBox } from '../geometry/bounds'
 import { guideSvgPath } from '../geometry/guides'
 import { placementTransform } from '../geometry/transform'
 import { lineSvg } from '../render/markup'
-import { readProjectFile, readSymbolPackFile } from '../export/projectFile'
 
 const LAST_KEY = 'dimcrochet.lastProject'
 
@@ -24,24 +23,20 @@ export function Gallery() {
 
   /** purely client-side import: dropped files are read into memory, never uploaded */
   const importFiles = async (files: File[]) => {
+    const { importInterchangeFile } = await import('../export/projectFile')
     for (const f of files) {
-      if (f.name.endsWith('.pack.json')) {
-        const set = await readSymbolPackFile(f)
-        if (!set) {
-          window.alert(`Could not read symbol pack ${f.name}.`)
-          continue
-        }
-        useStore.getState().addCustomSet(set)
-        useStore.getState().setSymbolSet(set.id)
-        window.alert(`Symbol pack “${set.name}” imported and selected.`)
+      const parsed = await importInterchangeFile(f)
+      if (!parsed) {
+        window.alert(`Could not read ${f.name}. Expected a DimCrochet chart or symbol pack export.`)
         continue
       }
-      const pf = await readProjectFile(f)
-      if (!pf) {
-        window.alert(`Could not read chart ${f.name}. Expected a DimCrochet export (.dimcrochet.json).`)
+      if (parsed.type === 'pack') {
+        useStore.getState().addCustomSet(parsed.set)
+        useStore.getState().setSymbolSet(parsed.set.id)
+        window.alert(`Symbol pack “${parsed.set.name}” imported and selected.`)
         continue
       }
-      create(pf.name, pf.doc)
+      create(parsed.name, parsed.doc)
     }
   }
 

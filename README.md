@@ -118,6 +118,14 @@ Chart and symbol-pack files use a versioned envelope (`{ app, version, name, doc
 GEN_FIXTURES=1 npx vitest run tests/fixtures/gen-fixtures.test.ts
 ```
 
+## Privacy & sharing
+
+Everything stays in your browser by default: charts live in IndexedDB, exports download straight from the page, and the app works fully offline. Sharing is always an explicit act:
+
+- **Share links** (Export → Create share link) embed a compressed copy of the chart *in the URL fragment* — the part of a URL that is never sent to any server. There is no backend and no upload. Anyone with the link can view the chart, and opening it creates a new local copy; treat the link like the file it contains.
+- **Files** (Save .json file / Load chart or pack file) work the same way and have no size limit — prefer them for very large charts or archival backups.
+- Symbol packs keep their own licenses and attributions (see Licenses & attributions in the app).
+
 ## AI assistance disclosure
 
 DimCrochet was designed and developed with the assistance of AI tools (including code generation, symbol artwork drafting, and documentation). All code is human-reviewed and released under the [MIT License](LICENSE) without warranty. The bundled symbol artwork was drawn for this project; symbol packs imported by users keep their own licenses and attributions.

@@ -5,7 +5,16 @@ in rough priority order, with design notes where the "how" matters.
 
 ---
 
-## 1. Shareable URLs + universal file interchange (next up)
+## 1. Shareable URLs + universal file interchange — **shipped**
+
+- **Share links**: Export → Create share link embeds the deflate+base64url chart in the URL
+  fragment; startup decodes `#c=…` into an "Open as my copy" import. Privacy copy shown in the
+  dialog and documented in the README.
+- **Interchange**: `parseInterchangeText` / `importInterchangeFile` accept chart exports and
+  symbol packs through one dispatcher; chart files already carry their custom symbol packs
+  (doc.customSets), so a chart using a custom regional set travels with that set.
+- **Future**: a `bundle` envelope kind remains reserved for extra assets if ever needed;
+  optional self-hosted link-shortener sidecar if long links prove annoying.
 
 Designers want to share a chart with a link or a file without any server, and
 to back up their own work. Everything needed already exists internally — the

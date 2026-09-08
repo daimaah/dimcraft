@@ -894,6 +894,27 @@ button {
   overflow: hidden;
 }
 
+.share-section {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.share-link {
+  width: 100%;
+  background: var(--bg-inset);
+  border: 1px solid var(--accent);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-family: Consolas, 'Cascadia Mono', monospace;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ---- gallery ------------------------------------------------------------- */
 .gallery {
   height: 100vh;

@@ -126,6 +126,9 @@ interface EditorState {
   addBracketFromPoints: (a: Vec, b: Vec) => void
   updateBracket: (id: string, patch: Partial<{ count: number; label: string | undefined; side: 1 | -1 }>) => void
   deleteBracket: (id: string) => void
+  sharedChart: { name: string; doc: ChartDoc } | null
+  setSharedChart: (s: { name: string; doc: ChartDoc } | null) => void
+
   followActive: boolean
   followRound: number
   followTolerance: number
@@ -687,6 +690,9 @@ export const useStore = create<EditorState>()((set, get) => {
 
     // follow mode: progress + tolerance live in the doc (autosaved) but are
     // navigation, so they deliberately bypass undo history
+    sharedChart: null,
+    setSharedChart: (s) => set({ sharedChart: s }),
+
     followActive: false,
     followRound: 0,
     followTolerance: 18,

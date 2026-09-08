@@ -3,7 +3,7 @@ import { useStore } from '../state/store'
 import { getDefMap } from '../symbols/registry'
 import { guideSample } from '../geometry/guides'
 import { contentBBox } from '../geometry/bounds'
-import { exportProjectFile, readProjectFile } from '../export/projectFile'
+import { exportProjectFile } from '../export/projectFile'
 import { PreviewDialog } from './PreviewDialog'
 import { InstructionsDialog } from './InstructionsDialog'
 import { LicensesDialog } from './LicensesDialog'
@@ -150,6 +150,7 @@ function trueSizeLabel(doc: ReturnType<typeof useStore.getState>['doc'], gauge: 
 export function ExportDialog() {
   const doc = useStore((s) => s.doc)
   const projectName = useStore((s) => s.projectName)
+  const projectId = useStore((s) => s.projectId)
   const [format, setFormat] = useState<'svg' | 'png' | 'pdf'>('svg')
   const [includeGuides, setIncludeGuides] = useState(false)
   const [background, setBackground] = useState<'transparent' | 'white'>('transparent')
@@ -158,8 +159,29 @@ export function ExportDialog() {
   const [orientation, setOrientation] = useState<PageOrientation>('portrait')
   const [trueScale, setTrueScale] = useState(false)
   const [busy, setBusy] = useState(false)
+  const [shareLink, setShareLink] = useState<string | null>(null)
+  const [shareBusy, setShareBusy] = useState(false)
 
   const gauge = doc.unitsPer10cm ?? null
+
+  const createShareLink = async () => {
+    setShareBusy(true)
+    try {
+      const { createShareFragment } = await import('../export/share')
+      const fragment = await createShareFragment({
+        id: projectId ?? 'proj-share',
+        name: projectName,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        doc,
+      })
+      setShareLink(`${location.origin}${location.pathname}${fragment}`)
+    } catch (err) {
+      window.alert(`Could not create the link: ${err instanceof Error ? err.message : err}`)
+    } finally {
+      setShareBusy(false)
+    }
+  }
 
   const run = async () => {
     setBusy(true)
@@ -281,6 +303,51 @@ export function ExportDialog() {
             {busy ? 'Exporting…' : 'Export'}
           </button>
         </div>
+
+        <div className="share-section">
+          <div className="panel-title">Share</div>
+          {!shareLink ? (
+            <>
+              <button className="btn wide" disabled={shareBusy} onClick={() => void createShareLink()}>
+                {shareBusy ? 'Encoding…' : 'Create share link'}
+              </button>
+              <p className="hint">
+                Embeds a copy of this chart in the link itself. Anyone who has the link can view it.
+                Nothing is uploaded to a server — but treat the link like the file it contains.
+              </p>
+            </>
+          ) : (
+            <>
+              <input
+                className="share-link"
+                readOnly
+                value={shareLink}
+                onFocus={(e) => e.target.select()}
+                onClick={(e) => (e.target as HTMLInputElement).select()}
+              />
+              <div className="modal-actions">
+                <button
+                  className="btn"
+                  onClick={() => {
+                    void navigator.clipboard.writeText(shareLink).catch(() => {})
+                  }}
+                >
+                  Copy link
+                </button>
+                <button className="btn" onClick={() => setShareLink(null)}>
+                  New link
+                </button>
+              </div>
+              {shareLink.length > 20000 && (
+                <p className="hint">
+                  This link is very long ({shareLink.length} characters) — some apps truncate long
+                  URLs. For big charts, prefer the file export.
+                </p>
+              )}
+            </>
+          )}
+        </div>
+
         <FileLoadRow />
       </div>
     </Modal>
@@ -290,22 +357,29 @@ export function ExportDialog() {
 export function FileLoadRow() {
   return (
     <label className="btn wide file-btn">
-      Load .json project file…
+      Load chart / pack file…
       <input
         type="file"
-        accept=".json,application/json"
+        accept=".json,application/json,.dimcrochet.json"
         hidden
         onChange={async (e) => {
           const f = e.target.files?.[0]
           e.target.value = ''
           if (!f) return
-          const parsed = await readProjectFile(f)
+          const { importInterchangeFile } = await import('../export/projectFile')
+          const parsed = await importInterchangeFile(f)
           if (!parsed) {
-            window.alert('That file is not a DimCrochet project.')
+            window.alert(`Could not read ${f.name}. Expected a DimCrochet chart or symbol pack export.`)
             return
           }
-          const { newProject } = useStore.getState()
-          newProject(parsed.name, parsed.doc)
+          const st = useStore.getState()
+          if (parsed.type === 'chart') {
+            st.newProject(parsed.name, parsed.doc)
+          } else {
+            st.addCustomSet(parsed.set)
+            st.setSymbolSet(parsed.set.id)
+            window.alert(`Symbol pack “${parsed.set.name}” imported and selected.`)
+          }
         }}
       />
     </label>

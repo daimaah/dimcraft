@@ -5,8 +5,10 @@ import { FollowBar } from './panels/FollowBar'
 import { Inspector } from './panels/Inspector'
 import { Dialogs } from './panels/dialogs'
 import { LayersPanel } from './panels/LayersPanel'
+import { SharedChartDialog } from './panels/SharedChartDialog'
 import { SymbolPalette } from './panels/SymbolPalette'
 import { useStore } from './state/store'
+import { decodeShareFragment } from './export/share'
 import { loadProject, saveProject } from './storage/db'
 import { StatusBar } from './ui/StatusBar'
 import { Toolbar } from './ui/Toolbar'
@@ -31,6 +33,7 @@ export default function App() {
   const followActive = useStore((s) => s.followActive)
   const leftCollapsed = useStore((s) => s.leftCollapsed)
   const rightCollapsed = useStore((s) => s.rightCollapsed)
+  const sharedChart = useStore((s) => s.sharedChart)
 
   // centre the view on the chart whenever a project opens
   useEffect(() => {
@@ -38,6 +41,16 @@ export default function App() {
     const t = setTimeout(fitCenter, 60)
     return () => clearTimeout(t)
   }, [projectId])
+
+  // a shared chart embedded in the URL fragment (never sent to any server)
+  useEffect(() => {
+    if (!location.hash.startsWith('#c=')) return
+    decodeShareFragment(location.hash).then((res) => {
+      if (res) useStore.getState().setSharedChart(res)
+      // remove the fragment so reloading doesn't re-import
+      history.replaceState(null, '', location.pathname + location.search)
+    })
+  }, [])
 
   // restore last project + preferences
   useEffect(() => {
@@ -248,6 +261,7 @@ export default function App() {
       <>
         <Gallery />
         <Dialogs />
+        {sharedChart && <SharedChartDialog />}
       </>
     )
 
@@ -298,6 +312,7 @@ export default function App() {
       </div>
       <StatusBar />
       <Dialogs />
+      {sharedChart && <SharedChartDialog />}
     </div>
   )
 }

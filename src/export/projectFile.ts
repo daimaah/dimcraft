@@ -1,6 +1,6 @@
 import { sanitizeDoc, uid } from '../model/doc'
 import { downloadBlob, safeFilename } from './download'
-import type { CustomSet, ProjectRecord } from '../model/types'
+import type { ChartDoc, CustomSet, ProjectRecord } from '../model/types'
 
 export interface ProjectFile {
   app: 'dimcrochet'
@@ -31,7 +31,32 @@ export function exportProjectFile(rec: ProjectRecord): void {
  * Reading is purely client-side: file.text() never touches a server.
  */
 export async function readProjectFile(file: File): Promise<ProjectFile | null> {
-  const text = await file.text()
+  return parseProjectText(await file.text())
+}
+
+export interface SymbolPackFile {
+  app: 'dimcrochet-symbol-pack'
+  version: number
+  name: string
+  artwork: Record<string, string>
+  license?: string
+  authors?: string
+  sourceUrl?: string
+  notes?: string
+}
+
+/** Read a symbol pack file (provenance fields preserved). */
+export async function readSymbolPackFile(file: File): Promise<CustomSet | null> {
+  return parsePackText(await file.text())
+}
+
+// ---- universal interchange: one importer for every export kind -----------
+
+export type InterchangeImport =
+  | { type: 'chart'; name: string; doc: ChartDoc }
+  | { type: 'pack'; set: CustomSet }
+
+function parseProjectText(text: string): ProjectFile | null {
   try {
     const parsed = JSON.parse(text) as Partial<ProjectFile>
     if (!parsed || parsed.app !== 'dimcrochet' || !parsed.doc) return null
@@ -49,20 +74,7 @@ export async function readProjectFile(file: File): Promise<ProjectFile | null> {
   }
 }
 
-export interface SymbolPackFile {
-  app: 'dimcrochet-symbol-pack'
-  version: number
-  name: string
-  artwork: Record<string, string>
-  license?: string
-  authors?: string
-  sourceUrl?: string
-  notes?: string
-}
-
-/** Read a symbol pack file (provenance fields preserved). */
-export async function readSymbolPackFile(file: File): Promise<CustomSet | null> {
-  const text = await file.text()
+function parsePackText(text: string): CustomSet | null {
   try {
     const parsed = JSON.parse(text) as Partial<SymbolPackFile>
     if (!parsed || typeof parsed.name !== 'string' || !parsed.artwork || typeof parsed.artwork !== 'object') return null
@@ -82,3 +94,27 @@ export async function readSymbolPackFile(file: File): Promise<CustomSet | null> 
     return null
   }
 }
+
+/** Accepts chart exports, symbol packs and future bundle kinds. */
+export function parseInterchangeText(text: string): InterchangeImport | null {
+  try {
+    const parsed = JSON.parse(text) as Record<string, unknown>
+    if (!parsed || typeof parsed !== 'object') return null
+    if (parsed.app === 'dimcrochet-symbol-pack') {
+      const set = parsePackText(text)
+      return set ? { type: 'pack', set } : null
+    }
+    if (parsed.app === 'dimcrochet') {
+      const project = parseProjectText(text)
+      return project ? { type: 'chart', name: project.name, doc: project.doc } : null
+    }
+    return null
+  } catch {
+    return null
+  }
+}
+
+export async function importInterchangeFile(file: File): Promise<InterchangeImport | null> {
+  return parseInterchangeText(await file.text())
+}
+
