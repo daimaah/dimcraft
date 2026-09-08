@@ -754,9 +754,7 @@ export function OptionsDialog() {
                     <span className="dd-handle" title="Drag to reorder">
                       ⠿
                     </span>
-                    {preview(b.id)}
-                    <span className="btnrow-label">{b.label}</span>
-                    <label className="check">
+                    <label className="check" title="Show or hide this button">
                       <input
                         type="checkbox"
                         checked={!isHidden}
@@ -768,8 +766,9 @@ export function OptionsDialog() {
                           useStore.getState().setPalette({ hidden: nextHidden })
                         }}
                       />
-                      <span>{isHidden ? 'hidden' : 'shown'}</span>
                     </label>
+                    {preview(b.id)}
+                    <span className="btnrow-label">{b.label}</span>
                   </div>
                   {splitAfterId === b.id && (
                     <div className="dd-row-divider" title="Second row starts here" data-testid="dd-row-divider" />
