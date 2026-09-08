@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import type { ChartDoc, ProjectRecord } from '../model/types'
 import { STARTERS } from '../model/starters'
 import { docFromClipboard, hasClipboard } from '../model/clipboard'
+import { sortProjects, DESIGNS_SORTS, type DesignsSort } from '../model/projectSort'
 import { applyBackup, downloadBackup } from '../export/backup'
 import { deleteProject, listProjects, saveProject } from '../storage/db'
 import { useStore } from '../state/store'
@@ -14,6 +15,7 @@ import { lineSvg } from '../render/markup'
 
 const LAST_KEY = 'dimcrochet.lastProject'
 const SEEN_MINE_KEY = 'dimcrochet.seenMine'
+const SORT_KEY = 'dimcrochet.designsSort'
 
 type Tab = 'starters' | 'mine'
 
@@ -25,6 +27,9 @@ export function Gallery() {
   // no designs yet → lead with the starters; otherwise lead with the user's own work
   const [tab, setTab] = useState<Tab | null>(null)
   const [mineSeen, setMineSeen] = useState(() => localStorage.getItem(SEEN_MINE_KEY) === '1')
+  const [sort, setSort] = useState<DesignsSort>(
+    () => (localStorage.getItem(SORT_KEY) as DesignsSort) || 'updated-desc',
+  )
 
   const refresh = () => void listProjects().then(setProjects)
   useEffect(refresh, [])
@@ -246,8 +251,28 @@ export function Gallery() {
       )}
 
       {activeTab === 'mine' && (
+        <div className="mine-toolbar" data-testid="mine-toolbar">
+          <label className="mine-sort">
+            <span>Sort:</span>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value as DesignsSort)}
+              data-testid="mine-sort"
+            >
+              {DESIGNS_SORTS.map((o) => (
+                <option key={o.id} value={o.id}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          {(projects ?? []).length > 0 && <span className="hint">{(projects ?? []).length} designs</span>}
+        </div>
+      )}
+
+      {activeTab === 'mine' && (
         <div className="cards-list">
-          {(projects ?? []).map((rec) => (
+          {sortProjects(projects ?? [], sort).map((rec) => (
             <article key={rec.id} className="project-card" onDoubleClick={() => open(rec)}>
               <div className="project-main" onClick={() => open(rec)}>
                 <MiniChart doc={rec.doc} />
