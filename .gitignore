@@ -6,3 +6,4 @@ dev-dist
 coverage
 gui-test-screenshots/
 scripts/.commons-cache/
+tests/scratch.test.ts
