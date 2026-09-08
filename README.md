@@ -153,7 +153,7 @@ Everything stays in your browser by default: charts live in IndexedDB, exports d
 
 ## AI assistance disclosure
 
-DimCrochet was designed and developed with the assistance of AI tools (including code generation, symbol artwork drafting, and documentation). All code is human-reviewed and released under the [MIT License](LICENSE) without warranty. The Standard, Japanese-style and Solid print symbol sets were drawn for this project; the International variants set consists of third-party Wikimedia Commons artwork under its own per-file licenses.
+DimCrochet was designed and developed with the assistance of Z.AI large language models — **GLM-5.3-Flash** (primary) and **GLM-5.3** — including code generation, symbol artwork drafting, and documentation. All code is human-reviewed and released under the [MIT License](LICENSE) without warranty. The Standard, Japanese-style and Solid print symbol sets were drawn for this project; the International variants set consists of third-party Wikimedia Commons artwork under its own per-file licenses. Model attribution is kept up to date in the in-app Licenses & attributions dialog as the models in use change.
 
 ## License & symbols
 

@@ -12,6 +12,9 @@ const DEPS: { name: string; license: string; url: string }[] = [
   { name: 'TypeScript', license: 'Apache-2.0', url: 'https://www.typescriptlang.org' },
 ]
 
+/** AI model attribution — keep current as the models in use change. */
+const AI_MODELS = 'GLM-5.3-Flash and GLM-5.3 (Z.AI)'
+
 export function LicensesDialog() {
   const doc = useStore((s) => s.doc)
 
@@ -93,6 +96,14 @@ export function LicensesDialog() {
             ))}
           </ul>
           <p className="hint">All trademarks belong to their respective owners.</p>
+
+          <h3>AI assistance</h3>
+          <p>
+            DimCrochet is designed and developed with the assistance of Z.AI large language models:{' '}
+            <strong>{AI_MODELS}</strong> — most contributions via GLM-5.3-Flash with high reasoning.
+            All code and artwork are human-reviewed. This attribution is kept up to date whenever
+            the models in use change.
+          </p>
         </div>
 
         <div className="modal-actions">
