@@ -7,6 +7,12 @@ in rough priority order, with design notes where the "how" matters.
 
 ## Recently shipped
 
+- **Self-hosted encrypted short links (sidecar in the image)** — for sharing through chat
+  apps where long fragment links get mangled: the browser encrypts the chart (AES-GCM-256,
+  key in the fragment) and the sidecar stores only ciphertext it cannot read. One container
+  serves both the app and the short-link API (`/api/links`, `/x/<id>`); links expire after
+  30 idle days (configurable) into a named volume. Receive path `/x/<id>#k=…` opens as a
+  local copy; plain `#c=` fragment links unchanged. WebCrypto requires HTTPS/localhost.
 - **Beginner starter path** — five starter charts in increasing difficulty (chain → sc
   coaster → dc coaster → granny square → granny circle) on a "Learn with starters" gallery
   tab; "My designs" tab defaults by saved-project count with a pulsing badge until first
@@ -63,8 +69,6 @@ in rough priority order, with design notes where the "how" matters.
 - **Community pack curation** — the Commons variants pack is bundled; next steps are
   glyph review by regional crocheters, and accepting community packs via repository
   PRs into a `packs/` folder.
-- **Optional link-shortener sidecar** — a tiny self-hosted companion (for people
-  already running Portainer) if long share links prove annoying in chat apps.
 
 ---
 
