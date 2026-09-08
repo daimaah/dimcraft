@@ -740,10 +740,10 @@ button {
   position: absolute;
   top: 8px;
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
+  align-items: stretch;
+  flex-wrap: nowrap;
   gap: 8px;
-  width: max-content;
+  width: auto;
   max-width: calc(100% - 16px);
   background: var(--bg-raised);
   border: 1px solid var(--line);
@@ -763,12 +763,6 @@ button {
   padding: 5px 8px;
 }
 
-/* two-row layout (Options → Tool palette layout) */
-.tool-palette.two-rows {
-  flex-direction: column;
-  align-items: stretch;
-  gap: 4px;
-}
 
 .tool-palette .tp-row {
   display: flex;
@@ -1637,7 +1631,9 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   gap: 4px;
+  width: 38px;
   padding: 3px;
   border-radius: 8px;
   /* slightly lighter than the bar so the always-visible island reads as its own area */
@@ -1677,6 +1673,7 @@ button {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+  flex: 1;
   min-width: 0;
 }
 
