@@ -10,6 +10,8 @@ import { LicensesDialog } from './LicensesDialog'
 import { PatternImportDialog } from './PatternImportDialog'
 import { StitchMotionDialog } from './StitchMotionDialog'
 import { createShortLink, sidecarAvailable } from '../export/secureShare'
+import { recentChangelog } from '../export/changelog'
+import changelogRaw from '../../CHANGELOG.md?raw'
 import type { RotationMode } from '../model/types'
 import type { SvgExportOptions } from '../export/svg'
 import type { PaperFormat, PageOrientation } from '../export/pdf'
@@ -494,91 +496,216 @@ export function FileLoadRow() {
   )
 }
 
-// ---- universal options: view animations, handedness, sidecar --------------
+// ---- universal options: view animations, handedness, sidecar, danger zone --
 
 export function OptionsDialog() {
   const viewAnimations = useStore((s) => s.viewAnimations)
   const lefty = useStore((s) => s.lefty)
   const paletteRows = useStore((s) => s.paletteRows)
+  const [tab, setTab] = useState<'general' | 'danger'>('general')
+  const [confirmText, setConfirmText] = useState('')
+  const [wiping, setWiping] = useState(false)
   const [sidecarUrl, setSidecarUrl] = useState(
     () => localStorage.getItem('dimcrochet.sidecarUrl') ?? location.origin,
   )
+
+  const wipe = async () => {
+    setWiping(true)
+    try {
+      const { deleteAllLocalData } = await import('../export/backup')
+      await deleteAllLocalData()
+      location.reload()
+    } finally {
+      setWiping(false)
+    }
+  }
+
+  const unlock = confirmText.trim().toLowerCase() === 'reset'
+
   return (
     <Modal title="Options" onClose={() => useStore.getState().closeDialog()} wide>
-      <div className="form">
-        <label className="check" data-testid="opt-animations">
-          <input
-            type="checkbox"
-            checked={viewAnimations}
-            onChange={(e) => useStore.getState().setViewAnimations(e.target.checked)}
-          />
-          <span>
-            <strong>Design view animations</strong>
-            <br />
-            <span className="hint">
-              Animate collapsible bars (tool palette, follow bar) and add a bounce when a typed zoom
-              is applied. Turn off for instant transitions.
+      <div className="seg options-tabs" role="tablist">
+        <button
+          role="tab"
+          aria-selected={tab === 'general'}
+          className={tab === 'general' ? 'on' : ''}
+          onClick={() => setTab('general')}
+        >
+          General
+        </button>
+        <button
+          role="tab"
+          aria-selected={tab === 'danger'}
+          className={`danger${tab === 'danger' ? ' on' : ''}`}
+          onClick={() => setTab('danger')}
+          data-testid="options-danger-tab"
+        >
+          Danger zone
+        </button>
+      </div>
+
+      {tab === 'general' && (
+        <div className="form">
+          <label className="check" data-testid="opt-animations">
+            <input
+              type="checkbox"
+              checked={viewAnimations}
+              onChange={(e) => useStore.getState().setViewAnimations(e.target.checked)}
+            />
+            <span>
+              <strong>Design view animations</strong>
+              <br />
+              <span className="hint">
+                Animate collapsible bars, side panels, and the tool palette collapse, and add a
+                bounce when a typed zoom is applied. Turn off for instant transitions.
+              </span>
             </span>
-          </span>
-        </label>
-        <label className="check" data-testid="opt-lefty">
-          <input
-            type="checkbox"
-            checked={lefty}
-            onChange={(e) => useStore.getState().setLefty(e.target.checked)}
-          />
-          <span>
-            <strong>Left-handed view</strong>
-            <br />
-            <span className="hint">
-              Mirrors the stitch-motion animations and switches follow-mode playback to clockwise.
+          </label>
+          <label className="check" data-testid="opt-lefty">
+            <input
+              type="checkbox"
+              checked={lefty}
+              onChange={(e) => useStore.getState().setLefty(e.target.checked)}
+            />
+            <span>
+              <strong>Left-handed view</strong>
+              <br />
+              <span className="hint">
+                Mirrors the stitch-motion animations and switches follow-mode playback to clockwise.
+              </span>
             </span>
-          </span>
-        </label>
-        <div className="form-row" data-testid="opt-rows">
-          <span>
-            <strong>Tool palette layout</strong>
-            <br />
-            <span className="hint">Two rows take less horizontal space.</span>
-          </span>
-          <div className="seg">
-            {[1, 2].map((n) => (
-              <button
-                key={n}
-                className={paletteRows === n ? 'on' : ''}
-                data-testid={`opt-rows-${n}`}
-                onClick={() => useStore.getState().setPaletteRows(n as 1 | 2)}
-              >
-                {n === 1 ? 'One row' : 'Two rows'}
-              </button>
-            ))}
+          </label>
+          <div className="form-row" data-testid="opt-rows">
+            <span>
+              <strong>Tool palette layout</strong>
+              <br />
+              <span className="hint">Two rows take less horizontal space.</span>
+            </span>
+            <div className="seg">
+              {[1, 2].map((n) => (
+                <button
+                  key={n}
+                  className={paletteRows === n ? 'on' : ''}
+                  data-testid={`opt-rows-${n}`}
+                  onClick={() => useStore.getState().setPaletteRows(n as 1 | 2)}
+                >
+                  {n === 1 ? 'One row' : 'Two rows'}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="form-row" data-testid="opt-sidecar">
+            <span>
+              <strong>Sidecar URL</strong>
+              <br />
+              <span className="hint">
+                Base URL of the self-hosted short-link sidecar used by Export → Short link
+                (defaults to this app's own address).
+              </span>
+            </span>
+            <input
+              value={sidecarUrl}
+              onChange={(e) => setSidecarUrl(e.target.value)}
+              onBlur={() => {
+                try {
+                  localStorage.setItem('dimcrochet.sidecarUrl', sidecarUrl.trim())
+                } catch {
+                  /* storage unavailable */
+                }
+              }}
+              placeholder="https://charts.example.com"
+              spellCheck={false}
+              data-testid="opt-sidecar-url"
+            />
           </div>
         </div>
-        <div className="form-row" data-testid="opt-sidecar">
-          <span>
-            <strong>Sidecar URL</strong>
-            <br />
-            <span className="hint">
-              Base URL of the self-hosted short-link sidecar used by Export → Short link
-              (defaults to this app's own address).
-            </span>
-          </span>
-          <input
-            value={sidecarUrl}
-            onChange={(e) => setSidecarUrl(e.target.value)}
-            onBlur={() => {
-              try {
-                localStorage.setItem('dimcrochet.sidecarUrl', sidecarUrl.trim())
-              } catch {
-                /* storage unavailable */
-              }
-            }}
-            placeholder="https://charts.example.com"
-            spellCheck={false}
-            data-testid="opt-sidecar-url"
-          />
+      )}
+
+      {tab === 'danger' && (
+        <div className="danger-zone">
+          <p>
+            <strong>Delete everything on this device.</strong> This removes every saved chart, all
+            preferences, and the copy/paste clipboard from this browser — exactly as if you had
+            never visited the site. Anything you did not back up is gone for good.
+          </p>
+          <div className="form-row" data-testid="danger-confirm-row">
+            <span>Type “reset” to confirm:</span>
+            <input
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              placeholder="reset"
+              spellCheck={false}
+              data-testid="danger-confirm"
+            />
+          </div>
+          <button
+            className="btn danger-btn"
+            data-testid="danger-reset"
+            disabled={!unlock || wiping}
+            onClick={() => void wipe()}
+          >
+            {wiping ? 'Deleting…' : 'Delete everything & start fresh'}
+          </button>
         </div>
-      </div>
+      )}
+    </Modal>
+  )
+}
+
+// ---- version history: current release highlighted + last 5 entries ---------
+
+const CHANGELOG_FALLBACK = 'No version history available.'
+
+export function ChangelogDialog() {
+  const raw = changelogRaw
+  const { current, older } = recentChangelog(raw, __APP_VERSION__, 5)
+
+  const renderBody = (body: string) => (
+    <div className="changelog-body">
+      {body
+        .split('\n')
+        .filter((l) => l.trim())
+        .map((line, i) =>
+          line.startsWith('### ') ? (
+            <strong key={i}>{line.slice(4)}</strong>
+          ) : line.startsWith('- ') ? (
+            <span key={i} className="changelog-li">
+              · {line.slice(2)}
+            </span>
+          ) : (
+            <span key={i}>{line}</span>
+          ),
+        )}
+    </div>
+  )
+
+  return (
+    <Modal title="Version history" onClose={() => useStore.getState().closeDialog()} wide>
+      <p className="hint">
+        Showing the current release and the last five. Older history lives in the repository's
+        CHANGELOG.md.
+      </p>
+      {current ? (
+        <div className="changelog-entry current" data-testid="changelog-current">
+          <div className="changelog-head">
+            <strong>Version {current.version}</strong>
+            {current.date && <span className="hint">{current.date}</span>}
+            <span className="level-chip level-3">current</span>
+          </div>
+          {renderBody(current.body)}
+        </div>
+      ) : (
+        <p className="hint">{CHANGELOG_FALLBACK}</p>
+      )}
+      {older.map((e) => (
+        <div key={e.version} className="changelog-entry">
+          <div className="changelog-head">
+            <strong>Version {e.version}</strong>
+            {e.date && <span className="hint">{e.date}</span>}
+          </div>
+          {renderBody(e.body)}
+        </div>
+      ))}
     </Modal>
   )
 }
@@ -593,5 +720,6 @@ export function Dialogs() {
   if (dialog === 'pattern-import') return <PatternImportDialog />
   if (dialog === 'stitch-motions') return <StitchMotionDialog />
   if (dialog === 'options') return <OptionsDialog />
+  if (dialog === 'changelog') return <ChangelogDialog />
   return null
 }

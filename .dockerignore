@@ -5,4 +5,5 @@ dev-dist
 .github
 coverage
 *.log
-*.md
+README.md
+ROADMAP.md

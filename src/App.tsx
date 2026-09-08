@@ -330,7 +330,10 @@ export default function App() {
     <div className="app">
       <Toolbar />
       <div className="main">
-        {!leftCollapsed && <SymbolPalette />}
+        {/* panels stay mounted so collapse/expand can animate (see .side-wrap) */}
+        <div className={`side-wrap left${leftCollapsed ? ' closed' : ''}`}>
+          <SymbolPalette />
+        </div>
         <div className="canvas-wrap">
           <ChartCanvas />
           <ToolPalette />
@@ -354,7 +357,7 @@ export default function App() {
           )}
           {followActive && <FollowBar />}
         </div>
-        {!rightCollapsed && (
+        <div className={`side-wrap right${rightCollapsed ? ' closed' : ''}`}>
           <div className="right-col">
             <div className="col-head">
               <button
@@ -370,7 +373,7 @@ export default function App() {
             </section>
             <LayersPanel />
           </div>
-        )}
+        </div>
       </div>
       <StatusBar />
       <Dialogs />

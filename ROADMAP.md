@@ -7,6 +7,12 @@ in rough priority order, with design notes where the "how" matters.
 
 ## Recently shipped
 
+- **Options tabs + danger zone + version history view** — Options now has General and
+  Danger zone tabs: the danger tab deletes all local data (charts, prefs, clipboard) behind
+  a type-"reset" confirmation that unlocks the final button. Collapsed tool palette keeps
+  Select/Pan/Place/Text visible; side-panel collapse/expand now animates under the view
+  animations toggle; clickable version under the gallery brand opens a version-history view
+  (current release highlighted + last five, older history deferred to the repo CHANGELOG).
 - **Options dialog + editable zoom + bar animations** — the tool palette ⚙ button opens
   Options: design-view animations on/off (gates bar collapse pops and the zoom bounce via a
   root data-anim attribute), left-handed view, and the sidecar URL (consolidated from the

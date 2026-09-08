@@ -132,6 +132,15 @@ export function Gallery() {
           </svg>
           <div>
             <h1>DimCrochet</h1>
+            <button
+              className="version-link"
+              data-testid="version-link"
+              title="Version history"
+              onClick={() => useStore.getState().openDialog('changelog')}
+            >
+              v{__APP_VERSION__}
+              {__GIT_COMMIT__ ? ` · ${__GIT_COMMIT__}` : ''}
+            </button>
             <p>Crochet round &amp; motif chart composer</p>
           </div>
         </div>
@@ -317,6 +326,9 @@ export function Gallery() {
               }}
             />
           </label>
+          <button className="btn" data-testid="open-options-gallery" onClick={() => useStore.getState().openDialog('options')}>
+            ⚙ Options
+          </button>
           <button className="btn" onClick={() => useStore.getState().openDialog('licenses')}>
             Licenses &amp; attributions
           </button>

@@ -1,4 +1,4 @@
-import { createStore, del, entries, get, set } from 'idb-keyval'
+import { clear, createStore, del, entries, get, set } from 'idb-keyval'
 import { sanitizeDoc } from '../model/doc'
 import type { ChartDoc, ProjectRecord } from '../model/types'
 
@@ -45,4 +45,10 @@ export async function loadProject(id: string): Promise<ProjectRecord | undefined
 export async function deleteProject(id: string): Promise<void> {
   if (!store) return
   await del(id, store)
+}
+
+/** Delete every stored project (used by the Options danger zone). */
+export async function clearProjects(): Promise<void> {
+  if (!store) return
+  await clear(store)
 }

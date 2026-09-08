@@ -18,6 +18,9 @@ const TOOLS: { id: string; icon: IconName; label: string; key: string }[] = [
 
 const KEY = 'dimcrochet.toolPalette'
 
+/** tools that stay visible even when the palette is collapsed */
+const ESSENTIAL_TOOLS = ['select', 'pan', 'place', 'text']
+
 interface PaletteState {
   x?: number
   y?: number
@@ -182,8 +185,6 @@ export function ToolPalette() {
     }
   }
 
-  const activeTool = TOOLS.find((t) => t.id === tool)
-
   // ---- button groups --------------------------------------------------------
   const toolsGroup = (
     <div className="tb-group">
@@ -326,11 +327,18 @@ export function ToolPalette() {
       </div>
       {collapsed ? (
         <>
-          {activeTool && (
-            <span className="tool-btn active" title={`Current tool: ${activeTool.label} (${activeTool.key})`}>
-              <Icon name={activeTool.icon} />
-            </span>
-          )}
+          {/* essential tools stay visible even when collapsed */}
+          {TOOLS.filter((t) => ESSENTIAL_TOOLS.includes(t.id)).map((t) => (
+            <button
+              key={t.id}
+              className={`tool-btn${tool === t.id ? ' active' : ''}`}
+              title={`${t.label} (${t.key})`}
+              onClick={() => st.getState().setTool(t.id as never)}
+            >
+              <Icon name={t.icon} />
+            </button>
+          ))}
+          <div className="tb-sep" />
           <button
             className="btn"
             title="Expand the tool palette"

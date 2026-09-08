@@ -1,4 +1,4 @@
-import { listProjects, saveProject } from '../storage/db'
+import { clearProjects, listProjects, saveProject } from '../storage/db'
 import { downloadBlob, safeFilename } from './download'
 import type { BackupFile } from './projectFile'
 
@@ -50,4 +50,16 @@ export async function applyBackup(backup: BackupFile): Promise<number> {
     }
   }
   return backup.projects.length
+}
+
+/** Wipe everything local: all charts, all dimcrochet.* settings, the clipboard. */
+export async function deleteAllLocalData(): Promise<void> {
+  await clearProjects()
+  try {
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith('dimcrochet.')) localStorage.removeItem(key)
+    }
+  } catch {
+    /* storage unavailable */
+  }
 }
