@@ -7,3 +7,6 @@ coverage
 gui-test-screenshots/
 scripts/.commons-cache/
 tests/scratch.test.ts
+
+# internal research notes — local only, never publish
+KNITTING-ASSESSMENT.md
