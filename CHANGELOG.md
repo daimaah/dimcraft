@@ -10,6 +10,16 @@ repository log remains the complete, transparent record.
 
 ### Added
 
+- **Asterisk repeats** in the written-pattern importer: `*2 dc, ch 1*; repeat
+  from * 3 more times` expands to 4 passes (the style-guide reading of
+  "repeat from * N times" is N+1, noted in the dialog); uncounted
+  "repeat to end" warns instead of guessing.
+- **Increase & decrease annotations** in the written-pattern importer: new
+  `sc2tog` / `hdc2tog` symbols (with technique animations via the
+  height-fallback), `dc2tog`/`sc2tog` style words now parse (previously
+  mis-read), "2 sc together" / "single crochet 2 together" phrases, the
+  amigurumi words `dec` → sc2tog and `inc` → 2 sc, and "2 dc in each st" /
+  "inc in each st" rounds expand against the previous round's stitch count.
 - **Chart URLs** — opening a design puts `#/chart/<id>` in the address bar:
   refreshing or bookmarking reopens it, and the browser Back/Forward buttons
   move between the gallery and designs. The bare root always opens the gallery.

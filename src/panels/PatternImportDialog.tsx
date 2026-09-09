@@ -35,8 +35,10 @@ export function PatternImportDialog() {
         <div className="form">
           <p className="hint">
             Paste round-based instructions (R1: …, Round 2: …). The parser understands stitch
-            abbreviations, counts ("3 dc", "ch 2") and bracketed repeats ("[…] × 4", "(…) 6 times"),
-            then lays the rounds out as a suggested chart you can edit.
+            abbreviations and counts ("3 dc", "ch 2"), bracketed repeats ("[…] × 4", "(…) 6 times"),
+            asterisk repeats ("*2 dc, ch 1*; repeat from * 3 more times"), increases ("2 dc in next
+            st", "inc", "2 dc in each st") and decreases ("sc2tog", "2 sc together", "dec"), then
+            lays the rounds out as a suggested chart you can edit.
           </p>
           <textarea
             className="instructions-text"

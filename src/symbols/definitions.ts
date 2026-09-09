@@ -76,6 +76,22 @@ export const BUILT_IN_SYMBOLS: SymbolDef[] = [
   ),
 
   def(
+    'sc2tog',
+    'Single crochet 2 together',
+    'sc2tog',
+    p('M 8.5 30 L 11.3 22 M 15.5 30 L 12.7 22 M 8.2 21.8 L 15.8 21.8') + p('M 6.8 27 L 11.2 25') + p('M 12.8 27.5 L 17 25.5'),
+    [6.8, 21.8, 10.2, 8.2],
+  ),
+
+  def(
+    'hdc2tog',
+    'Half double crochet 2 together',
+    'hdc2tog',
+    p('M 8.5 30 L 11.3 17 M 15.5 30 L 12.7 17 M 6.5 16.8 L 17.5 16.8'),
+    [6.5, 16.8, 11, 13.2],
+  ),
+
+  def(
     'popcorn',
     'Popcorn stitch',
     'pc',

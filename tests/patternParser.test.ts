@@ -160,3 +160,85 @@ describe('pattern → chart layout', () => {
     expect(line2).toBe(line1)
   })
 })
+
+describe('asterisk repeats', () => {
+  it('expands "*…*; repeat from * N more times" to N+1 passes', () => {
+    const parsed = parsePattern('R3: *2 dc, ch 1*; repeat from * 3 more times')
+    expect(parsed.warnings).not.toContain('asterisk-repeat')
+    expect(parsed.rounds[0].repeat).toEqual({ runs: [{ symbolId: 'dc', count: 2 }, { symbolId: 'ch', count: 1 }], times: 4 })
+    expect(parsed.rounds[0].total).toBe(12)
+  })
+
+  it('reads "repeat from * N times" as N+1 passes and says so', () => {
+    const parsed = parsePattern('R2: *5 sc*; repeat from * 3 times')
+    expect(parsed.rounds[0].total).toBe(20)
+    expect(parsed.notes?.join(' ')).toContain('N+1 passes')
+  })
+
+  it('supports "*…* N times" and "once/twice" multipliers', () => {
+    expect(parsePattern('R1: *3 tr* 4 times').rounds[0].total).toBe(12)
+    expect(parsePattern('R1: *sc, ch 2* twice').rounds[0].total).toBe(6)
+  })
+
+  it('warns when the repeat runs to the end without a count', () => {
+    const parsed = parsePattern('R2: *sc, ch 1*; repeat from * to end')
+    expect(parsed.warnings).toContain('asterisk-repeat-to-end')
+    expect(parsed.rounds[0].total).toBe(2)
+  })
+
+  it('mixes asterisk units with a lead-in ("Ch 1, *2 dc…*")', () => {
+    const parsed = parsePattern('R1: ch 1, *2 dc*; repeat from * 5 more times')
+    expect(parsed.rounds[0].runs[0]).toEqual({ symbolId: 'ch', count: 1 })
+    expect(parsed.rounds[0].total).toBe(1 + 2 * 6)
+  })
+})
+
+describe('increases and decreases', () => {
+  it('parses tog abbreviations into decrease symbols (dc2tog used to mis-parse)', () => {
+    const parsed = parsePattern('R1: dc2tog, sc2tog, hdc2tog')
+    expect(parsed.warnings).toEqual([])
+    expect(parsed.rounds[0].runs.map((r) => r.symbolId)).toEqual(['dc2tog', 'sc2tog', 'hdc2tog'])
+  })
+
+  it('understands "2 sc together" and full-name forms', () => {
+    expect(parsePattern('R1: 2 sc together').rounds[0].runs).toEqual([{ symbolId: 'sc2tog', count: 1 }])
+    expect(parsePattern('R1: single crochet 2 together').rounds[0].runs).toEqual([{ symbolId: 'sc2tog', count: 1 }])
+    expect(parsePattern('R1: half double crochet 2 together').rounds[0].runs).toEqual([{ symbolId: 'hdc2tog', count: 1 }])
+  })
+
+  it('maps amigurumi "dec" to sc2tog and "inc" to 2 sc', () => {
+    expect(parsePattern('R1: dec, inc').rounds[0].runs).toEqual([
+      { symbolId: 'sc2tog', count: 1 },
+      { symbolId: 'sc', count: 2 },
+    ])
+  })
+
+  it('expands "2 sc in each st" against the previous round', () => {
+    const parsed = parsePattern('R1: 12 sc\nR2: 2 sc in each st')
+    expect(parsed.rounds[1].total).toBe(24)
+    expect(parsed.notes?.join(' ')).toContain('12')
+  })
+
+  it('expands "inc in each st" to double the previous round', () => {
+    const parsed = parsePattern('R1: 6 sc\nR2: inc in each st')
+    expect(parsed.rounds[1].total).toBe(12)
+  })
+
+  it('warns when an in-each round has no base to expand from', () => {
+    const parsed = parsePattern('R1: 2 sc in each st')
+    expect(parsed.warnings).toContain('increase-base-unknown')
+  })
+
+  it('charts an increase round with pairs side by side, and decreases place normally', () => {
+    const parsed = parsePattern('Start with a magic ring.\nR1: 6 sc\nR2: [2 sc, sc2tog] × 2')
+    const { doc } = patternToChart(parsed, {})
+    const r2 = doc.placements.filter((p) => p.guideTag === 'imported-round-2')
+    // 2 sc + sc2tog per unit × 2: the pair shares one base angle, so both
+    // carry the same radial rotation
+    expect(r2).toHaveLength(6)
+    const sc2 = r2.filter((p) => p.symbolId === 'sc')
+    expect(sc2).toHaveLength(4)
+    expect(Math.abs(sc2[0].rotation - sc2[1].rotation)).toBeLessThan(0.01)
+    expect(r2.filter((p) => p.symbolId === 'sc2tog')).toHaveLength(2)
+  })
+})
