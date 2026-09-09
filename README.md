@@ -60,7 +60,7 @@ A single container serves everything: the app's static build and the self-hosted
 4. **Update the stack** — Portainer clones the repo and builds the image
 5. Open `http://your-server:8080`
 
-The repository is private, so Portainer needs Git credentials that can read it (a fine-grained PAT with **Contents: Read-only** works) — add them under **Settings → Git credentials** or in the stack's repository options.
+The repository is public — Portainer can clone it without credentials.
 
 To change the port, add an environment variable in the stack editor: `DIMCROCHET_PORT = 3000`.
 
@@ -83,7 +83,7 @@ volumes:
   dimcrochet-data:
 ```
 
-The volume mapping matters: `/data` holds the sidecar's encrypted short links, and without it every stack update starts from an empty store, breaking previously shared links. Pin `v0.8.0` instead of `latest` if you want upgrades to be explicit. While the GHCR package is still private, run `docker login ghcr.io` on the host once with a PAT that has `read:packages` before deploying (or flip the package to public in its settings).
+The volume mapping matters: `/data` holds the sidecar's encrypted short links, and without it every stack update starts from an empty store, breaking previously shared links. Pin `v0.8.0` instead of `latest` if you want upgrades to be explicit. The image is public on GHCR — pulling needs no login.
 
 ### Plain Docker / docker compose
 
