@@ -59,6 +59,14 @@ export function StatusBar() {
           : 'Unsaved'}
       </span>
       <span className="sb-cell muted">Everything stays in this browser — no account, no uploads</span>
+      <button
+        className="sb-cell version-link"
+        data-testid="statusbar-version"
+        title="Version history"
+        onClick={() => useStore.getState().openDialog('changelog')}
+      >
+        v{__APP_VERSION__}
+      </button>
     </footer>
   )
 }

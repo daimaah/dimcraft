@@ -608,6 +608,10 @@ button {
   font-variant-numeric: tabular-nums;
 }
 
+.statusbar .version-link {
+  font-size: inherit;
+}
+
 .sb-cell.accent {
   color: var(--accent-soft);
 }
