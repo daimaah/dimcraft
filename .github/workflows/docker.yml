@@ -44,6 +44,12 @@ jobs:
         id: meta
         with:
           images: ghcr.io/${{ github.repository }}
+          # default branch builds always refresh :latest, so deployments
+          # tracking it get the newest passing build, not just releases
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=ref,event=branch
+            type=ref,event=tag
 
       - uses: docker/build-push-action@v6
         with:

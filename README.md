@@ -66,7 +66,7 @@ To change the port, add an environment variable in the stack editor: `DIMCROCHET
 
 ### Portainer — Web editor method (pre-built image)
 
-The [GitHub workflow](.github/workflows/docker.yml) publishes the pre-built image to GHCR: every push to `main` updates the `main` tag, and every version tag `vX.Y.Z` publishes `vX.Y.Z` plus `latest`. Paste this as the stack:
+The [GitHub workflow](.github/workflows/docker.yml) publishes the pre-built image to GHCR: every push to `main` updates the `main` **and** `latest` tags, and every version tag `vX.Y.Z` publishes `vX.Y.Z` plus `latest`. Paste this as the stack:
 
 ```yaml
 services:
