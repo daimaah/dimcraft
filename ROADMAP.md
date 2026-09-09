@@ -7,6 +7,34 @@ in rough priority order, with design notes where the "how" matters.
 
 ## Recently shipped
 
+- **Chart URLs & gallery-first routing** — designs open at `#/chart/<id>`: refreshing or
+  bookmarking reopens exactly that chart, browser Back/Forward move between gallery and
+  designs, and the bare root always opens the gallery (no silent last-project restore).
+  Hash routing keeps static hosting proxy-free and leaves the `#c=`/`/x/` share flows intact.
+- **Stitch-count check** — every round in the follow pill and written instructions now ends
+  with an authentic "(N sts)" count, and the instructions dialog gains a ⚠ stitch-count check:
+  a round that breaks the constant per-round growth of the same-stitch run before it
+  (the flat-circle rule: sc +6, hdc +8, dc +12 — "add as many stitches each round as you
+  started with") is flagged with the expected count, while decreases, stitch changes and
+  short runs stay exempt. Researched against published conventions before building.
+- **Z-order controls** — To front / Forward / Backward / To back for selected stitches
+  (Inspector buttons + `Ctrl+]`/`Ctrl+[`, Shift for the ends); contiguous selections move
+  as a block; no-op commands don't pollute undo history.
+- **Pattern import: asterisk repeats & inc/dec** — `*2 dc, ch 1*; repeat from * 3 more times`
+  expands to 4 passes (the style-guide reading of "repeat from * N times" is N+1, stated in
+  the dialog; `*…* N times` counts N; uncounted "repeat to end" warns). New `sc2tog` and
+  `hdc2tog` symbols (palette, legend, height-fallback animations); `dc2tog`-style words now
+  parse correctly (previously mis-read as one stitch), "2 sc together"/"single crochet 2
+  together" phrases work in both word orders, amigurumi `dec` → sc2tog and `inc` → 2 sc, and
+  "2 dc in each st" / "inc in each st" rounds expand against the previous round's stitch count.
+- **Branching & unreleased view** — day-to-day work lands on the `develop` branch (published
+  as the `develop` Docker tag); `main` carries released code (`main` + `latest` GHCR tags;
+  `vX.Y.Z` release tags pin versions). The version history dialog shows a "Changes coming in
+  next version" section whenever CHANGELOG.md's `[Unreleased]` entry has content, so develop
+  ("beta") users see what's coming; releases retitle the section.
+- **My designs edited ages** — human-friendly "edited 5 minutes ago / yesterday" labels with
+  the exact timestamp on hover, a week-and-older fallback to full date+time, a one-minute
+  refresh tick, and 24-hour-clock setting respected in every absolute timestamp.
 - **Tool palette left island + tools-only collapse** — the drag grip and collapse/expand
   toggle live in a permanent left-side island (same spot in every state); the collapsed
   palette keeps all tool buttons visible (two rows when two-row layout is on) while the
@@ -88,22 +116,19 @@ in rough priority order, with design notes where the "how" matters.
 
 ## Backlog (unprioritised)
 
-  charts, closing the copy/paste complaints aimed at Stitch Fiddle.
-- **Z-ordering** — bring forward / send backward for placements; today layer
-  order is fixed (guides → brackets → stitches → lines → text).
 - **Multi-chart documents** — several artboards per pattern (motif + schematic
   + edging) in one project.
-- **Written pattern → chart refinements** — asterisk-style repeats ("repeat from
-  \* 3 more times"), increases/decreases ("2 dc in next st", "sc2tog") as placement
-  annotations, multi-round radius refinement, and optionally an AI-assisted freeform
-  parser on top of the deterministic core.
+- **Written pattern → chart refinements** — multi-round radius refinement, and
+  optionally an AI-assisted freeform parser on top of the deterministic core
+  (deliberately deferred: the deterministic layer covers round-based patterns;
+  asterisk repeats and inc/dec annotations shipped 2026-09-09).
 - **Print tiling** — split oversized charts across multiple pages with
   alignment marks.
-- **Stitch-count validation** — heuristic warnings when a round's stitch count
-  doesn't fit the previous round (CrochetPARADE-style structural checks).
 - **Community pack curation** — the Commons variants pack is bundled; next steps are
   glyph review by regional crocheters, and accepting community packs via repository
   PRs into a `packs/` folder.
+- **Infra maintenance** — the pinned GitHub Actions (checkout@v4, docker/*) log
+  Node 20 deprecation warnings: bump their majors in a quiet maintenance pass.
 
 ---
 
