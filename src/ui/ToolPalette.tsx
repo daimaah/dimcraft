@@ -338,6 +338,9 @@ export function ToolPalette() {
           '--o-rest': toolbarOpacity / 100,
           '--o-hover': Math.max(toolbarOpacity, toolbarHoverOpacity) / 100,
           '--island-rest': islandFullOpacity ? 1 : toolbarOpacity / 100,
+          '--island-bg': islandFullOpacity
+            ? 'rgb(63, 58, 69)' // solid equivalent of the translucent tile over a solid bar
+            : 'rgba(255, 255, 255, 0.08)',
           '--island-hover': islandFullOpacity ? 1 : Math.max(toolbarOpacity, toolbarHoverOpacity) / 100,
         } as React.CSSProperties
       }

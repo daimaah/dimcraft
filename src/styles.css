@@ -1646,8 +1646,8 @@ button {
   width: 38px;
   padding: 3px;
   border-radius: 8px;
-  /* slightly lighter than the bar so the always-visible island reads as its own area */
-  background: rgba(255, 255, 255, 0.08);
+  /* solid when keep-the-island-visible is on; translucent overlay otherwise */
+  background: var(--island-bg, rgba(255, 255, 255, 0.08));
   cursor: grab;
   touch-action: none;
   user-select: none;
