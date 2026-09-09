@@ -8,6 +8,14 @@ repository log remains the complete, transparent record.
 
 ## [Unreleased]
 
+### Added
+
+- **Per-round colourways in the 2D fabric preview** — the Preview dialog lists
+  every detected round with its own colour picker (defaulting to the yarn
+  colour), so doilies and mandalas can be eye-balled in their real colour
+  changes; the magic ring and backstitch lines keep the base yarn colour, and
+  a reset returns everything to it.
+
 ## [0.7.0] — 2026-09-09
 
 Routing, validation and drawing-tool cycle: designs get their own URLs, the
@@ -144,7 +152,3 @@ First numbered release. Everything below landed in this cycle.
   container, deployable as a Portainer stack.
 - AI-assistance disclosure included (app developed with AI tools,
   human-reviewed, MIT).
-
-## [Unreleased]
-
-Changes since 0.6.0 will be listed here as they land.

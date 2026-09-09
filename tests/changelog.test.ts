@@ -92,8 +92,10 @@ describe('version history dialog source', () => {
     // the file only holds releases so far; the dialog shows up to five
     expect(older.length).toBeLessThanOrEqual(5)
     expect(older[0]?.version).toBe('0.6.0')
-    // the shipped [Unreleased] section is empty on a release build
-    expect(unreleasedChangelog(changelogRaw)).toBeNull()
+    // mid-cycle the shipped [Unreleased] has content, on a release build it's
+    // empty — either way whatever is there must block-render for the dialog
+    const up = unreleasedChangelog(changelogRaw)
+    if (up) expect(changelogBlocks(up.body).length).toBeGreaterThan(0)
 
     for (const entry of [current!, ...older]) {
       const blocks = changelogBlocks(entry.body)

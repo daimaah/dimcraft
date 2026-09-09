@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useStore } from '../state/store'
-import { buildFabricSvg } from '../render/fabric'
+import { buildFabricSvg, previewRounds } from '../render/fabric'
 import { rasterizeSvgToPngBlob } from '../export/png'
 import { downloadBlob, safeFilename } from '../export/download'
 
@@ -28,12 +28,17 @@ export function PreviewDialog() {
   const [background, setBackground] = useState<'cream' | 'white' | 'dark'>('cream')
   const [jitter, setJitter] = useState(true)
   const [busy, setBusy] = useState(false)
+  // sparse per-round overrides; unset rounds fall back to the base yarn colour
+  const [roundColors, setRoundColors] = useState<(string | undefined)[]>([])
 
   const bg = background === 'cream' ? '#f4ecdd' : background === 'white' ? '#ffffff' : '#2b2723'
+  const rounds = useMemo(() => previewRounds(doc), [doc])
+  const colors = useMemo(() => rounds.map((r) => roundColors[r.index] ?? yarn), [rounds, roundColors, yarn])
+  const hasOverrides = rounds.some((r) => roundColors[r.index])
 
   const { svg, width, height } = useMemo(
-    () => buildFabricSvg(doc, { yarn, background: bg, jitter }),
-    [doc, yarn, bg, jitter],
+    () => buildFabricSvg(doc, { yarn, background: bg, jitter, roundColors: colors }),
+    [doc, yarn, bg, jitter, colors],
   )
 
   const download = async () => {
@@ -77,6 +82,35 @@ export function PreviewDialog() {
             <span>Handmade jitter</span>
           </label>
         </div>
+
+        {rounds.length > 0 && (
+          <div className="field">
+            <span>Round colours</span>
+            <div className="preview-rounds">
+              {rounds.map((r) => (
+                <label key={r.index} className="preview-round-row">
+                  <input
+                    type="color"
+                    value={roundColors[r.index] ?? yarn}
+                    onChange={(e) =>
+                      setRoundColors((prev) => {
+                        const next = [...prev]
+                        next[r.index] = e.target.value
+                        return next
+                      })
+                    }
+                  />
+                  <span>
+                    R{r.index + 1} · {r.count} sts
+                  </span>
+                </label>
+              ))}
+            </div>
+            <button className="btn" disabled={!hasOverrides} onClick={() => setRoundColors([])}>
+              Reset to yarn colour
+            </button>
+          </div>
+        )}
 
         <div className="preview-stage" style={{ background: bg }}>
           <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Fabric preview">

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildFabricSvg, fabricGlyph, shade } from '../src/render/fabric'
+import { buildFabricSvg, fabricGlyph, previewRounds, shade } from '../src/render/fabric'
 import { createStarterDoc, } from '../src/model/starter'
 import { createEmptyDoc, uid } from '../src/model/doc'
 import type { Placement, StitchLine } from '../src/model/types'
@@ -94,5 +94,55 @@ describe('fabric preview document', () => {
     expect(height).toBeGreaterThan(200)
     expect(svg).not.toContain('@YARN@')
     expect(svg).not.toContain('@HI@')
+  })
+})
+
+describe('per-round colourways', () => {
+  /** one round of `count` stitches at radius r (plus the circle guide) */
+  const round = (doc: ReturnType<typeof createEmptyDoc>, symbolId: string, count: number, r: number) => {
+    doc.guides.push({ id: uid('g'), kind: 'circle', cx: 0, cy: 0, r, visible: true })
+    for (let i = 0; i < count; i++) {
+      const a = ((-90 + (i * 360) / count) * Math.PI) / 180
+      doc.placements.push(place({ symbolId, x: r * Math.cos((a * Math.PI) / 180), y: r * Math.sin((a * Math.PI) / 180) }))
+    }
+  }
+
+  it('colours each detected round from roundColors, base for the rest', () => {
+    const doc = createEmptyDoc()
+    doc.placements.push(place({ symbolId: 'magicring' }))
+    round(doc, 'sc', 6, 30)
+    round(doc, 'dc', 12, 55)
+    const { svg } = buildFabricSvg(doc, {
+      yarn: '#c9553d',
+      background: '#ffffff',
+      jitter: false,
+      roundColors: ['#111111', '#222222'],
+    })
+    expect(svg).toContain('#111111')
+    expect(svg).toContain('#222222')
+    // the magic ring is not part of any round: base yarn colour only
+    expect(svg).toContain('data-fab="magicring"')
+    expect((svg.match(/#c9553d/g) ?? []).length).toBeGreaterThan(0)
+  })
+
+  it('missing entries fall back to the base yarn colour', () => {
+    const doc = createEmptyDoc()
+    round(doc, 'sc', 6, 30)
+    round(doc, 'dc', 12, 55)
+    const partial = buildFabricSvg(doc, { yarn: '#c9553d', background: null, jitter: false, roundColors: ['#111111'] }).svg
+    expect(partial).toContain('#111111')
+    expect(partial).not.toContain('#222222')
+    const none = buildFabricSvg(doc, { yarn: '#c9553d', background: null, jitter: false }).svg
+    expect(none).not.toContain('#111111')
+  })
+
+  it('previewRounds reports one entry per detected round with counts', () => {
+    const doc = createEmptyDoc()
+    round(doc, 'sc', 6, 30)
+    round(doc, 'dc', 12, 55)
+    expect(previewRounds(doc)).toEqual([
+      { index: 0, count: 6 },
+      { index: 1, count: 12 },
+    ])
   })
 })

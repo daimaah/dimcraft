@@ -1,5 +1,6 @@
 import type { ChartDoc, Placement, SymbolDef, StitchLine } from '../model/types'
 import { placementCorners, placementTransform, cornersBBox, unionBBox, type BBox } from '../geometry/transform'
+import { groupRounds } from '../geometry/instructions'
 
 // ---- colour helpers -------------------------------------------------------
 function hexToRgb(hex: string): [number, number, number] {
@@ -121,6 +122,18 @@ export interface FabricPreviewOptions {
   yarn: string
   background: string | null
   jitter: boolean
+  /** optional per-round yarn colours, indexed by the chart's detected rounds */
+  roundColors?: string[]
+}
+
+/** The round grouping the preview colours use (same detection as follow mode). */
+function previewTolerance(doc: ChartDoc): number {
+  return doc.follow?.tolerance ?? 18
+}
+
+/** Per-round info for the preview colour picker, matching buildFabricSvg's mapping. */
+export function previewRounds(doc: ChartDoc): { index: number; count: number }[] {
+  return groupRounds(doc, previewTolerance(doc)).rounds.map((r, index) => ({ index, count: r.items.length }))
 }
 
 function paddedBBox(b: BBox, pad: number): BBox {
@@ -165,6 +178,17 @@ export function buildFabricSvg(doc: ChartDoc, opts: FabricPreviewOptions): { svg
   const width = Math.max(1, bbox.w + PAD * 2)
   const height = Math.max(1, bbox.h + PAD * 2)
 
+  // which round each stitch belongs to (magic ring and backstitch lines stay
+  // on the base yarn colour; round i uses roundColors[i] ?? opts.yarn)
+  const roundOfId = new Map<string, number>()
+  groupRounds(doc, previewTolerance(doc)).rounds.forEach((r, i) => {
+    for (const { p } of r.items) roundOfId.set(p.id, i)
+  })
+  const yarnFor = (p: Placement) => {
+    const idx = roundOfId.get(p.id)
+    return (idx !== undefined ? opts.roundColors?.[idx] : undefined) ?? opts.yarn
+  }
+
   const parts: string[] = []
   parts.push(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${r2(width)}" height="${r2(height)}" viewBox="${r2(viewX)} ${r2(viewY)} ${r2(width)} ${r2(height)}">`,
@@ -184,7 +208,7 @@ export function buildFabricSvg(doc: ChartDoc, opts: FabricPreviewOptions): { svg
     .filter((p) => p.visible !== false)
     .map((p) => {
       const def = defs.get(p.symbolId)
-      const glyph = fabricGlyph(p.symbolId, def, opts.yarn)
+      const glyph = fabricGlyph(p.symbolId, def, yarnFor(p))
       if (!glyph) return ''
       return `<g transform="${placementTransform(jittered(p, opts.jitter))}">${glyph}</g>`
     })
