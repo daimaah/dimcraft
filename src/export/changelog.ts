@@ -35,3 +35,44 @@ export function recentChangelog(
   if (idx === -1) return { current: null, older: all.slice(0, olderCount) }
   return { current: all[idx], older: all.slice(idx + 1, idx + 1 + olderCount) }
 }
+
+/** One renderable block of an entry's markdown body. */
+export type ChangelogBlock =
+  | { kind: 'heading'; text: string }
+  | { kind: 'paragraph'; text: string }
+  | { kind: 'bullets'; items: string[] }
+
+/**
+ * Group an entry's markdown body into blocks: `### ` headings, `- ` bullet
+ * lists and plain paragraphs. Soft-wrapped markdown lines (including bullet
+ * continuations) are joined back into the block they belong to; a blank line
+ * ends the current paragraph or list.
+ */
+export function changelogBlocks(body: string): ChangelogBlock[] {
+  const blocks: ChangelogBlock[] = []
+  let afterBlank = true
+  const last = () => blocks[blocks.length - 1]
+  for (const raw of body.split('\n')) {
+    const line = raw.trim()
+    if (!line) {
+      afterBlank = true
+      continue
+    }
+    if (line.startsWith('### ')) {
+      blocks.push({ kind: 'heading', text: line.slice(4).trim() })
+    } else if (line.startsWith('- ')) {
+      if (afterBlank || last()?.kind !== 'bullets') blocks.push({ kind: 'bullets', items: [] })
+      const list = last() as Extract<ChangelogBlock, { kind: 'bullets' }>
+      list.items.push(line.slice(2).trim())
+    } else if (!afterBlank && last()?.kind === 'paragraph') {
+      ;(last() as Extract<ChangelogBlock, { kind: 'paragraph' }>).text += ` ${line}`
+    } else if (!afterBlank && last()?.kind === 'bullets') {
+      const list = last() as Extract<ChangelogBlock, { kind: 'bullets' }>
+      list.items[list.items.length - 1] += ` ${line}`
+    } else {
+      blocks.push({ kind: 'paragraph', text: line })
+    }
+    afterBlank = false
+  }
+  return blocks
+}

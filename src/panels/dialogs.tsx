@@ -10,7 +10,7 @@ import { LicensesDialog } from './LicensesDialog'
 import { PatternImportDialog } from './PatternImportDialog'
 import { StitchMotionDialog } from './StitchMotionDialog'
 import { createShortLink, sidecarAvailable } from '../export/secureShare'
-import { recentChangelog } from '../export/changelog'
+import { changelogBlocks, recentChangelog } from '../export/changelog'
 import { DEFAULT_ORDER, PALETTE_BUTTONS } from '../ui/ToolPalette'
 import { Icon } from '../ui/icons'
 import changelogRaw from '../../CHANGELOG.md?raw'
@@ -945,26 +945,51 @@ export function OptionsDialog() {
 
 const CHANGELOG_FALLBACK = 'No version history available.'
 
+/** Minimal inline markdown: **bold**, *italic*, `code`, [text](url). */
+function renderChangelogInline(text: string, key: string): React.ReactNode[] {
+  const parts: React.ReactNode[] = []
+  const re = /\*\*([^*]+)\*\*|\*([^*]+)\*|`([^`]+)`|\[([^\]]+)\]\(([^)\s]+)\)/g
+  let idx = 0
+  let n = 0
+  for (let m = re.exec(text); m; m = re.exec(text)) {
+    if (m.index > idx) parts.push(text.slice(idx, m.index))
+    const k = `${key}-${n++}`
+    if (m[1] !== undefined) parts.push(<strong key={k}>{m[1]}</strong>)
+    else if (m[2] !== undefined) parts.push(<em key={k}>{m[2]}</em>)
+    else if (m[3] !== undefined) parts.push(<code key={k}>{m[3]}</code>)
+    else if (m[4] !== undefined && m[5] !== undefined)
+      parts.push(
+        <a key={k} href={m[5]} target="_blank" rel="noreferrer">
+          {m[4]}
+        </a>,
+      )
+    idx = m.index + m[0].length
+  }
+  if (idx < text.length) parts.push(text.slice(idx))
+  return parts
+}
+
 export function ChangelogDialog() {
   const raw = changelogRaw
   const { current, older } = recentChangelog(raw, __APP_VERSION__, 5)
 
   const renderBody = (body: string) => (
     <div className="changelog-body">
-      {body
-        .split('\n')
-        .filter((l) => l.trim())
-        .map((line, i) =>
-          line.startsWith('### ') ? (
-            <strong key={i}>{line.slice(4)}</strong>
-          ) : line.startsWith('- ') ? (
-            <span key={i} className="changelog-li">
-              · {line.slice(2)}
-            </span>
-          ) : (
-            <span key={i}>{line}</span>
-          ),
-        )}
+      {changelogBlocks(body).map((b, i) =>
+        b.kind === 'heading' ? (
+          <h4 key={i} className="changelog-sub">
+            {b.text}
+          </h4>
+        ) : b.kind === 'bullets' ? (
+          <ul key={i}>
+            {b.items.map((item, j) => (
+              <li key={j}>{renderChangelogInline(item, `${i}:${j}`)}</li>
+            ))}
+          </ul>
+        ) : (
+          <p key={i}>{renderChangelogInline(b.text, `${i}`)}</p>
+        ),
+      )}
     </div>
   )
 
