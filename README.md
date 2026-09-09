@@ -50,7 +50,7 @@ npm run preview
 
 ## Deploy with Docker / Portainer
 
-The container is **stateless** — it serves the static build via nginx. All user data lives in each visitor's browser (IndexedDB), so there is nothing to back up on the host and **upgrading is just a redeploy**.
+A single container serves everything: the app's static build and the self-hosted short-link sidecar are baked into the same image (one Node process — no second service, no nginx). Charts live in each visitor's browser (IndexedDB); the only server-side state is the sidecar's short-link store in `/data`, which the volume mapping below preserves across redeploys.
 
 ### Portainer — Repository method (builds the image for you)
 
@@ -76,9 +76,14 @@ services:
     restart: unless-stopped
     ports:
       - "8080:80"
+    volumes:
+      - dimcrochet-data:/data   # encrypted short-link store
+
+volumes:
+  dimcrochet-data:
 ```
 
-Pin `v0.6.0` instead of `latest` if you want upgrades to be explicit. While the GHCR package is still private, run `docker login ghcr.io` on the host once with a PAT that has `read:packages` before deploying (or flip the package to public in its settings).
+The volume mapping matters: `/data` holds the sidecar's encrypted short links, and without it every stack update starts from an empty store, breaking previously shared links. Pin `v0.6.0` instead of `latest` if you want upgrades to be explicit. While the GHCR package is still private, run `docker login ghcr.io` on the host once with a PAT that has `read:packages` before deploying (or flip the package to public in its settings).
 
 ### Plain Docker / docker compose
 
