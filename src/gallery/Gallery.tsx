@@ -13,7 +13,6 @@ import { guideSvgPath } from '../geometry/guides'
 import { placementTransform } from '../geometry/transform'
 import { lineSvg } from '../render/markup'
 
-const LAST_KEY = 'dimcrochet.lastProject'
 const SEEN_MINE_KEY = 'dimcrochet.seenMine'
 const SORT_KEY = 'dimcrochet.designsSort'
 
@@ -77,21 +76,18 @@ export function Gallery() {
   }
 
   const open = (rec: ProjectRecord) => {
-    localStorage.setItem(LAST_KEY, rec.id)
     useStore.getState().openProject(rec)
   }
 
   const create = (name: string, doc?: ChartDoc) => {
-    const id = useStore.getState().newProject(name, doc)
+    useStore.getState().newProject(name, doc)
     const st = useStore.getState()
-    localStorage.setItem(LAST_KEY, id)
-    void saveProject({ id, name: st.projectName, createdAt: Date.now(), updatedAt: Date.now(), doc: st.doc })
+    void saveProject({ id: st.projectId!, name: st.projectName, createdAt: Date.now(), updatedAt: Date.now(), doc: st.doc })
   }
 
   const del = async (id: string) => {
     if (!window.confirm('Delete this project? Its chart lives only in this browser.')) return
     await deleteProject(id)
-    if (localStorage.getItem(LAST_KEY) === id) localStorage.removeItem(LAST_KEY)
     refresh()
   }
 

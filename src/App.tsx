@@ -11,11 +11,11 @@ import { useStore } from './state/store'
 import { decodeShareFragment } from './export/share'
 import { parseShortLinkLocation, fetchShortLink } from './export/secureShare'
 import { loadProject, saveProject } from './storage/db'
+import { chartHash, GALLERY_HASH, parseRoute } from './route'
 import { StatusBar } from './ui/StatusBar'
 import { Toolbar } from './ui/Toolbar'
 import { ToolPalette } from './ui/ToolPalette'
 
-const LAST_KEY = 'dimcrochet.lastProject'
 const PREFS_KEY = 'dimcrochet.prefs'
 
 function isTypingTarget(t: EventTarget | null): boolean {
@@ -117,12 +117,46 @@ export default function App() {
       /* ignore bad prefs */
     }
     void (async () => {
-      const last = localStorage.getItem(LAST_KEY)
-      if (last) {
-        const rec = await loadProject(last)
-        if (rec) useStore.getState().openProject(rec)
-      }
+      // the URL decides what opens: #/chart/<id> reopens that design, anything
+      // else is the gallery — a bare root never silently restores a chart
+      const route = parseRoute(location.hash)
+      if (route.kind !== 'chart') return
+      const rec = await loadProject(route.id)
+      if (rec) useStore.getState().openProject(rec)
+      else history.replaceState(null, '', GALLERY_HASH)
     })()
+  }, [])
+
+  // keep the hash in step with the open project; pushState (not replace) so
+  // the browser Back button returns to the previous view. It never fires
+  // hashchange, so the listener below stays the only store→URL writer.
+  useEffect(
+    () =>
+      useStore.subscribe((s, prev) => {
+        if (s.projectId === prev.projectId) return
+        const want = s.projectId ? chartHash(s.projectId) : GALLERY_HASH
+        if (location.hash !== want) history.pushState(null, '', want)
+      }),
+    [],
+  )
+
+  // Back/Forward navigation and hand-edited hashes drive the view
+  useEffect(() => {
+    const onHash = () => {
+      const st = useStore.getState()
+      const route = parseRoute(location.hash)
+      if (route.kind === 'gallery') {
+        if (st.projectId) st.closeProject()
+        return
+      }
+      if (route.id === st.projectId) return
+      void loadProject(route.id).then((rec) => {
+        if (rec) useStore.getState().openProject(rec)
+        else history.replaceState(null, '', GALLERY_HASH)
+      })
+    }
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
   }, [])
 
   // persist preferences

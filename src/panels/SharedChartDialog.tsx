@@ -12,7 +12,6 @@ export function SharedChartDialog() {
   const open = () => {
     const st = useStore.getState()
     st.newProject(shared.name, shared.doc)
-    localStorage.setItem('dimcrochet.lastProject', st.projectId ?? '')
     void saveProject({
       id: st.projectId!,
       name: st.projectName,
