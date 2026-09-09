@@ -83,7 +83,7 @@ volumes:
   dimcrochet-data:
 ```
 
-The volume mapping matters: `/data` holds the sidecar's encrypted short links, and without it every stack update starts from an empty store, breaking previously shared links. Pin `v0.7.0` instead of `latest` if you want upgrades to be explicit. While the GHCR package is still private, run `docker login ghcr.io` on the host once with a PAT that has `read:packages` before deploying (or flip the package to public in its settings).
+The volume mapping matters: `/data` holds the sidecar's encrypted short links, and without it every stack update starts from an empty store, breaking previously shared links. Pin `v0.8.0` instead of `latest` if you want upgrades to be explicit. While the GHCR package is still private, run `docker login ghcr.io` on the host once with a PAT that has `read:packages` before deploying (or flip the package to public in its settings).
 
 ### Plain Docker / docker compose
 
@@ -136,7 +136,7 @@ GEN_FIXTURES=1 npx vitest run tests/fixtures/gen-fixtures.test.ts
 
 ## Versioning
 
-The current release is **v0.7.0**; the project started numbering at v0.5.0 (nothing in any license dictates a scheme). The
+The current release is **v0.8.0**; the project started numbering at v0.5.0 (nothing in any license dictates a scheme). The
 running version and commit are shown in the gallery footer, the status bar, and the Licenses dialog.
 [CHANGELOG.md](CHANGELOG.md) summarizes each release transparently from the public commit
 history.

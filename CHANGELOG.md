@@ -8,6 +8,14 @@ repository log remains the complete, transparent record.
 
 ## [Unreleased]
 
+## [0.8.0] — 2026-09-09
+
+Community groundwork and animation polish: symbol packs get a curated
+community shelf with automated provenance checks, the project opens up to
+contributors with a proper guide, the physical stitch animations are redrawn
+where they looked broken, the fabric preview can tint each round, and the CI
+pipeline moves to the Node-24 actions.
+
 ### Added
 
 - **Per-round colourways in the 2D fabric preview** — the Preview dialog lists
