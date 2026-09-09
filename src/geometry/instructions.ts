@@ -144,13 +144,85 @@ export function followSteps(doc: ChartDoc, tolerance = 18, dir: WorkingDir = 'cc
     const workOrder = dir === 'ccw' ? [...round.items].sort((x, y) => y.a - x.a) : round.items
     steps.push({
       label: `R${i + 1}`,
-      text: `R${i + 1}: ${body}`,
+      // the trailing count mirrors written patterns ("Rnd 2: … (24 sts)")
+      text: `R${i + 1}: ${body} (${round.items.length} sts)`,
       ids: round.items.map((it) => it.p.id),
       order: workOrder.map((it) => it.p.id),
       radius: round.meanRadius,
     })
   })
   return steps
+}
+
+export interface RoundCountIssue {
+  label: string
+  actual: number
+  expected: number
+  /** the constant per-round growth the earlier rounds established */
+  growth: number
+}
+
+/** stitches that are spacing/joins rather than a round's working stitch */
+const NON_FAMILY = new Set(['ch', 'slst', 'magicring'])
+const isDecrease = (symbolId: string) => symbolId.endsWith('tog')
+
+/**
+ * Flat-circle sanity check. A circle worked in the round in one stitch grows
+ * by the same number of stitches every round (the rule every reference
+ * teaches: sc +6, hdc +8, dc +12 — "add as many stitches each round as you
+ * started with"). So within a run of consecutive rounds of the same stitch,
+ * counts should form an arithmetic progression. Decreases, or a change of
+ * stitch, legitimately end a run — nothing is checked across them.
+ */
+export function checkRoundGrowth(doc: ChartDoc, tolerance = 18): { counts: number[]; issues: RoundCountIssue[] } {
+  const { rounds } = groupRounds(doc, tolerance)
+  const counts = rounds.map((r) => r.items.length)
+  const families = rounds.map((r) => {
+    const tally = new Map<string, number>()
+    for (const { p } of r.items) {
+      if (NON_FAMILY.has(p.symbolId)) continue
+      tally.set(p.symbolId, (tally.get(p.symbolId) ?? 0) + 1)
+    }
+    let best: string | null = null
+    let bestN = 0
+    for (const [id, n] of tally) {
+      if (n > bestN) {
+        best = id
+        bestN = n
+      }
+    }
+    return best
+  })
+  const shaped = rounds.map((r) => r.items.some(({ p }) => isDecrease(p.symbolId)))
+
+  const issues: RoundCountIssue[] = []
+  let i = 0
+  while (i < rounds.length) {
+    if (families[i] == null || shaped[i]) {
+      i++
+      continue
+    }
+    let j = i + 1
+    while (j < rounds.length && families[j] === families[i] && !shaped[j]) j++
+    if (j - i >= 3) {
+      const growth = counts[i + 1] - counts[i]
+      if (growth !== 0) {
+        for (let k = i + 2; k < j; k++) {
+          if (counts[k] - counts[k - 1] !== growth) {
+            issues.push({
+              label: `R${k + 1}`,
+              actual: counts[k],
+              expected: counts[k - 1] + growth,
+              growth,
+            })
+            break
+          }
+        }
+      }
+    }
+    i = j
+  }
+  return { counts, issues }
 }
 
 /** Generate the full written-instructions text for a chart. */
@@ -170,5 +242,18 @@ export function generateInstructions(doc: ChartDoc, tolerance = 18): string {
     lines.push('')
   }
   if (steps.length > 0) lines.push('Fasten off.')
+
+  const { issues } = checkRoundGrowth(doc, tolerance)
+  if (issues.length > 0) {
+    lines.push('')
+    lines.push('Stitch-count check')
+    for (const it of issues) {
+      lines.push(
+        `• ${it.label} has ${it.actual} stitches, but the rounds before it grow by ${it.growth} each round — ` +
+          `${it.expected} would keep the circle even. Check this round for a missing or extra stitch ` +
+          `(ignore if the shaping is intentional).`,
+      )
+    }
+  }
   return lines.join('\n')
 }

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useStore } from '../state/store'
-import { generateInstructions } from '../geometry/instructions'
+import { checkRoundGrowth, generateInstructions } from '../geometry/instructions'
 import { downloadBlob, safeFilename } from '../export/download'
 
 /** Chart → written round-by-round instructions. */
@@ -9,6 +9,7 @@ export function InstructionsDialog() {
   const projectName = useStore((s) => s.projectName)
   const [tolerance, setTolerance] = useState(18)
   const text = useMemo(() => generateInstructions(doc, tolerance), [doc, tolerance])
+  const issues = useMemo(() => checkRoundGrowth(doc, tolerance).issues, [doc, tolerance])
 
   const copy = async () => {
     try {
@@ -38,6 +39,20 @@ export function InstructionsDialog() {
               ))}
             </div>
           </label>
+          {issues.length > 0 && (
+            <div className="instructions-check" data-testid="instructions-check">
+              <strong>⚠ Stitch-count check</strong>
+              <ul>
+                {issues.map((it) => (
+                  <li key={it.label}>
+                    {it.label} has {it.actual} stitches, but the rounds before it grow by {it.growth} each round —{' '}
+                    {it.expected} would keep the circle even. Check for a missing or extra stitch (ignore if the
+                    shaping is intentional).
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <textarea className="instructions-text" readOnly rows={14} value={text} />
           <p className="hint">
             Rounds are detected by distance from the chart centre; stitches inside each round are listed
