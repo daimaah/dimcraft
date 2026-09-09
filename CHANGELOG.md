@@ -16,6 +16,17 @@ repository log remains the complete, transparent record.
   changes; the magic ring and backstitch lines keep the base yarn colour, and
   a reset returns everything to it.
 
+### Fixed
+
+- **"How stitches work" animations redrawn where they looked broken** — tall
+  stitches now show their real loop count (treble's 5, bobble's 7, puff's 8
+  all sit on the shaft instead of piling at the tip); a yarn-over wrap
+  settles behind the loop stack as the thread finishes its sweep instead of
+  blinking on top of an existing loop; pulled-up loops are drawn with the
+  working yarn running through the fabric stitch into the loop; and
+  pull-throughs show the consumed loops sliding off the hook tip with the
+  yarn drawn along the shaft through them, rather than fading in place.
+
 ## [0.7.0] — 2026-09-09
 
 Routing, validation and drawing-tool cycle: designs get their own URLs, the

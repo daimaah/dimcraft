@@ -1,5 +1,5 @@
 import type { Scene, Pose, Vec } from './engine'
-import { TARGET, RING_CENTER, YARN_TAIL, LOOP_LOCAL_X, VIEW } from './engine'
+import { TARGET, RING_CENTER, YARN_TAIL, YARN_MID_REST, VIEW, slotX, ringView, wrapView, yarnAttachX, easeInOut, seg, lerp } from './engine'
 
 // Line-art palette: dark steel hook, warm yarn thread, app accent for highlights.
 const HOOK = '#3a3733'
@@ -28,33 +28,81 @@ const stitchV = (x: number, top: number, point: number, stroke: string, width: n
   />
 )
 
-const YARN_PT_LOCAL: Vec = { x: 34, y: 2 }
+const lerpV = (a: Vec, b: Vec, k: number): Vec => ({ x: lerp(a.x, b.x, k), y: lerp(a.y, b.y, k) })
+
+/** Sag point the working yarn pulls down to while drawing through the loops. */
+const SLIDE_BELLY: Vec = { x: 84, y: 170 }
+
+/** Centre of the loop currently travelling up from the fabric to the hook. */
+function formingCenter(scene: Scene): Vec {
+  const { from, k } = scene.forming!
+  const to = hookPoint(scene.hook, { x: slotX(0, scene.loops + 1), y: -1 })
+  return lerpV(from, to, k)
+}
+
+function Yarn({ scene }: { scene: Scene }) {
+  const end = hookPoint(scene.hook, { x: yarnAttachX(scene), y: 2 })
+  let d: string
+  if (scene.forming) {
+    // pull-up: the thread runs from the tail, through the target stitch, into
+    // the loop travelling up to the hook — then relaxes as the loop lands
+    const { from, k } = scene.forming
+    const ring = formingCenter(scene)
+    const bend = lerpV(from, YARN_MID_REST, easeInOut(seg(k, 0.75, 1)))
+    const c1 = lerpV(bend, ring, 0.5)
+    const c2 = lerpV(ring, end, 0.5)
+    d = `M ${YARN_TAIL.x} ${YARN_TAIL.y} Q ${scene.yarnMid.x} ${scene.yarnMid.y} ${bend.x} ${bend.y} Q ${c1.x} ${c1.y} ${ring.x} ${ring.y} Q ${c2.x} ${c2.y} ${end.x} ${end.y}`
+  } else if (scene.slide && scene.slide.k > 0) {
+    // pull-through: the yarn runs along the shaft, through the loops sliding
+    // off the tip, then hangs to the tail — relaxing back once the draw ends
+    const k = scene.slide.k
+    const out = easeInOut(seg(k, 0, 0.3))
+    const back = easeInOut(seg(k, 0.65, 1))
+    const belly = lerpV(lerpV(YARN_MID_REST, SLIDE_BELLY, easeInOut(seg(k, 0.05, 0.55))), YARN_MID_REST, back)
+    const exit = hookPoint(scene.hook, { x: lerp(yarnAttachX(scene) - 3, -4, out), y: lerp(6, 12, out) })
+    const c2 = lerpV(exit, end, 0.5)
+    d = `M ${YARN_TAIL.x} ${YARN_TAIL.y} Q ${belly.x} ${belly.y} ${exit.x} ${exit.y} Q ${c2.x} ${c2.y} ${end.x} ${end.y}`
+  } else {
+    d = `M ${YARN_TAIL.x} ${YARN_TAIL.y} Q ${scene.yarnMid.x} ${scene.yarnMid.y} ${end.x} ${end.y}`
+  }
+  return (
+    <path
+      d={d}
+      fill="none"
+      stroke={YARN}
+      strokeWidth={3.4}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  )
+}
 
 function Hook({ scene }: { scene: Scene }) {
   const loops = []
-  const slideK = scene.slide?.k ?? 0
+  // ring width thins with the slot spacing so dense stacks stay countable
+  const step = scene.loops > 4 ? 34 / (scene.loops - 1) : 12
+  const rx = Math.min(4, step * 0.62)
   for (let i = 0; i < scene.loops; i++) {
-    const consumed = scene.slide && i < scene.slide.n
-    const lx = consumed ? LOOP_LOCAL_X[i] + (2 - LOOP_LOCAL_X[i]) * slideK : LOOP_LOCAL_X[i]
-    const scale = consumed ? 1 - 0.5 * slideK : 1
+    const v = ringView(scene, i)
     loops.push(
       <ellipse
         key={`lp${i}`}
-        cx={lx}
+        cx={v.x}
         cy={-1}
-        rx={4 * scale}
-        ry={8.5 * scale}
+        rx={rx * v.scale}
+        ry={8.5 * v.scale}
         fill="none"
         stroke={YARN}
         strokeWidth={3.4}
-        opacity={consumed ? 1 - slideK : 1}
+        opacity={v.opacity}
       />,
     )
   }
-  // a yarn-over wrap popping onto the shaft (becomes the tip-most loop)
-  if (scene.wrap > 0) {
+  // a yarn-over wrap settling onto the shaft behind the loop stack
+  const wv = wrapView(scene)
+  if (wv) {
     loops.push(
-      <ellipse key="wrap" cx={LOOP_LOCAL_X[0]} cy={-1} rx={4 * scene.wrap} ry={8.5 * scene.wrap} fill="none" stroke={YARN} strokeWidth={3.4} />,
+      <ellipse key="wrap" cx={wv.x} cy={-1} rx={rx * wv.scale} ry={8.5 * wv.scale} fill="none" stroke={YARN} strokeWidth={3.4} opacity={wv.opacity} />,
     )
   }
   return (
@@ -69,19 +117,6 @@ function Hook({ scene }: { scene: Scene }) {
       <rect x={86} y={-4.5} width={22} height={9} rx={4.5} fill={HOOK} />
       {loops}
     </g>
-  )
-}
-
-function Yarn({ scene }: { scene: Scene }) {
-  const end = hookPoint(scene.hook, YARN_PT_LOCAL)
-  return (
-    <path
-      d={`M ${YARN_TAIL.x} ${YARN_TAIL.y} Q ${scene.yarnMid.x} ${scene.yarnMid.y} ${end.x} ${end.y}`}
-      fill="none"
-      stroke={YARN}
-      strokeWidth={3.4}
-      strokeLinecap="round"
-    />
   )
 }
 
@@ -147,14 +182,14 @@ function KnotLoop({ scene }: { scene: Scene }) {
 
 function FormingLoop({ scene }: { scene: Scene }) {
   if (!scene.forming) return null
-  const { from, k } = scene.forming
-  const to = hookPoint(scene.hook, { x: LOOP_LOCAL_X[0], y: -1 })
+  const { k } = scene.forming
+  const c = formingCenter(scene)
   return (
     <ellipse
-      cx={from.x + (to.x - from.x) * k}
-      cy={from.y + (to.y - from.y) * k}
-      rx={5.5}
-      ry={5.5 + 3 * k}
+      cx={c.x}
+      cy={c.y}
+      rx={5.5 + (4 - 5.5) * k}
+      ry={5.5 + (8.5 - 5.5) * k}
       fill="none"
       stroke={YARN}
       strokeWidth={3.4}

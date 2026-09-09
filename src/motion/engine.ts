@@ -27,8 +27,80 @@ export const YARN_TAIL: Vec = { x: 16, y: 174 }
 export const YARN_MID_REST: Vec = { x: 58, y: 146 }
 /** Resting hook pose (tip position + rotation). */
 export const REST: Pose = { x: 150, y: 104, rot: -10 }
-/** Tip-side local offsets of hook loops, from the tip backwards. */
-export const LOOP_LOCAL_X = [16, 28, 40, 50]
+
+/**
+ * Local x of loop slot i when the shaft carries n loops (slot 0 = tip-most).
+ * Counts up to 4 keep the authored spacing; taller stitches compress evenly
+ * so every loop — treble's 5, puff's 8 — stays on the shaft.
+ */
+export function slotX(i: number, n: number): number {
+  if (n <= 4) return [16, 28, 40, 50][i]
+  return 16 + (34 / (n - 1)) * i
+}
+
+/** Where a shaft ring is drawn right now. */
+export interface RingView {
+  x: number
+  scale: number
+  opacity: number
+}
+
+/** Tip-side end of the shaft: loops slide here (and off) when pulled through. */
+const TIP_X = 2
+
+/**
+ * Position of ring i this frame, including the pull-through slide (consumed
+ * rings glide to the tip and fade, survivors close ranks) and the shift
+ * glide (existing loops make room for an incoming loop).
+ */
+export function ringView(s: Scene, i: number): RingView {
+  const n = s.loops
+  const c = s.slide ? Math.min(s.slide.n, Math.max(0, n - 1)) : 0
+  const home = slotX(i, n)
+  if (s.slide) {
+    if (i < c) {
+      const k = s.slide.k
+      return { x: home + (TIP_X - home) * k, scale: 1 - 0.45 * k, opacity: 1 - k }
+    }
+    const to = slotX(i - c, n - c)
+    return { x: home + (to - home) * s.slide.k, scale: 1, opacity: 1 }
+  }
+  if (s.shift > 0) {
+    // a pulled-up loop lands at the front (pushing every ring back one slot);
+    // a yarn-over wrap settles at the back (rings keep their index, but the
+    // stack re-compresses once it outgrows the authored spacing)
+    const to = s.wrap > 0 ? slotX(i, n + 1) : slotX(i + 1, n + 1)
+    return { x: home + (to - home) * s.shift, scale: 1, opacity: 1 }
+  }
+  return { x: home, scale: 1, opacity: 1 }
+}
+
+/** The yarn-over wrap settling in behind the loop stack (slot n of n+1). */
+export function wrapView(s: Scene): RingView | null {
+  if (s.wrap <= 0) return null
+  return { x: slotX(s.loops, s.loops + 1), scale: s.wrap, opacity: Math.min(1, s.wrap * 1.4) }
+}
+
+/** Local x the working yarn hangs from: just behind the back-most ring. */
+export function yarnAttachX(s: Scene): number {
+  const n = s.loops
+  if (n <= 0) return s.forming ? lerp(34, slotX(0, 1) + 9, s.forming.k) : 34
+  const base = ringView(s, n - 1).x + 9
+  if (s.wrap > 0) {
+    // the settling wrap becomes the back-most ring; the yarn follows it out
+    return lerp(base, slotX(n, n + 1) + 9, Math.min(1, s.wrap))
+  }
+  return base
+}
+
+/** All shaft rings this frame (existing loops plus a settling wrap). */
+export function ringLayout(s: Scene): RingView[] {
+  const out: RingView[] = []
+  for (let i = 0; i < s.loops; i++) out.push(ringView(s, i))
+  const wv = wrapView(s)
+  if (wv) out.push(wv)
+  return out
+}
 
 const insertPose = (t: Vec): Pose => ({ x: t.x, y: t.y, rot: -4 })
 const DIP: Pose = { x: 164, y: 116, rot: -32 }
@@ -41,6 +113,8 @@ export interface Scene {
   inserted: boolean
   /** 0..1 — yarn-over wrap popping onto the shaft. */
   wrap: number
+  /** 0..1 — existing loops gliding back to make room for an incoming loop. */
+  shift: number
   /** pullUp: a loop travelling from the target stitch onto the shaft. */
   forming: { from: Vec; k: number } | null
   /** pullThrough: n tip-side loops collapsing back towards the throat. */
@@ -60,6 +134,7 @@ export const baseScene = (): Scene => ({
   yarnMid: { ...YARN_MID_REST },
   inserted: false,
   wrap: 0,
+  shift: 0,
   forming: null,
   slide: null,
   chains: 0,
@@ -90,15 +165,15 @@ export function sceneBefore(steps: MotionStep[], i: number): Scene {
 
 // ---- Easing ----------------------------------------------------------------
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v))
-const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2)
+export const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2)
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3)
-const lerp = (a: number, b: number, k: number) => a + (b - a) * k
+export const lerp = (a: number, b: number, k: number) => a + (b - a) * k
 const lerpPose = (a: Pose, b: Pose, k: number): Pose => ({
   x: lerp(a.x, b.x, k),
   y: lerp(a.y, b.y, k),
   rot: lerp(a.rot, b.rot, k),
 })
-const seg = (t: number, a: number, b: number) => clamp01((t - a) / (b - a))
+export const seg = (t: number, a: number, b: number) => clamp01((t - a) / (b - a))
 
 function targetOf(target: InsertTarget | undefined): Vec {
   if (target === 'ring') return RING_CENTER
@@ -140,8 +215,11 @@ export function applyStep(step: MotionStep, t: number, s: Scene): void {
       } else {
         s.hook = lerpPose(DIP, REST, easeInOut(seg(t, 0.8, 1)))
         s.yarnMid = { x: lerp(172, YARN_MID_REST.x, easeInOut(seg(t, 0.8, 1))), y: lerp(78, YARN_MID_REST.y, easeInOut(seg(t, 0.8, 1))) }
-        s.wrap = easeOut(seg(t, 0.85, 1))
       }
+      // as the thread finishes sweeping it settles onto the shaft: the wrap
+      // pops in behind the loop stack while the existing loops make room
+      s.wrap = easeOut(seg(t, 0.68, 0.95))
+      s.shift = easeInOut(seg(t, 0.68, 1))
       return
     }
     case 'insert': {
@@ -158,6 +236,7 @@ export function applyStep(step: MotionStep, t: number, s: Scene): void {
       s.hook = lerpPose(insertPose(from), REST, back)
       s.inserted = t < 0.55
       s.forming = { from, k: easeInOut(seg(t, 0.25, 1)) }
+      s.shift = back
       return
     }
     case 'pullThrough': {
@@ -167,7 +246,6 @@ export function applyStep(step: MotionStep, t: number, s: Scene): void {
       } else {
         s.hook = lerpPose(THROUGH, REST, easeInOut(seg(t, 0.35, 1)))
         s.slide = { n, k: easeInOut(seg(t, 0.4, 0.95)) }
-        s.yarnMid = { x: lerp(YARN_MID_REST.x, 36, easeInOut(seg(t, 0.4, 1))), y: lerp(YARN_MID_REST.y, 128, easeInOut(seg(t, 0.4, 1))) }
       }
       return
     }

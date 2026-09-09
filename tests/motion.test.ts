@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { STITCH_MOTIONS, motionFor, motionForAny, genericMotion } from '../src/motion/stitches'
-import { applyStep, baseScene, simulate } from '../src/motion/engine'
+import { applyStep, baseScene, ringLayout, slotX, simulate, type Scene } from '../src/motion/engine'
 import type { MotionKind, MotionStep, StitchMotion } from '../src/motion/types'
 
 const kinds = (m: StitchMotion): MotionKind[] => m.steps.map((s) => s.kind)
@@ -187,5 +187,70 @@ describe('motion choreography', () => {
         }
       }
     }
+  })
+})
+
+describe('loop slot layout', () => {
+  it('fits up to 8 loops along the shaft, tip-most first, without piling at the tip', () => {
+    for (let n = 1; n <= 8; n++) {
+      const xs = Array.from({ length: n }, (_, i) => slotX(i, n))
+      for (let i = 1; i < n; i++) expect(xs[i]).toBeGreaterThan(xs[i - 1])
+      expect(xs[n - 1]).toBeLessThanOrEqual(52)
+    }
+    expect(slotX(0, 1)).toBe(16)
+  })
+
+  it('keeps the authored spacing for counts up to four', () => {
+    expect([0, 1, 2, 3].map((i) => slotX(i, 4))).toEqual([16, 28, 40, 50])
+    expect([0, 1, 2].map((i) => slotX(i, 3))).toEqual([16, 28, 40])
+  })
+
+  it('moves loops continuously across every step boundary (no teleports)', () => {
+    const motions: StitchMotion[] = [
+      ...STITCH_MOTIONS,
+      motionForAny('puff', 'puff')!,
+      motionForAny('bobble', 'bo')!,
+      motionForAny('tr3tog', '3 tr together')!,
+      genericMotion('some-trtr-thing', 'thing'), // 6-loop fallback
+    ]
+    const cumulative = (steps: MotionStep[], upto: number): Scene => {
+      const s = baseScene()
+      s.loops = steps[0]?.kind === 'ringShow' ? 0 : 1
+      for (let k = 0; k < upto; k++) {
+        s.loops = steps[k].loopsOnHook
+        if (steps[k].kind === 'chain') s.chains++
+        if (steps[k].kind === 'ringShow') s.ring = 1
+        if (steps[k].kind === 'slipKnot') s.knot = 0.22
+      }
+      return s
+    }
+    for (const m of motions) {
+      for (let i = 0; i < m.steps.length - 1; i++) {
+        const a = cumulative(m.steps, i)
+        applyStep(m.steps[i], 1, a)
+        const b = cumulative(m.steps, i + 1)
+        applyStep(m.steps[i + 1], 0, b)
+        const xsOf = (s: Scene): number[] => {
+          const xs = ringLayout(s).filter((r) => r.opacity > 0.05).map((r) => r.x)
+          // a pull-up that has landed contributes the front ring of the next count
+          if (s.forming && s.forming.k >= 1) xs.push(slotX(0, s.loops + 1))
+          return xs.sort((p, q) => p - q)
+        }
+        expect(xsOf(a), `${m.symbolId} boundary ${i}: ${m.steps[i].kind} -> ${m.steps[i + 1].kind}`).toEqual(xsOf(b))
+      }
+    }
+  })
+
+  it('leaves pull-through with the declared loop count even when it must keep one loop', () => {
+    // slip stitch draws through "the stitch and the loop" yet exactly one
+    // ring survives — the wrap glides to the tip-most slot
+    const slst = byName('slst')
+    const pt = slst.steps.findIndex((s) => s.kind === 'pullThrough')
+    const s = baseScene()
+    for (let k = 0; k < pt; k++) s.loops = slst.steps[k].loopsOnHook
+    applyStep(slst.steps[pt], 1, s)
+    const visible = ringLayout(s).filter((r) => r.opacity > 0.05)
+    expect(visible).toHaveLength(1)
+    expect(visible[0].x).toBe(slotX(0, 1))
   })
 })
