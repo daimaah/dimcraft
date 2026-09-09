@@ -56,25 +56,29 @@ The container is **stateless** — it serves the static build via nginx. All use
 
 1. **Stacks → Add stack**
 2. Name: `dimcrochet`, Build method: **Repository**
-3. Repository URL: this repository's Git URL; Compose path: `docker-compose.yml`
+3. Repository URL: `https://github.com/daimaah/dimcrochet.git`; Compose path: `docker-compose.yml`
 4. **Update the stack** — Portainer clones the repo and builds the image
 5. Open `http://your-server:8080`
+
+The repository is private, so Portainer needs Git credentials that can read it (a fine-grained PAT with **Contents: Read-only** works) — add them under **Settings → Git credentials** or in the stack's repository options.
 
 To change the port, add an environment variable in the stack editor: `DIMCROCHET_PORT = 3000`.
 
 ### Portainer — Web editor method (pre-built image)
 
-If you publish the image to a registry (the included [GitHub workflow](.github/workflows/docker.yml) pushes `ghcr.io/<owner>/<repo>` on every push to `main`), paste this as the stack:
+The [GitHub workflow](.github/workflows/docker.yml) publishes the pre-built image to GHCR: every push to `main` updates the `main` tag, and every version tag `vX.Y.Z` publishes `vX.Y.Z` plus `latest`. Paste this as the stack:
 
 ```yaml
 services:
   dimcrochet:
-    image: ghcr.io/YOUR_OWNER/dimcrochet:main
+    image: ghcr.io/daimaah/dimcrochet:latest
     container_name: dimcrochet
     restart: unless-stopped
     ports:
       - "8080:80"
 ```
+
+Pin `v0.6.0` instead of `latest` if you want upgrades to be explicit. While the GHCR package is still private, run `docker login ghcr.io` on the host once with a PAT that has `read:packages` before deploying (or flip the package to public in its settings).
 
 ### Plain Docker / docker compose
 
