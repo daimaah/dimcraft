@@ -40,6 +40,10 @@ pipeline moves to the Node-24 actions.
 
 ### Fixed
 
+- **PDF exports were blank pages** — svg2pdf.js renders asynchronously and the
+  export never awaited it, so the downloaded PDF held an empty page while the
+  chart rendered fine on screen. Present since the PDF feature shipped; caught
+  by the Dependabot smoke test for the jsPDF 4 bump (which itself is safe).
 - **"How stitches work" animations redrawn where they looked broken** — tall
   stitches now show their real loop count (treble's 5, bobble's 7, puff's 8
   all sit on the shaft instead of piling at the tip); a yarn-over wrap
