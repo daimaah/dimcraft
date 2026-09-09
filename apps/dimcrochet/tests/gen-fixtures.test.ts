@@ -1,0 +1,77 @@
+// Golden-fixture generator. These tests are skipped normally and only run
+// with GEN_FIXTURES=1, regenerating the compatibility fixtures under
+// packages/core/tests/fixtures/ using the *current* serializers:
+//
+//   GEN_FIXTURES=1 npx vitest run apps/dimcrochet/tests/gen-fixtures.test.ts
+//
+// Workflow: whenever the schema changes, regenerate (or hand-commit exports
+// from the previous app version) and make sure packages/core/tests/golden.test.ts
+// still passes — old files must always keep importing.
+import { mkdirSync, writeFileSync } from 'node:fs'
+import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { describe, expect, it } from 'vitest'
+import { serializeProject } from '@dimcraft/core/export/projectFile'
+import { createStarterDoc } from '../src/model/starter'
+
+const FIXTURES_DIR = fileURLToPath(new URL('../../../packages/core/tests/fixtures/', import.meta.url))
+
+const regenerate = !!process.env.GEN_FIXTURES
+
+describe.skipIf(!regenerate)('golden fixture generation', () => {
+  it('writes the v1-era starter project export', () => {
+    mkdirSync(FIXTURES_DIR, { recursive: true })
+    const doc = createStarterDoc()
+    const rec = {
+      id: 'proj-golden-v1',
+      name: 'Golden starter (v1 era)',
+      createdAt: 1757000000000,
+      updatedAt: 1757000000000,
+      doc,
+    }
+    writeFileSync(join(FIXTURES_DIR, 'v1-starter.dimcrochet.json'), serializeProject(rec))
+    expect(true).toBe(true)
+  })
+
+  it('writes the v1-era symbol pack export', () => {
+    const pack = {
+      app: 'dimcrochet-symbol-pack',
+      version: 1,
+      name: 'Golden variants pack',
+      artwork: {
+        dc: '<path d="M 12 30 L 12 12 M 6 12 L 18 12" fill="none" stroke="@INK@" stroke-width="1.6" stroke-linecap="round"/>',
+      },
+      license: 'CC BY-SA 4.0',
+      authors: 'Fixture authors',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/Category:Crochet_symbols',
+      notes: 'Compatibility fixture — not a real regional pack.',
+    }
+    writeFileSync(join(FIXTURES_DIR, 'v1-pack.pack.json'), JSON.stringify(pack, null, 2))
+    expect(true).toBe(true)
+  })
+
+  it('writes a v1-era chart that uses a bundled set and one of its added symbols', () => {
+    const doc = createStarterDoc()
+    doc.title = 'Golden commons chart (v1 era)'
+    doc.symbolSet = 'commons-variants'
+    // a stitch that only exists in the Commons pack's artwork
+    doc.placements.push({
+      id: 'p-blo-golden',
+      symbolId: 'blo',
+      x: 0,
+      y: 0,
+      rotation: 0,
+      scale: 1,
+      flip: false,
+    })
+    const rec = {
+      id: 'proj-golden-commons-v1',
+      name: 'Golden commons chart (v1 era)',
+      createdAt: 1757000000000,
+      updatedAt: 1757000000000,
+      doc,
+    }
+    writeFileSync(join(FIXTURES_DIR, 'v1-commons-chart.dimcrochet.json'), serializeProject(rec))
+    expect(true).toBe(true)
+  })
+})

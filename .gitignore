@@ -6,7 +6,8 @@ dev-dist
 coverage
 gui-test-screenshots/
 scripts/.commons-cache/
-tests/scratch.test.ts
+apps/dimcrochet/scripts/.commons-cache/
+apps/dimcrochet/tests/scratch.test.ts
 
 # internal research notes — local only, never publish
 KNITTING-ASSESSMENT.md

@@ -97,11 +97,16 @@ export function createHandler(opts = {}) {
     new Promise((resolveBody, rejectBody) => {
       const chunks = []
       let size = 0
+      let rejected = false
       req.on('data', (c) => {
         size += c.length
         if (size > maxBodyBytes) {
-          rejectBody(Object.assign(new Error('payload too large'), { code: 413 }))
-          req.destroy()
+          // stop buffering but keep draining the socket, so the 413
+          // response reaches the client before the connection closes
+          if (!rejected) {
+            rejected = true
+            rejectBody(Object.assign(new Error('payload too large'), { code: 413 }))
+          }
           return
         }
         chunks.push(c)
@@ -178,6 +183,9 @@ export function createHandler(opts = {}) {
           return sendJson(res, 500, { error: 'stored link unreadable' })
         }
       }
+
+      // the API namespace never serves the app: unknown API routes 404
+      if (url.pathname.startsWith('/api/')) return sendJson(res, 404, { error: 'no such endpoint' })
 
       if (req.method === 'GET' || req.method === 'HEAD') return serveStatic(res, url.pathname)
       res.writeHead(405)

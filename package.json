@@ -1,16 +1,20 @@
 {
-  "name": "dimcrochet",
+  "name": "dimcraft",
   "private": true,
   "version": "0.8.0",
   "type": "module",
-  "description": "Crochet round & motif chart composer — draw granny squares, doilies and circular crochet charts in the browser.",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc --noEmit && vite build",
-    "preview": "vite preview",
+    "dev": "npm run dev -w @dimcraft/dimcrochet",
+    "build": "npm run typecheck && npm run build -w @dimcraft/dimcrochet",
+    "typecheck": "tsc --noEmit -p packages/core && tsc --noEmit -p apps/dimcrochet",
+    "preview": "npm run preview -w @dimcraft/dimcrochet",
     "test": "vitest run",
     "test:watch": "vitest",
-    "commons-pack": "node scripts/build-commons-pack.mjs"
+    "commons-pack": "npm run commons-pack -w @dimcraft/dimcrochet"
   },
   "dependencies": {
     "idb-keyval": "^6.2.1",

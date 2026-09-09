@@ -4,6 +4,8 @@ WORKDIR /app
 
 # install dependencies first for better layer caching
 COPY package.json package-lock.json ./
+COPY packages/core/package.json packages/core/
+COPY apps/dimcrochet/package.json apps/dimcrochet/
 RUN npm ci --no-audit --no-fund
 
 # build the production bundle (includes typechecking)
@@ -17,7 +19,7 @@ FROM node:22-alpine
 WORKDIR /app
 ENV NODE_ENV=production PORT=80 DATA_DIR=/data DIST_DIR=/app/dist DIMCROCHET_MAX_AGE_HOURS=720
 COPY sidecar/server.mjs ./sidecar/server.mjs
-COPY --from=build /app/dist ./dist
+COPY --from=build /app/apps/dimcrochet/dist ./dist
 VOLUME /data
 EXPOSE 80
 

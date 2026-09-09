@@ -8,6 +8,22 @@ repository log remains the complete, transparent record.
 
 ## [Unreleased]
 
+### Changed
+
+- Repository restructured as the DimCraft monorepo (`packages/core` +
+  `apps/dimcrochet`): the craft-agnostic chart-editor kernel (document model,
+  geometry toolkit, interchange formats, storage, routing) now lives in a
+  shared core package, in preparation for sibling apps. No user-facing
+  changes — same app, same features, same formats.
+
+### Fixed
+
+- Short-link sidecar: oversized upload payloads could get their 413 response
+  lost when the connection was torn down mid-reply; the request is now
+  drained so the error reliably reaches the client.
+- Short-link sidecar: unknown `/api/…` routes fell through to the app and
+  served HTML with a 200; the API namespace now answers 404 instead.
+
 ## [0.8.0] — 2026-09-09
 
 Community groundwork and animation polish: symbol packs get a curated
