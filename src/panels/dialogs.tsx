@@ -682,7 +682,11 @@ export function OptionsDialog() {
             </span>
             <div className="dual-wrap" data-testid="opt-toolbar-opacity-slider">
               <div className="dual-range">
-                <div className="dual-track" />
+                {/* visible track ends at the hover thumb — no dangling tail past it */}
+                <div
+                  className="dual-track"
+                  style={{ width: `${((toolbarHoverOpacity - 30) / 70) * 100}%` }}
+                />
                 <div
                   className="dual-band"
                   style={{
