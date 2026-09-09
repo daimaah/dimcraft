@@ -145,6 +145,21 @@ Branching: day-to-day work lands on the `develop` branch (published as the `deve
 tag); `main` carries released code — every push to `main` is a passing build, tagged `main`
 and `latest` on GHCR, and a formal release adds a `vX.Y.Z` tag.
 
+## Contributing & community packs
+
+Contributions are open and welcome — code, docs, terminology presets, glyph
+reviews and symbol packs. [CONTRIBUTING.md](CONTRIBUTING.md) has the setup,
+the branch model and the PR conventions.
+
+You don't need to code to grow the symbol library: **draw or collect SVG
+symbols, import them into a custom set in the app, and export a pack**
+(Symbols & region → Export pack). Packs shared through pull requests or
+issues land in the curated [`packs/`](packs/README.md) folder — CI checks the
+format, license and provenance of every pack automatically, and each one
+keeps its own license and authors, shown in-app under **Licenses &
+attributions**. Found a glyph that doesn't match what your region's charts
+use? The *Symbol report* issue template is the place to say so.
+
 ## Privacy & sharing
 
 Everything stays in your browser by default: charts live in IndexedDB, exports download straight from the page, and the app works fully offline. Sharing is always an explicit act:

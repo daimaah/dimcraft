@@ -83,6 +83,11 @@ export function LicensesDialog() {
             its license terms (for example CC BY-SA attribution and share-alike, or GPL) must be
             respected. Attribution above travels automatically with exported packs.
           </p>
+          <p className="hint">
+            Made your own set? Share it — the project's <strong>packs/</strong> folder on GitHub
+            accepts community packs by pull request or issue, and your license and authorship
+            travel with the file.
+          </p>
 
           <h3>Open-source dependencies</h3>
           <ul className="license-list">

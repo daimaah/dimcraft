@@ -15,6 +15,20 @@ repository log remains the complete, transparent record.
   colour), so doilies and mandalas can be eye-balled in their real colour
   changes; the magic ring and backstitch lines keep the base yarn colour, and
   a reset returns everything to it.
+- **Community symbol packs** — the project now curates community-made symbol
+  packs in a `packs/` folder: submit by pull request or issue (no Git skills
+  needed — attach the file exported from the app), and CI validates every
+  pack's format, license provenance and SVG hygiene automatically. A
+  CONTRIBUTING guide, issue templates for symbol reports and pack
+  submissions, a README section and an in-app nudge in the Licenses dialog
+  round out the invitation.
+
+### Changed
+
+- **Infra maintenance** — GitHub Actions bumped to the Node-24 runtime majors
+  (checkout@v5, setup-node@v7, docker actions v4/v4/v6/v7), clearing the
+  Node 20 deprecation warnings, with Dependabot keeping actions and npm
+  dependencies current from now on.
 
 ### Fixed
 

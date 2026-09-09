@@ -1,0 +1,44 @@
+name: "Pack submission"
+description: "Share a symbol pack you made (no Git skills needed — a maintainer will land it for you)"
+labels: ["pack submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Made a symbol pack — regional variants, a personal glyph style, a themed
+        set? Share it here and it can join the project's curated
+        [`packs/`](../blob/develop/packs/README.md) shelf, with you credited as
+        the author.
+
+        **Attach your pack file** (the `.json` exported via *Symbols & region →
+        Export pack*) to this issue. If you're comfortable with Git, a pull
+        request to `packs/` is even better — see [packs/README.md](../blob/develop/packs/README.md).
+  - type: input
+    id: pack-name
+    attributes:
+      label: Pack name
+    validations:
+      required: true
+  - type: textarea
+    id: contents
+    attributes:
+      label: What's in it?
+      description: Which symbols, for which region or style, how it differs from the built-in sets.
+    validations:
+      required: true
+  - type: textarea
+    id: license
+    attributes:
+      label: License & authors
+      description: |
+        Required for the shelf. Original artwork: name the open license and
+        yourself as author. Third-party artwork: name the license, author and
+        source for every borrowed symbol — unlicensed artwork cannot be
+        accepted.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source URL (optional)
+      description: Where the pack or its artwork lives (your site, a wiki category, …).

@@ -7,6 +7,17 @@ in rough priority order, with design notes where the "how" matters.
 
 ## Recently shipped
 
+- **Community pack shelf & contributing** — the `packs/` folder accepts
+  community-made symbol packs by pull request or (attachment) issue; CI
+  validates every pack through the app's own importer and gates on
+  provenance (license / authors / sourceUrl) and SVG hygiene. Issue
+  templates cover symbol reports (glyph review by regional crocheters) and
+  pack submissions; CONTRIBUTING.md, a README section and an in-app nudge in
+  the Licenses dialog invite both contributors and pack authors.
+- **Infra maintenance** — GitHub Actions bumped to the Node-24 majors
+  (checkout@v5, setup-node@v7, docker/* v4/v4/v6/v7) clearing the Node 20
+  deprecation warnings, and Dependabot now keeps actions and npm packages
+  current monthly.
 - **Chart URLs & gallery-first routing** — designs open at `#/chart/<id>`: refreshing or
   bookmarking reopens exactly that chart, browser Back/Forward move between gallery and
   designs, and the bare root always opens the gallery (no silent last-project restore).
@@ -124,11 +135,6 @@ in rough priority order, with design notes where the "how" matters.
   asterisk repeats and inc/dec annotations shipped 2026-09-09).
 - **Print tiling** — split oversized charts across multiple pages with
   alignment marks.
-- **Community pack curation** — the Commons variants pack is bundled; next steps are
-  glyph review by regional crocheters, and accepting community packs via repository
-  PRs into a `packs/` folder.
-- **Infra maintenance** — the pinned GitHub Actions (checkout@v4, docker/*) log
-  Node 20 deprecation warnings: bump their majors in a quiet maintenance pass.
 
 ---
 

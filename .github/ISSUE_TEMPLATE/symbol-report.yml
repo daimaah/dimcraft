@@ -1,0 +1,55 @@
+name: "Symbol report"
+description: "A glyph in a symbol pack (or a bundled set) is wrong, unclear or mislabelled for your region"
+labels: ["symbol review"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reviewing! Regional crocheters checking the glyphs is the
+        only way this project's symbol sets stay trustworthy. If a shape,
+        label or attribution looks wrong, tell us what authentic charts use
+        instead — references (links to published charts, standards, books)
+        are the most helpful thing you can add.
+  - type: dropdown
+    id: set
+    attributes:
+      label: Which set or pack?
+      options:
+        - "International variants (Commons) — bundled"
+        - "Standard / Japanese-style / Solid print — bundled"
+        - "A community pack from the packs/ folder"
+        - "My own imported pack"
+    validations:
+      required: true
+  - type: input
+    id: symbol
+    attributes:
+      label: Symbol id or label
+      description: "The id under the symbol in the palette, or the label shown in the legend (e.g. `dtr`, `bobble-alt`)."
+      placeholder: dtr
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong?
+      description: Wrong shape, wrong label for the region, unclear glyph, missing attribution…
+    validations:
+      required: true
+  - type: input
+    id: region
+    attributes:
+      label: Region / terminology (optional)
+      placeholder: "e.g. Sweden, US, Japan"
+  - type: input
+    id: reference
+    attributes:
+      label: Reference (optional)
+      description: Link to a published chart, standard or book page that shows the correct symbol.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I understand symbol sets are charting conventions, not standards, and variants can legitimately differ
+          required: true

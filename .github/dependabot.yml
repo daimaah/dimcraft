@@ -1,0 +1,17 @@
+# Keep GitHub Actions on current majors (the Node-20 deprecation wave of
+# 2025-26 is why this file exists) and npm dependencies patched.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    labels: [infra]
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    labels: [infra]
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
