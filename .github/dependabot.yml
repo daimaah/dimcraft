@@ -3,11 +3,13 @@
 version: 2
 updates:
   - package-ecosystem: github-actions
+    target-branch: develop
     directory: /
     schedule:
       interval: monthly
     labels: [infra]
   - package-ecosystem: npm
+    target-branch: develop
     directory: /
     schedule:
       interval: monthly
