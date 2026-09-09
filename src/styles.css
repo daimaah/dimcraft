@@ -1497,6 +1497,11 @@ button {
   background: rgba(217, 111, 78, 0.07);
 }
 
+.changelog-entry.unreleased {
+  border-style: dashed;
+  border-color: var(--accent-soft);
+}
+
 .changelog-head {
   display: flex;
   align-items: center;

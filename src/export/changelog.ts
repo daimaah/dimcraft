@@ -36,6 +36,16 @@ export function recentChangelog(
   return { current: all[idx], older: all.slice(idx + 1, idx + 1 + olderCount) }
 }
 
+/**
+ * The `## [Unreleased]` entry when it carries content — develop builds show
+ * it as "changes coming in next version". Stable builds ship a retitled (or
+ * empty) section, so they render nothing here.
+ */
+export function unreleasedChangelog(raw: string): ChangelogEntry | null {
+  const entry = parseChangelog(raw).find((e) => e.version.toLowerCase() === 'unreleased')
+  return entry && entry.body.trim() ? entry : null
+}
+
 /** One renderable block of an entry's markdown body. */
 export type ChangelogBlock =
   | { kind: 'heading'; text: string }

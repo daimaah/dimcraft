@@ -6,6 +6,22 @@ yet 1.0, so versions start at 0.5.0 — no license requires any particular
 numbering scheme. This file summarizes the (public) git commit history; the
 repository log remains the complete, transparent record.
 
+## [Unreleased]
+
+### Added
+
+- **Chart URLs** — opening a design puts `#/chart/<id>` in the address bar:
+  refreshing or bookmarking reopens it, and the browser Back/Forward buttons
+  move between the gallery and designs. The bare root always opens the gallery.
+- **"Changes coming in next version" section** in the version history view,
+  listing unreleased work for develop-branch ("beta") builds.
+
+### Changed
+
+- **My designs listing** — human-friendly edited ages ("5 minutes ago",
+  "yesterday") with the exact timestamp on hover; entries a week and older
+  fall back to a full date+time. Timestamps follow the 24-hour clock setting.
+
 ## [0.6.0] — 2026-09-09
 
 Interface refinement cycle: the design view becomes customizable and the

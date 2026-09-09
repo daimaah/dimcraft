@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import changelogRaw from '../CHANGELOG.md?raw'
-import { changelogBlocks, parseChangelog, recentChangelog } from '../src/export/changelog'
+import { changelogBlocks, parseChangelog, recentChangelog, unreleasedChangelog } from '../src/export/changelog'
 
 describe('changelog body blocks', () => {
   it('groups headings, bullets and paragraphs, joining soft-wrapped lines', () => {
@@ -47,6 +47,44 @@ describe('changelog body blocks', () => {
   })
 })
 
+describe('unreleased section ("changes coming in next version")', () => {
+  const RAW = [
+    '# Changelog',
+    '',
+    '## [Unreleased]',
+    '',
+    '### Added',
+    '',
+    '- **Chart URLs** — designs get their own address.',
+    '',
+    '## [0.6.0] — 2026-09-09',
+    '',
+    'First stable line.',
+  ].join('\n')
+
+  it('surfaces the Unreleased entry only when it has content', () => {
+    const entry = unreleasedChangelog(RAW)
+    expect(entry?.version).toBe('Unreleased')
+    expect(entry?.body).toContain('Chart URLs')
+    expect(unreleasedChangelog('# Changelog\n\n## [Unreleased]\n\n## [0.6.0]\n\nbody')).toBeNull()
+    expect(unreleasedChangelog('# Changelog\n\n## [0.6.0] — 2026-09-09\n\nbody')).toBeNull()
+  })
+
+  it('stays out of the release list the dialog shows below', () => {
+    const { current, older } = recentChangelog(RAW, '0.6.0', 5)
+    expect(current?.version).toBe('0.6.0')
+    expect(older).toHaveLength(0)
+  })
+
+  it('its body renders into blocks like any other entry', () => {
+    const entry = unreleasedChangelog(RAW)!
+    expect(changelogBlocks(entry.body)).toEqual([
+      { kind: 'heading', text: 'Added' },
+      { kind: 'bullets', items: ['**Chart URLs** — designs get their own address.'] },
+    ])
+  })
+})
+
 describe('version history dialog source', () => {
   it('the shipped CHANGELOG.md yields the current entry plus five older, all blockable', () => {
     const { current, older } = recentChangelog(changelogRaw, '0.6.0', 5)
@@ -70,7 +108,8 @@ describe('version history dialog source', () => {
 
   it('parseChangelog keeps entry bodies free of header lines', () => {
     const entries = parseChangelog(changelogRaw)
-    expect(entries[0].version).toBe('0.6.0')
+    expect(entries[0].version).toBe('Unreleased')
+    expect(entries[1].version).toBe('0.6.0')
     for (const e of entries) expect(e.body).not.toMatch(/^## \[/m)
   })
 })

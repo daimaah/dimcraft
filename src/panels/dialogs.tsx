@@ -10,7 +10,7 @@ import { LicensesDialog } from './LicensesDialog'
 import { PatternImportDialog } from './PatternImportDialog'
 import { StitchMotionDialog } from './StitchMotionDialog'
 import { createShortLink, sidecarAvailable } from '../export/secureShare'
-import { changelogBlocks, recentChangelog } from '../export/changelog'
+import { changelogBlocks, recentChangelog, unreleasedChangelog } from '../export/changelog'
 import { DEFAULT_ORDER, PALETTE_BUTTONS } from '../ui/ToolPalette'
 import { Icon } from '../ui/icons'
 import changelogRaw from '../../CHANGELOG.md?raw'
@@ -972,6 +972,7 @@ function renderChangelogInline(text: string, key: string): React.ReactNode[] {
 export function ChangelogDialog() {
   const raw = changelogRaw
   const { current, older } = recentChangelog(raw, __APP_VERSION__, 5)
+  const upcoming = unreleasedChangelog(raw)
 
   const renderBody = (body: string) => (
     <div className="changelog-body">
@@ -999,6 +1000,15 @@ export function ChangelogDialog() {
         Showing the current release and the last five. Older history lives in the repository's
         CHANGELOG.md.
       </p>
+      {upcoming && (
+        <div className="changelog-entry unreleased" data-testid="changelog-unreleased">
+          <div className="changelog-head">
+            <strong>Changes coming in next version</strong>
+            <span className="level-chip level-3">unreleased</span>
+          </div>
+          {renderBody(upcoming.body)}
+        </div>
+      )}
       {current ? (
         <div className="changelog-entry current" data-testid="changelog-current">
           <div className="changelog-head">
