@@ -12,6 +12,7 @@ import { contentBBox } from '../geometry/bounds'
 import { guideSvgPath } from '../geometry/guides'
 import { placementTransform } from '../geometry/transform'
 import { lineSvg } from '../render/markup'
+import { editedLabel } from './relativeTime'
 
 const SEEN_MINE_KEY = 'dimcrochet.seenMine'
 const SORT_KEY = 'dimcrochet.designsSort'
@@ -32,6 +33,13 @@ export function Gallery() {
 
   const refresh = () => void listProjects().then(setProjects)
   useEffect(refresh, [])
+
+  // re-render every minute so "edited N minutes ago" labels stay honest
+  const [nowTick, setNowTick] = useState(() => Date.now())
+  useEffect(() => {
+    const t = setInterval(() => setNowTick(Date.now()), 60_000)
+    return () => clearInterval(t)
+  }, [])
 
   const starterDocs = useMemo(() => STARTERS.map((s) => ({ def: s, doc: s.build() })), [])
 
@@ -287,9 +295,9 @@ export function Gallery() {
                   ) : (
                     <strong>{rec.name}</strong>
                   )}
-                  <span className="hint">
+                  <span className="hint" title={`Last edited ${new Date(rec.updatedAt).toLocaleString()}`}>
                     {rec.doc.placements.length} stitches · {rec.doc.guides.length} guides · edited{' '}
-                    {new Date(rec.updatedAt).toLocaleDateString()}
+                    {editedLabel(rec.updatedAt, nowTick)}
                   </span>
                 </div>
               </div>
