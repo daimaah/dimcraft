@@ -21,7 +21,7 @@ See [ROADMAP.md](ROADMAP.md) for what's planned next and notes on design decisio
 - **Stitch groups**: even-placement rounds, groups and loose stitches appear as toggleable layers (hide/show; hidden stitches are skipped in exports, legend and the fabric preview)
 - **Gauge & true-scale PDF**: set a gauge (units per 10 cm) to see the finished size and print the PDF at true scale
 - **2D fabric preview**: see the motif as simulated crocheted fabric — yarn-styled stitches with a sheen, optional handmade jitter, yarn & background colours, one-click PNG download
-- **Editing**: marquee + shift multi-select, move/rotate/scale, nudge, duplicate, group, mirror H/V, distribute, align edges/centers (left/center/right/top/middle/bottom), snapping to guide points & anchors, full undo/redo, and **cross-project copy/cut/paste** (Ctrl+C/X/V; the gallery offers "Paste as new chart" while a fragment is on the clipboard). Editing/view tools live in a **floating tool palette** over the canvas — draggable, collapsible, one/two-row layout, position resettable
+- **Editing**: marquee + shift multi-select, move/rotate/scale, nudge, duplicate, group, mirror H/V, distribute, align edges/centers (left/center/right/top/middle/bottom), snapping to guide points & anchors, full undo/redo, and **cross-project copy/cut/paste** (Ctrl+C/X/V; the gallery offers "Paste as new chart" while a fragment is on the clipboard). Editing/view tools live in a **floating tool palette** over the canvas — draggable, collapsible, one/two-row layout, position resettable, per-button show/hide + reorder (Options → Buttons)
 - **Repeat brackets** with automatic “× N” counts and an **automatic legend** (symbol swatch, editable labels, stitch counts)
 - **Export**: standalone SVG (tight viewBox, editor chrome stripped), transparent PNG at 2×/4×, vector PDF (A4/Letter, portrait/landscape, true-scale option), and project/symbol-pack `.json` files
 - **Share links**: embed a compressed copy of the chart in a URL — no server, no upload; opening a link imports it as a new local copy
@@ -125,7 +125,7 @@ GEN_FIXTURES=1 npx vitest run tests/fixtures/gen-fixtures.test.ts
 
 ## Versioning
 
-Releases start at **v0.5.0** (nothing in any license dictates a numbering scheme). The
+The current release is **v0.6.0**; the project started numbering at v0.5.0 (nothing in any license dictates a scheme). The
 running version and commit are shown in the gallery footer and the Licenses dialog.
 [CHANGELOG.md](CHANGELOG.md) summarizes each release transparently from the public commit
 history.
