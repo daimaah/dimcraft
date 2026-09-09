@@ -46,7 +46,12 @@ jobs:
       - uses: docker/metadata-action@v6
         id: meta
         with:
-          images: ghcr.io/${{ github.repository }}
+          # pinned to the dimcrochet package name, not derived from the repo
+          # (the repo is becoming `dimcraft`): an unpinned name would start
+          # publishing a new ghcr.io/daimaah/dimcraft image and strand existing
+          # deployments on a frozen dimcrochet one. Add dimknit as its own
+          # pinned entry when that app exists — never derive from repo name.
+          images: ghcr.io/${{ github.repository_owner }}/dimcrochet
           # default branch builds always refresh :latest, so deployments
           # tracking it get the newest passing build, not just releases
           tags: |
