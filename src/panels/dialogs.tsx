@@ -917,7 +917,7 @@ export function OptionsDialog() {
             never visited the site. Anything you did not back up is gone for good.
           </p>
           <div className="form-row" data-testid="danger-confirm-row">
-            <span>Type \u201creset\u201d to confirm:</span>
+            <span>Type “reset” to confirm:</span>
             <input
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
