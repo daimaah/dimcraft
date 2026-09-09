@@ -30,6 +30,7 @@ export async function exportPdf(doc: ChartDoc, name: string, options: PdfExportO
 
   const pdf = new jsPDF({ orientation: options.orientation === 'landscape' ? 'l' : 'p', unit: 'mm', format: options.format })
   const el = new DOMParser().parseFromString(svg, 'image/svg+xml').documentElement as unknown as SVGSVGElement
-  svg2pdf(el, pdf, { x: layout.x, y: layout.y, width: layout.w, height: layout.h })
+  // svg2pdf is async — output() before it settles produces blank pages
+  await svg2pdf(el, pdf, { x: layout.x, y: layout.y, width: layout.w, height: layout.h })
   downloadBlob(`${safeFilename(name)}.pdf`, pdf.output('blob'))
 }
