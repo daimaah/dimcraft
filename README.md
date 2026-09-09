@@ -135,9 +135,13 @@ GEN_FIXTURES=1 npx vitest run tests/fixtures/gen-fixtures.test.ts
 ## Versioning
 
 The current release is **v0.6.0**; the project started numbering at v0.5.0 (nothing in any license dictates a scheme). The
-running version and commit are shown in the gallery footer and the Licenses dialog.
+running version and commit are shown in the gallery footer, the status bar, and the Licenses dialog.
 [CHANGELOG.md](CHANGELOG.md) summarizes each release transparently from the public commit
 history.
+
+Branching: day-to-day work lands on the `develop` branch (published as the `develop` Docker
+tag); `main` carries released code — every push to `main` is a passing build, tagged `main`
+and `latest` on GHCR, and a formal release adds a `vX.Y.Z` tag.
 
 ## Privacy & sharing
 

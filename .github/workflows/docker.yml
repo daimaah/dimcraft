@@ -2,10 +2,13 @@ name: Test and publish Docker image
 
 # Tests run on every push and pull request; the Docker image is published only
 # after the tests (including the golden compatibility fixtures) pass.
+# Branch model: `develop` builds publish the `develop` tag; the default branch
+# `main` carries released code and refreshes `main` + `latest`; `v*` tags
+# publish `vX.Y.Z` + `latest`.
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
     tags: ['v*']
   pull_request:
   workflow_dispatch:
