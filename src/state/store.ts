@@ -126,6 +126,7 @@ interface EditorState {
   clearSelection: () => void
   deleteSelection: () => void
   duplicateSelection: () => void
+  reorderPlacements: (mode: 'front' | 'back' | 'forward' | 'backward') => void
   copySelection: () => void
   cutSelection: () => void
   pasteClipboard: () => void
@@ -398,6 +399,39 @@ export const useStore = create<EditorState>()((set, get) => {
           doc: { ...st.doc, placements: [...st.doc.placements, ...copies] },
           selPlacements: copies.map((c) => c.id),
         })
+      }),
+
+    /** Stack order: later placements paint on top (SVG document order). */
+    reorderPlacements: (mode) =>
+      set((st) => {
+        const sel = new Set(st.selPlacements)
+        if (!sel.size) return {}
+        const list = st.doc.placements
+        let next: typeof list
+        if (mode === 'front' || mode === 'back') {
+          const picked = list.filter((p) => sel.has(p.id))
+          const rest = list.filter((p) => !sel.has(p.id))
+          next = mode === 'front' ? [...rest, ...picked] : [...picked, ...rest]
+        } else {
+          // one-slot nudge that keeps contiguous selections together
+          next = [...list]
+          if (mode === 'forward') {
+            for (let i = next.length - 2; i >= 0; i--) {
+              if (sel.has(next[i].id) && !sel.has(next[i + 1].id)) {
+                ;[next[i], next[i + 1]] = [next[i + 1], next[i]]
+              }
+            }
+          } else {
+            for (let i = 1; i < next.length; i++) {
+              if (sel.has(next[i].id) && !sel.has(next[i - 1].id)) {
+                ;[next[i], next[i - 1]] = [next[i - 1], next[i]]
+              }
+            }
+          }
+        }
+        // at the edge of the stack the order is unchanged — no empty undo step
+        if (next.every((p, i) => p === list[i])) return {}
+        return mutateDoc(st, { doc: { ...st.doc, placements: next } })
       }),
 
     // cross-project clipboard: fragment is saved to localStorage so it

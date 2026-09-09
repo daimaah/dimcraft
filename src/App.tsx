@@ -278,6 +278,17 @@ export default function App() {
             e.preventDefault()
             fitCenter()
             return
+          case ']':
+          case '}':
+            e.preventDefault()
+            // Shift+bracket produces } / { on US layouts — both mean "to front"
+            st.reorderPlacements(e.shiftKey ? 'front' : 'forward')
+            return
+          case '[':
+          case '{':
+            e.preventDefault()
+            st.reorderPlacements(e.shiftKey ? 'back' : 'backward')
+            return
           default:
             return
         }

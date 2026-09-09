@@ -104,6 +104,8 @@ docker compose up -d --build   # build & run on http://localhost:8080
 | `1`–`5` | Circle · Arc · Spiral · Line · Polygon guide |
 | `R`, `Shift+R` | Rotate placed symbol ±15° (while in place mode) |
 | `[` `]` | Scale placed symbol down/up |
+| `Ctrl+]` / `Ctrl+[` | Raise / lower the selection one level in paint order |
+| `Ctrl+Shift+]` / `Ctrl+Shift+[` | Selection to front / to back |
 | `Ctrl+Z` / `Ctrl+Shift+Z` | Undo / redo |
 | `Ctrl+D` | Duplicate selection |
 | `Ctrl+G` / `Ctrl+Shift+G` | Group / ungroup |

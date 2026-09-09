@@ -147,6 +147,34 @@ export function Inspector() {
               Group
             </button>
           )}
+          <button
+            className="btn"
+            title="Paint above every other stitch"
+            onClick={() => st.getState().reorderPlacements('front')}
+          >
+            To front
+          </button>
+          <button
+            className="btn"
+            title="Raise one level (Ctrl+])"
+            onClick={() => st.getState().reorderPlacements('forward')}
+          >
+            Forward
+          </button>
+          <button
+            className="btn"
+            title="Lower one level (Ctrl+[)"
+            onClick={() => st.getState().reorderPlacements('backward')}
+          >
+            Backward
+          </button>
+          <button
+            className="btn"
+            title="Paint beneath every other stitch"
+            onClick={() => st.getState().reorderPlacements('back')}
+          >
+            To back
+          </button>
         </div>
         {selected.length >= 2 && (
           <>
