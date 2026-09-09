@@ -12,7 +12,7 @@ import { contentBBox } from '../geometry/bounds'
 import { guideSvgPath } from '../geometry/guides'
 import { placementTransform } from '../geometry/transform'
 import { lineSvg } from '../render/markup'
-import { editedLabel } from './relativeTime'
+import { editedLabel, editedTimestamp } from './relativeTime'
 
 const SEEN_MINE_KEY = 'dimcrochet.seenMine'
 const SORT_KEY = 'dimcrochet.designsSort'
@@ -20,6 +20,7 @@ const SORT_KEY = 'dimcrochet.designsSort'
 type Tab = 'starters' | 'mine'
 
 export function Gallery() {
+  const clock24h = useStore((s) => s.clock24h)
   const [projects, setProjects] = useState<ProjectRecord[] | null>(null)
   const [renamingId, setRenamingId] = useState<string | null>(null)
   const [renameValue, setRenameValue] = useState('')
@@ -295,9 +296,9 @@ export function Gallery() {
                   ) : (
                     <strong>{rec.name}</strong>
                   )}
-                  <span className="hint" title={`Last edited ${new Date(rec.updatedAt).toLocaleString()}`}>
+                  <span className="hint" title={`Last edited ${editedTimestamp(rec.updatedAt, !clock24h)}`}>
                     {rec.doc.placements.length} stitches · {rec.doc.guides.length} guides · edited{' '}
-                    {editedLabel(rec.updatedAt, nowTick)}
+                    {editedLabel(rec.updatedAt, nowTick, !clock24h)}
                   </span>
                 </div>
               </div>

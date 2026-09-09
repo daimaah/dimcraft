@@ -756,7 +756,7 @@ export function OptionsDialog() {
             <span>
               <strong>Show 24 hour clock</strong>
               <br />
-              <span className="hint">Display save times like 14:07 instead of 2:07 PM.</span>
+              <span className="hint">Display times like 14:07 instead of 2:07 PM — save times in the status bar and the edited timestamps in My designs.</span>
             </span>
           </label>
           <label className="check" data-testid="opt-lefty">

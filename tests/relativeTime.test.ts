@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { editedLabel } from '../src/gallery/relativeTime'
+import { editedLabel, editedTimestamp } from '../src/gallery/relativeTime'
 
 const MIN = 60_000
 const HOUR = 60 * MIN
@@ -32,5 +32,11 @@ describe('editedLabel', () => {
     const label = editedLabel(old, now)
     expect(label).not.toContain('ago')
     expect(label.length).toBeGreaterThan(0)
+  })
+
+  it('the absolute timestamp follows the 24-hour clock preference', () => {
+    const t = new Date(2026, 8, 9, 14, 5).getTime()
+    expect(editedTimestamp(t, false)).not.toBe(editedTimestamp(t, true))
+    expect(editedLabel(now - 30 * DAY, now, false)).toBe(editedTimestamp(now - 30 * DAY, false))
   })
 })
