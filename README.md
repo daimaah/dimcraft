@@ -127,6 +127,8 @@ volumes:
 
 The volume mapping matters: `/data` holds the sidecar's encrypted short links, and without it every stack update starts from an empty store, breaking previously shared links. Pin `v0.8.0` (DimCrochet) or `dimknit-v0.1.0` (DimKnit) instead of `latest` if you want upgrades to be explicit. The images are public on GHCR — pulling needs no login.
 
+> **Note on DimKnit's `latest` tag:** `latest` (and `main`) are published only from pushes to `main`. DimKnit's first release is still in preparation, so until then only `ghcr.io/daimaah/dimknit:develop` exists — pull that tag (and pair it with `dimcrochet:develop` if you want this week's features, such as the automatic sibling pairing). After the first release, `dimknit:latest` and pinned `dimknit-vX.Y.Z` tags are available like DimCrochet's.
+
 #### Linking the two apps
 
 When both apps run, they find each other automatically and show an **Open DimKnit / DimCrochet →** button on their projects screens — a wrong app on a probed port is ignored. Detection needs no manual setup:
