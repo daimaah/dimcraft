@@ -14,7 +14,8 @@ import { guideSvgPath } from '@dimcraft/core/geometry/guides'
 import { placementTransform } from '@dimcraft/core/geometry/transform'
 import { lineSvg } from '@dimcraft/core/render/markup'
 import { editedLabel, editedTimestamp } from '@dimcraft/core/ui/relativeTime'
-import { siblingAppName, useSiblingApp } from '@dimcraft/core/sibling'
+import { useSiblingApp } from '@dimcraft/core/sibling'
+import { SiblingCard } from '@dimcraft/core/ui/SiblingCard'
 
 const SEEN_MINE_KEY = 'dimcrochet.seenMine'
 const SORT_KEY = 'dimcrochet.designsSort'
@@ -143,7 +144,9 @@ export function Gallery() {
             </g>
           </svg>
           <div>
-            <h1>DimCrochet</h1>
+            <h1>
+              DimCrochet <span className="level-chip level-2">this app</span>
+            </h1>
             <button
               className="version-link"
               data-testid="version-link"
@@ -157,16 +160,8 @@ export function Gallery() {
             <p>Crochet round &amp; motif chart composer</p>
           </div>
         </div>
+        {sibling && <SiblingCard sibling={sibling} />}
         <div className="gallery-actions">
-          {sibling && (
-            <button
-              className="btn"
-              title={`Opens ${siblingAppName()} at ${sibling.url} — detected via the sibling app's sidecar`}
-              onClick={() => window.open(sibling.url, '_blank', 'noopener')}
-            >
-              Open {siblingAppName()} →
-            </button>
-          )}
           {hasClipboard() && (
             <button
               className="btn"

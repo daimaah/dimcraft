@@ -17,7 +17,9 @@ and summarized in the [repository-root CHANGELOG](../../CHANGELOG.md).
 - **"Open DimKnit →" companion link** — when a DimKnit deployment answers on
   the same host (default ports), the gallery offers a jump to it; verified
   via the sibling's sidecar identity handshake. A manual companion URL can be
-  set in Options → General for custom ports or proxies. (Underlying
+  set in Options → General for custom ports or proxies. When detected, the
+  sibling appears as an identity card (logo, version, slogan) beside this
+  app's branding, which carries a 'this app' chip. (Underlying
   discovery machinery and the `/api/whoami` endpoint are core changes — see
   the root CHANGELOG.)
 - **Legend spacing** — the legend title no longer crowds the first row of

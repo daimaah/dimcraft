@@ -1966,3 +1966,43 @@ button {
   gap: 14px;
   margin: 10px 0;
 }
+
+/* ---- sibling-app identity card (projects screen) -------------------------- */
+
+.sibling-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-inset);
+  padding: 10px 14px;
+  max-width: 430px;
+}
+
+.sibling-card .sibling-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.sibling-card .sibling-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sibling-card .sibling-name strong {
+  font-size: 15px;
+}
+
+.sibling-card .sibling-meta .hint {
+  font-size: 12px;
+  margin: 0;
+}
+
+.sibling-card .btn {
+  margin-left: auto;
+  white-space: nowrap;
+}

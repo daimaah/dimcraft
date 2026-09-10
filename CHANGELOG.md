@@ -22,7 +22,10 @@ changes live in each app's own changelog:
   and identifies itself, the gallery shows an "Open DimKnit / DimCrochet →"
   button. A wrong app on that port is ignored (the handshake is verified). For
   custom ports, reverse-proxy paths or separate hosts, the Options → General
-  tab takes a manual companion URL.
+  tab takes a manual companion URL. On the projects screen the detected
+  sibling appears as an identity card (its logo, version from the handshake
+  and slogan) beside the active app's own branding, which now carries a
+  'this app' chip.
 
 ### Fixed
 
