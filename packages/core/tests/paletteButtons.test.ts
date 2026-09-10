@@ -17,6 +17,7 @@ const stub: CraftModule = {
   symbolPacks: false,
   colourwork: false,
   replaceOnStamp: false,
+  rowsAndColumns: false,
 }
 
 registerCraft(stub)

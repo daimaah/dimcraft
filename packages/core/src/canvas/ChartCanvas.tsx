@@ -6,8 +6,8 @@ import { placementTransform, cornersBBox, bboxesIntersect, placementCorners, typ
 import { applySnap, collectSnapTargets, type SnapKind } from '../geometry/snap'
 import { guideHandles, applyGuideHandle } from '../geometry/handles'
 import { guideSvgPath } from '../geometry/guides'
-import { legendSize } from '../geometry/bounds'
-import { bracketSvg, legendSvgPlaced, lineSvg, textSvg } from '../render/markup'
+import { legendSize, gridAspect } from '../geometry/bounds'
+import { bracketSvg, legendSvgPlaced, lineSvg, numberingSvg, textSvg } from '../render/markup'
 import { applyLineHandle } from '../geometry/handles'
 import { getCraft } from '../craft'
 import type { DragPositions } from '../state/store'
@@ -75,6 +75,9 @@ export function ChartCanvas() {
 
   const defMap = useMemo(() => getDefMap(doc), [doc])
   const ink = doc.ink
+  // gauge aspect: cells render taller/shorter than square; pointer math and
+  // the world layer both account for it
+  const aspect = gridAspect(doc)
 
   // ---- coordinate helpers -------------------------------------------------
   const localScreen = (e: { clientX: number; clientY: number }): Vec => {
@@ -83,7 +86,7 @@ export function ChartCanvas() {
   }
   const screenToWorld = (local: Vec): Vec => ({
     x: (local.x - vp.x) / vp.zoom,
-    y: (local.y - vp.y) / vp.zoom,
+    y: (local.y - vp.y) / (vp.zoom * aspect),
   })
 
   const snapPoint = (world: Vec, ignore?: Vec): { pos: Vec; kind: SnapKind | null } => {
@@ -488,6 +491,8 @@ export function ChartCanvas() {
       </defs>
 
       <g transform={`translate(${vp.x} ${vp.y}) scale(${vp.zoom})`}>
+        {/* gauge aspect stretches the chart content; numbers and legend stay true */}
+        <g transform={aspect !== 1 ? `scale(1 ${aspect})` : undefined}>
         {gridVisible && <rect x={-100000} y={-100000} width={200000} height={200000} fill="url(#gridpat)" />}
 
         {/* guides */}
@@ -615,6 +620,11 @@ export function ChartCanvas() {
             />
           ))}
         </g>
+
+        </g>
+
+        {/* row/column numbers — rendered unstretched */}
+        <g dangerouslySetInnerHTML={{ __html: numberingSvg(doc, defMap, ink, aspect) }} />
 
         {/* legend */}
         {doc.legend.visible && (

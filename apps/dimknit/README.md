@@ -14,11 +14,11 @@ knitting time: follow mode reads the chart's rows out, stitch by stitch,
 while you work. And because the source is open, the tool can always be
 picked up if its maintainers ever step away.
 
-> **Status:** DimKnit is young but real. The charting core — grid editing,
-> row reading, stitch-count validation, written instructions, follow mode,
-> exports and sharing — is tested and release-quality; the craft surface is
-> still growing (colourwork, cables and in-the-round charts are next on the
-> roadmap). What's missing today is scope, not stability —
+> **Status:** DimKnit is young but real. The charting core — grid editing, row reading,
+> stitch-count validation, written instructions, follow mode, exports and sharing — is tested and
+> release-quality, and the craft surface keeps growing: colourwork, repeat brackets, row/column
+> numbering, chart resizing and gauge-true printing are in. Cables and in-the-round charts are
+> next on the roadmap. What's missing today is scope, not stability —
 > [issue reports](https://github.com/daimaah/dimcraft/issues) help decide
 > what gets built next.
 
@@ -38,6 +38,13 @@ picked up if its maintainers ever step away.
 - **Follow mode** — step through the chart row by row (or stitch by stitch)
   in true working order, the current row spelled out in a movable bar, with
   playback and speed control.
+- **Colourwork** — build a yarn palette (MC, CC1, CC2…), arm a yarn and paint cells; colours
+  show in the legend, written instructions (`k3 CC1, k2tog MC`), follow mode and every export.
+- **Chart furniture** — repeat brackets with auto-counts and ×N labels, row numbers printed where
+  each row starts (right for RS rows, left for WS rows), column numbers along the bottom, and
+  insert/delete of whole rows and columns.
+- **Gauge & true-scale PDF** — set stitches and rows per 10 cm: cells take their real aspect (no
+  square-knitting-cell compromise) and the vector PDF prints at true size.
 - **Knit-aware editing** — the same editor shell as DimCrochet: a floating,
   customizable action bar (undo/redo, snapping, zoom, fullscreen), an
   inspector sidebar for selection and chart properties, and **mirroring that
@@ -54,7 +61,7 @@ picked up if its maintainers ever step away.
 
 | Keys | Action |
 | --- | --- |
-| `V` `P` `H` `F` | Select · Place stitch · Pan · Follow mode |
+| `V` `P` `B` `H` `F` | Select · Place stitch · Repeat bracket · Pan · Follow mode |
 | `Delete` | Delete selection |
 | `Ctrl+D` | Duplicate selection |
 | `Ctrl+Z` / `Ctrl+Shift+Z` / `Ctrl+Y` | Undo / redo |

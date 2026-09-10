@@ -1,14 +1,15 @@
 import { registerCraft, type CraftModule, type PaletteToolDef } from '@dimcraft/core/craft'
 import { KNIT_SYMBOLS } from './symbols/definitions'
 import { applyTerminologyToDoc } from './symbols/terminology'
-import { followSteps, mirrorSymbol } from './geometry/rows'
+import { followSteps, gridInfo, mirrorSymbol } from './geometry/rows'
 
 /** Tools of the floating action bar. Knitting charts are cell grids — the
- *  freeform line/guide/bracket/text tools join when a feature needs them. */
+ *  freeform line/text tools join when a feature needs them. */
 const PALETTE_TOOLS: PaletteToolDef[] = [
   { id: 'select', icon: 'select', label: 'Select & move', key: 'V' },
   { id: 'pan', icon: 'hand', label: 'Pan view', key: 'H' },
   { id: 'place', icon: 'place', label: 'Place stitch', key: 'P' },
+  { id: 'bracket', icon: 'bracket', label: 'Repeat bracket', key: 'B' },
 ]
 
 /**
@@ -34,12 +35,25 @@ export const knitCraft: CraftModule = {
   followSteps,
   paletteTools: PALETTE_TOOLS,
   mirrorSymbol,
-  // one bundled set, no packs, no terminology presets, and no gauge until a
-  // feature consumes it (true-scale PDF, gauge-correct cells) — no dead UI
+  // one bundled set, no packs and no terminology presets, and the gauge stays
+  // hidden until set — no dead UI
   terminologyPresets: [],
   symbolPacks: false,
   colourwork: true,
   replaceOnStamp: true,
+  rowsAndColumns: true,
+  gridInfo,
+  gauge: {
+    label: 'Stitches / 10 cm',
+    label2: 'Rows / 10 cm',
+    // the user enters stitch/row counts; the doc stores chart units per 10 cm
+    // (one cell = FRAME.w units), which is what true-scale PDF speaks
+    unitScale: 24,
+    hint: (set, sizeHint) =>
+      set
+        ? `Gauge set${sizeHint ? ` — chart ${sizeHint}` : ''}. Enable “True scale” in the PDF export to print at this size; the chart cells already show the stitch aspect.`
+        : 'Optional gauge: stitches and rows per 10 cm. Corrects the cell aspect and enables true-scale PDF printing.',
+  },
 }
 
 registerCraft(knitCraft)

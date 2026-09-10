@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { ChartCanvas } from '@dimcraft/core/canvas/ChartCanvas'
+import { getCraft } from '@dimcraft/core/craft'
 import { importInterchangeFile } from '@dimcraft/core/export/projectFile'
 import { applyBackup } from '@dimcraft/core/export/backup'
 import { loadProject, saveProject } from '@dimcraft/core/storage/db'
@@ -305,6 +306,11 @@ export default function App() {
           return
         case 'p':
           st.setTool('place')
+          return
+        case 'b':
+          if (getCraft().paletteTools.some((t) => t.id === 'bracket')) {
+            st.setTool('bracket')
+          }
           return
         case 'h':
           st.setTool(st.tool === 'pan' ? 'select' : 'pan')

@@ -45,6 +45,7 @@ export const crochetCraft: CraftModule = {
   // the fabric preview, not on placements)
   colourwork: false,
   replaceOnStamp: false,
+  rowsAndColumns: false,
 }
 
 registerCraft(crochetCraft)

@@ -1,7 +1,10 @@
 import type { ChartDoc, RepeatBracket, StitchLine, SymbolDef, TextElement } from '../model/types'
+import type { BBox } from '../geometry/transform'
 import { LINE_LEGEND_ID } from '../model/types'
+import { getCraft } from '../craft'
 import { legendItems, yarnLegendItems } from '../geometry/legend'
 import { LEGEND_HEAD, LEGEND_ROW_H, LEGEND_W } from '../geometry/bounds'
+import { contentBBox } from '../geometry/bounds'
 import { symbolInner } from '../symbols/registry'
 
 const r2 = (v: number) => Math.round(v * 100) / 100
@@ -143,4 +146,73 @@ export function legendSvgPlaced(doc: ChartDoc, defMap: Map<string, SymbolDef>, i
   const inner = legendSvg(doc, defMap, ink)
   if (!inner) return ''
   return `<g transform="translate(${doc.legend.x} ${doc.legend.y}) scale(${doc.legend.scale})">${inner}</g>`
+}
+
+/**
+ * Row/column numbers beside the grid, for crafts whose gridInfo provides the
+ * bands. Row numbers sit where each row starts (right for RS rows, left for
+ * WS rows); column numbers run 1..N along the bottom. `aspect` is the cell
+ * height/width ratio — labels themselves stay unstretched.
+ */
+export function numberingSvg(doc: ChartDoc, defMap: Map<string, SymbolDef>, ink: string, aspect = 1): string {
+  const craft = getCraft()
+  if (!doc.numbering || (!doc.numbering.rows && !doc.numbering.cols) || !craft.gridInfo) return ''
+  const info = craft.gridInfo(doc, doc.follow?.tolerance ?? 20)
+  const bbox = contentBBox(doc, defMap, { includeLegend: false, includeGuides: false })
+  if (!info || info.rows.length === 0 || !bbox) return ''
+  const parts: string[] = []
+  if (doc.numbering.rows) {
+    for (const r of info.rows) {
+      // the number sits where the row starts: right for RS rows, left for WS
+      const rightSide = r.side !== 'WS'
+      parts.push(
+        `<text x="${rightSide ? r2(bbox.x + bbox.w + 10) : r2(bbox.x - 10)}" y="${r2(r.y * aspect + 4)}" text-anchor="${rightSide ? 'start' : 'end'}">${r.index}</text>`,
+      )
+    }
+  }
+  if (doc.numbering.cols && info.colXs.length > 0) {
+    const bottomY = r2((bbox.y + bbox.h) * aspect + 18)
+    info.colXs.forEach((x, i) => {
+      parts.push(`<text x="${r2(x + 12)}" y="${bottomY}" text-anchor="middle">${i + 1}</text>`)
+    })
+  }
+  return `<g fill="${ink}" fill-opacity="0.7" font-family="${FONT}" font-size="12" stroke="none">${parts.join('')}</g>`
+}
+
+/** Extents of the numbering labels, for export viewBox calculations. */
+export function numberingBBox(doc: ChartDoc, defMap: Map<string, SymbolDef>, aspect = 1): BBox | null {
+  const craft = getCraft()
+  if (!doc.numbering || (!doc.numbering.rows && !doc.numbering.cols) || !craft.gridInfo) return null
+  const info = craft.gridInfo(doc, doc.follow?.tolerance ?? 20)
+  const bbox = contentBBox(doc, defMap, { includeLegend: false, includeGuides: false })
+  if (!info || info.rows.length === 0 || !bbox) return null
+  const boxes: BBox[] = []
+  if (doc.numbering.rows) {
+    const left = info.rows.some((r) => r.side === 'WS')
+    boxes.push({
+      x: left ? bbox.x - 34 : bbox.x + bbox.w + 4,
+      y: bbox.y * aspect,
+      w: left ? bbox.w + 42 : bbox.w + 36,
+      h: bbox.h * aspect,
+    })
+  }
+  if (doc.numbering.cols && info.colXs.length > 0) {
+    boxes.push({ x: bbox.x, y: (bbox.y + bbox.h) * aspect, w: bbox.w, h: 24 })
+  }
+  return unionOf(boxes)
+}
+
+function unionOf(boxes: BBox[]): BBox | null {
+  if (boxes.length === 0) return null
+  let minX = Infinity
+  let minY = Infinity
+  let maxX = -Infinity
+  let maxY = -Infinity
+  for (const b of boxes) {
+    minX = Math.min(minX, b.x)
+    minY = Math.min(minY, b.y)
+    maxX = Math.max(maxX, b.x + b.w)
+    maxY = Math.max(maxY, b.y + b.h)
+  }
+  return { x: minX, y: minY, w: maxX - minX, h: maxY - minY }
 }

@@ -185,6 +185,15 @@ interface EditorState {
   applyTerminology: (presetId: string) => void
   setLegendLive: (patch: Partial<ChartDoc['legend']>) => void
   setGauge: (unitsPer10cm: number | null) => void
+  setRowGauge: (rowsPer10cm: number | null) => void
+  setNumbering: (patch: Partial<{ rows: boolean; cols: boolean }>) => void
+  /** grid furniture: insert an empty band just above (below=false) or below
+   *  (below=true) the pivot row, shifting the rest of the chart aside */
+  insertGridRow: (atY: number, below: boolean) => void
+  /** remove the pivot row's band and close the gap */
+  deleteGridRow: (atY: number) => void
+  insertGridCol: (atX: number, right: boolean) => void
+  deleteGridCol: (atX: number) => void
   /** replace the whole colourwork yarn palette (one call = one undo step) */
   setYarns: (yarns: Yarn[]) => void
   /** recolour/rename one yarn; existing stitches wearing its colour repaint with it */
@@ -924,6 +933,59 @@ export const createStore = (craft: CraftModule): EditorStore => {
     setYarns: (yarns) =>
       commit((d) => {
         d.yarns = yarns.length ? yarns : undefined
+      }),
+
+    setRowGauge: (rowsPer10cm) =>
+      commit((d) => {
+        d.rowGauge = rowsPer10cm && rowsPer10cm > 0 ? rowsPer10cm : null
+      }),
+
+    setNumbering: (patch) =>
+      commit((d) => {
+        d.numbering = {
+          rows: patch.rows ?? d.numbering?.rows ?? false,
+          cols: patch.cols ?? d.numbering?.cols ?? false,
+        }
+      }),
+
+    insertGridRow: (atY, below) =>
+      set((st) => {
+        const dy = below ? 24 : -24
+        const moved = st.doc.placements.map((p) =>
+          below ? (p.y > atY ? { ...p, y: p.y + dy } : p) : p.y < atY ? { ...p, y: p.y + dy } : p,
+        )
+        if (!moved.some((p, i) => p !== st.doc.placements[i])) return {}
+        return mutateDoc(st, { doc: { ...st.doc, placements: moved } })
+      }),
+
+    deleteGridRow: (atY) =>
+      set((st) => {
+        const kept = st.doc.placements.filter((p) => Math.abs(p.y - atY) > 12)
+        if (kept.length === st.doc.placements.length) return {}
+        return mutateDoc(st, {
+          doc: { ...st.doc, placements: kept.map((p) => (p.y < atY ? { ...p, y: p.y + 24 } : p)) },
+          ...clearSel,
+        })
+      }),
+
+    insertGridCol: (atX, right) =>
+      set((st) => {
+        const dx = right ? 24 : -24
+        const moved = st.doc.placements.map((p) =>
+          right ? (p.x > atX ? { ...p, x: p.x + dx } : p) : p.x < atX ? { ...p, x: p.x + dx } : p,
+        )
+        if (!moved.some((p, i) => p !== st.doc.placements[i])) return {}
+        return mutateDoc(st, { doc: { ...st.doc, placements: moved } })
+      }),
+
+    deleteGridCol: (atX) =>
+      set((st) => {
+        const kept = st.doc.placements.filter((p) => Math.abs(p.x - atX) > 12)
+        if (kept.length === st.doc.placements.length) return {}
+        return mutateDoc(st, {
+          doc: { ...st.doc, placements: kept.map((p) => (p.x > atX ? { ...p, x: p.x - 24 } : p)) },
+          ...clearSel,
+        })
       }),
 
     updateYarn: (id, patch) =>

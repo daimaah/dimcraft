@@ -19,7 +19,11 @@ export function ExportDialog() {
   const [format, setFormat] = useState<'svg' | 'png' | 'pdf'>('svg')
   const [scale, setScale] = useState(2)
   const [orientation, setOrientation] = useState<PageOrientation>('portrait')
+  const [trueScale, setTrueScale] = useState(false)
   const [white, setWhite] = useState(false)
+  const gaugeSts = doc.unitsPer10cm ?? null
+  const gaugeRows = doc.rowGauge ?? null
+  const canTrueScale = !!(gaugeSts && gaugeRows)
   const [shareLink, setShareLink] = useState<string | null>(null)
   const [shareBusy, setShareBusy] = useState(false)
   const [sidecarUrl, setSidecarUrl] = useState(
@@ -78,7 +82,14 @@ export function ExportDialog() {
       const { svg } = buildExportSvg(doc, opts)
       downloadBlob(`${safe}.svg`, new Blob([svg], { type: 'image/svg+xml' }))
     } else if (format === 'pdf') {
-      await exportPdf(doc, safe, { ...opts, format: 'a4', orientation })
+      await exportPdf(doc, safe, {
+        ...opts,
+        format: 'a4',
+        orientation,
+        trueScale: canTrueScale && trueScale,
+        unitsPer10cm: gaugeSts,
+        unitsPer10cmY: gaugeRows,
+      })
     } else {
       await exportPng(doc, safe, { ...opts, scale })
     }
@@ -111,15 +122,26 @@ export function ExportDialog() {
         </div>
       )}
       {format === 'pdf' && (
-        <div className="field-row">
-          <label>
-            Orientation
-            <select value={orientation} onChange={(e) => setOrientation(e.target.value as PageOrientation)}>
-              <option value="portrait">Portrait</option>
-              <option value="landscape">Landscape</option>
-            </select>
+        <>
+          <div className="field-row">
+            <label>
+              Orientation
+              <select value={orientation} onChange={(e) => setOrientation(e.target.value as PageOrientation)}>
+                <option value="portrait">Portrait</option>
+                <option value="landscape">Landscape</option>
+              </select>
+            </label>
+          </div>
+          <label className="field-row">
+            <input
+              type="checkbox"
+              disabled={!canTrueScale}
+              checked={canTrueScale && trueScale}
+              onChange={(e) => setTrueScale(e.target.checked)}
+            />
+            {canTrueScale ? 'True scale — print at your gauge' : 'True scale — set stitch & row gauge first'}
           </label>
-        </div>
+        </>
       )}
       <label className="field-row">
         <input type="checkbox" checked={white} onChange={(e) => setWhite(e.target.checked)} /> White background

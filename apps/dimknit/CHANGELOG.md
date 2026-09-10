@@ -17,6 +17,18 @@ follows [Keep a Changelog](https://keepachangelog.com/).
   colours. Stamping on an occupied cell now re-works that cell (new symbol + colour) instead of
   stacking stitches.
 
+- **Repeat brackets** (B) — mark the repeated section of a chart; the bracket auto-counts the
+  stitches it spans and carries an editable ×N label, exactly like DimCrochet's.
+- **Row & column numbers** — toggle row numbers (each printed where its row starts: right for RS
+  rows, left for WS rows) and column numbers along the bottom; they show on canvas and in every
+  export.
+- **Rows & columns editing** — with a stitch selected: insert an empty row above/below or column
+  left/right (the chart slides aside), or delete the row/column and close the gap — one undo step
+  each.
+- **Gauge & true-scale PDF** — set stitches and rows per 10 cm and the chart cells take their
+  real aspect (no more square knitting cells); the PDF export's true-scale mode then prints each
+  axis by its own gauge.
+
 ### Added
 
 - **Action bar** — the floating, draggable tool palette from DimCrochet, restyled for the knit

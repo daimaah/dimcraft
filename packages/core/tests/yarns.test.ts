@@ -18,7 +18,7 @@ const k: SymbolDef = {
 const stub: CraftModule = {
   craft: 'knit',
   baseSymbols: [k],
-  builtinSets: [{ id: 'standard', name: 'Standard', artwork: {} }],
+  builtinSets: [{ id: 'standard', name: 'Standard', description: 'stub', license: 'MIT', artwork: {} }],
   defaultSymbolId: 'k',
   applyTerminology: () => {},
   followSteps: () => [],
@@ -27,6 +27,7 @@ const stub: CraftModule = {
   symbolPacks: false,
   colourwork: true,
   replaceOnStamp: false,
+  rowsAndColumns: false,
 }
 
 registerCraft(stub)

@@ -1,7 +1,6 @@
 import type { ChartDoc, SymbolDef, Tool } from './model/types'
 import type { BuiltinSet } from './symbols/sets'
 import type { IconName } from './ui/icons'
-
 /**
  * Regional terminology presets: what each stitch is *called* per market.
  * The preset data itself is craft-specific; this is only the shared shape.
@@ -70,6 +69,11 @@ export interface CraftModule {
    *  has a feature that uses it (true-scale PDF, gauge-correct cells). */
   gauge?: {
     label: string
+    /** second gauge axis (e.g. rows / 10 cm beside stitches / 10 cm) */
+    label2?: string
+    /** how many chart units one entered count spans (grid crafts: FRAME.w —
+     *  the user enters stitches/rows, the doc stores units per 10 cm) */
+    unitScale?: number
     hint(set: boolean, sizeHint: string | null): string
   }
   /** Whether the shell exposes the colourwork palette (yarn picking, per-stitch
@@ -78,6 +82,17 @@ export interface CraftModule {
   /** Grid crafts: stamping on an occupied cell re-works that cell (symbol +
    *  colour) instead of stacking a second stitch on top of it. */
   replaceOnStamp: boolean
+  /** Grid crafts: row/column furniture — numbering toggles and insert/delete
+   *  of whole rows and columns in the inspector. */
+  rowsAndColumns: boolean
+  /** Grid geometry of the chart, for rendering row/column numbers. Absent:
+   *  the craft has no grid and numbering stays hidden. */
+  gridInfo?(doc: ChartDoc, tolerance: number): {
+    /** rows bottom-up: band centre y, 1-based index, and the worked side */
+    rows: { index: number; y: number; side: 'RS' | 'WS' }[]
+    /** x of every occupied column, left → right */
+    colXs: number[]
+  }
 }
 
 let craft: CraftModule | null = null

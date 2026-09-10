@@ -12,8 +12,10 @@ export interface PdfExportOptions extends SvgExportOptions {
   orientation: PageOrientation
   /** print at gauge-derived true size instead of fit-to-page */
   trueScale?: boolean
-  /** doc gauge: chart units per 10 cm of finished fabric */
+  /** doc gauge: chart units per 10 cm of finished fabric (width axis) */
   unitsPer10cm?: number | null
+  /** height-axis gauge for non-square cells (rows / 10 cm) */
+  unitsPer10cmY?: number | null
 }
 
 /** Vector PDF via svg2pdf, centred — fit-to-page or gauge-driven true scale. */
@@ -25,6 +27,7 @@ export async function exportPdf(doc: ChartDoc, name: string, options: PdfExportO
     format: options.format,
     orientation: options.orientation,
     unitsPer10cm: options.unitsPer10cm,
+    unitsPer10cmY: options.unitsPer10cmY,
     trueScale: options.trueScale,
   })
 

@@ -84,5 +84,13 @@ export function sanitizeDoc(input: unknown): ChartDoc | null {
             ...(typeof y.name === 'string' && y.name.trim() ? { name: y.name.trim() } : {}),
           }))
       : undefined,
+    numbering:
+      d.numbering && typeof d.numbering === 'object'
+        ? {
+            rows: (d.numbering as { rows?: unknown }).rows === true,
+            cols: (d.numbering as { cols?: unknown }).cols === true,
+          }
+        : undefined,
+    rowGauge: typeof d.rowGauge === 'number' && Number.isFinite(d.rowGauge) ? d.rowGauge : null,
   }
 }

@@ -208,13 +208,17 @@ knitting:
   (stockinette, 2×2 rib, seed stitch, eyelet lace), and **knit-aware mirroring** — flipping a
   selection swaps leaning decreases for their true mirror image (k2tog ↔ ssk), the way the
   fabric actually reverses
+- **Colourwork and chart furniture**: yarn palette with MC/CC1… naming painted cell by cell
+  (legend, instructions and follow mode carry the colours), repeat brackets, row/column numbers,
+  insert/delete of rows and columns, and a two-axis gauge that renders cells at their true
+  aspect and prints true-scale PDFs
 - **The same editor shell**: floating customizable action bar, inspector sidebar, SVG/PNG/PDF
   export, encrypted share links, own browser storage and `.dimknit.json` files — charts never
   cross between the two apps
 
 DimKnit is public and deployable today, and honest about its age: the charting core is
-release-quality, while colourwork, cables and in-the-round charts are still on the roadmap —
-see [its README](apps/dimknit/README.md) for status and positioning.
+release-quality and colourwork is in, while cables and in-the-round charts are still on the
+roadmap — see [its README](apps/dimknit/README.md) for status and positioning.
 
 ## File format & compatibility
 

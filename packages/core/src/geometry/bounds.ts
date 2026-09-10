@@ -15,6 +15,14 @@ export function legendSize(doc: ChartDoc, defMap: Map<string, SymbolDef>): { w: 
   return { w: LEGEND_W * doc.legend.scale, h: (LEGEND_HEAD + rows * LEGEND_ROW_H + 8) * doc.legend.scale }
 }
 
+/** Cell aspect (height / width) from the two-axis gauge. Both doc gauges are
+ *  in chart-units-per-10 cm, so the ratio is directly height/width; 1 =
+ *  square cells. */
+export function gridAspect(doc: ChartDoc): number {
+  if (!doc.unitsPer10cm || !doc.rowGauge) return 1
+  return doc.unitsPer10cm / doc.rowGauge
+}
+
 export interface BoundsOptions {
   includeGuides?: boolean
   includeLegend?: boolean

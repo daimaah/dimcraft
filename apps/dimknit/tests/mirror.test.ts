@@ -43,11 +43,18 @@ describe('knit mirror map', () => {
   it('gates inspector sections whose backing features knit lacks', () => {
     expect(getCraft().terminologyPresets).toEqual([])
     expect(getCraft().symbolPacks).toBe(false)
-    expect(getCraft().gauge).toBeUndefined()
+  })
+
+  it('opts into the grid crafts: colourwork, cell re-work, rows & columns, gauge', () => {
+    expect(getCraft().colourwork).toBe(true)
+    expect(getCraft().replaceOnStamp).toBe(true)
+    expect(getCraft().rowsAndColumns).toBe(true)
+    expect(getCraft().gridInfo).toBeDefined()
+    expect(getCraft().gauge).toBeDefined()
   })
 
   it('offers a grid-appropriate action-bar tool set', () => {
-    expect(getCraft().paletteTools.map((t) => t.id)).toEqual(['select', 'pan', 'place'])
+    expect(getCraft().paletteTools.map((t) => t.id)).toEqual(['select', 'pan', 'place', 'bracket'])
   })
 })
 

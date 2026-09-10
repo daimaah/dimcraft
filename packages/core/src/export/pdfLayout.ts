@@ -27,6 +27,8 @@ export function computePdfLayout(input: {
   format: PaperFormat
   orientation: PageOrientation
   unitsPer10cm?: number | null
+  /** second gauge axis for crafts whose cells aren't square (rows / 10 cm) */
+  unitsPer10cmY?: number | null
   trueScale?: boolean
 }): PdfLayout {
   const [short, long] = PAGE_MM[input.format]
@@ -36,18 +38,21 @@ export function computePdfLayout(input: {
   const availH = pageH - MARGIN_MM * 2
 
   const fitScale = Math.min(availW / input.widthUnits, availH / input.heightUnits)
-  const trueSizeCm = input.unitsPer10cm
-    ? { w: (input.widthUnits / input.unitsPer10cm) * 10, h: (input.heightUnits / input.unitsPer10cm) * 10 }
-    : null
+  const unitsY = input.unitsPer10cmY ?? input.unitsPer10cm
+  const trueSizeCm =
+    input.unitsPer10cm && unitsY
+      ? { w: (input.widthUnits / input.unitsPer10cm) * 10, h: (input.heightUnits / unitsY) * 10 }
+      : null
 
-  if (input.trueScale && input.unitsPer10cm) {
-    // 1 unit = 10 / N cm = 100 / N mm
-    const mmPerUnit = 100 / input.unitsPer10cm
-    const w = input.widthUnits * mmPerUnit
-    const h = input.heightUnits * mmPerUnit
+  if (input.trueScale && input.unitsPer10cm && unitsY) {
+    // 1 unit = 10 / N cm = 100 / N mm, per axis
+    const mmPerUnitX = 100 / input.unitsPer10cm
+    const mmPerUnitY = 100 / unitsY
+    const w = input.widthUnits * mmPerUnitX
+    const h = input.heightUnits * mmPerUnitY
     if (w <= availW && h <= availH) {
       return {
-        scale: mmPerUnit,
+        scale: mmPerUnitX,
         w,
         h,
         x: (pageW - w) / 2,

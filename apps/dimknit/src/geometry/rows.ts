@@ -147,6 +147,18 @@ export function mirrorSymbol(symbolId: string): string {
   return MIRROR[symbolId] ?? symbolId
 }
 
+/** Grid geometry for chart furniture: row bands bottom-up with their worked
+ *  side, and the x of every occupied column. Feeds row/column numbering and
+ *  the inspector's rows & columns controls through the craft seam. */
+export function gridInfo(doc: ChartDoc, tolerance = 20): {
+  rows: { index: number; y: number; side: 'RS' | 'WS' }[]
+  colXs: number[]
+} {
+  const rows = groupRows(doc, tolerance).map((r) => ({ index: r.index, y: r.y, side: r.side }))
+  const xs = new Set(doc.placements.filter((p) => p.visible !== false).map((p) => p.x))
+  return { rows, colXs: [...xs].sort((a, b) => a - b) }
+}
+
 /** Stitch-count accounting: the stitches row N works must equal the stitches
  *  row N-1 leaves. A row leaves one live stitch per cell plus one per yarn
  *  over; decrease cells absorb extra stitches from the row below (k2tog/ssk

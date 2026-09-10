@@ -35,6 +35,17 @@ changes live in each app's own changelog:
   into `craft.replaceOnStamp`: stamping on an occupied cell re-works that cell instead of stacking
   a second stitch on it.
 
+### Added (M6 — publication furniture)
+
+- **Chart furniture in the core**: row/column numbering — rendered beside the grid in the canvas
+  and every export, driven by a `craft.gridInfo` hook and per-document numbering toggles — and
+  insert/delete of whole rows and columns for grid crafts (`craft.rowsAndColumns`): an empty band
+  slides in and the rest of the chart shifts aside; deleting removes the band and closes the gap,
+  one undo step each.
+- **Gauge-correct cells** — with a two-axis gauge (stitches and rows per 10 cm via `craft.gauge`
+  label2), chart cells render at their true aspect in the canvas and exports instead of squares,
+  and the PDF's true-scale mode prints each axis by its own gauge (`unitsPer10cmY`).
+
 ### Changed
 
 - `mirrorSelection` consults `craft.mirrorSymbol` when present: on a horizontal mirror the craft

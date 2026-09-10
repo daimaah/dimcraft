@@ -187,6 +187,10 @@ export interface ChartDoc {
   customSets?: CustomSet[]
   /** colourwork yarn palette — present once the chart uses more than the ink */
   yarns?: Yarn[]
+  /** chart furniture: row/column numbers beside the grid */
+  numbering?: { rows: boolean; cols: boolean }
+  /** knitting row gauge: rows per 10 cm (unitsPer10cm holds the stitch gauge) */
+  rowGauge?: number | null
 }
 
 /** Legend key under which backstitch lines are listed. */

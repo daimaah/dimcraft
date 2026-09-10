@@ -130,6 +130,56 @@ export function Inspector() {
             </label>
           </Row>
         )}
+        {craft.rowsAndColumns && (
+          <>
+            <div className="panel-title">Rows &amp; columns</div>
+            <div className="btn-grid">
+              <button
+                className="btn"
+                title="Insert an empty row above this stitch's row"
+                onClick={() => st.getState().insertGridRow(selected[0].y, false)}
+              >
+                + Row above
+              </button>
+              <button
+                className="btn"
+                title="Insert an empty row below this stitch's row"
+                onClick={() => st.getState().insertGridRow(selected[0].y, true)}
+              >
+                + Row below
+              </button>
+              <button
+                className="btn danger"
+                title="Delete this row and close the gap"
+                onClick={() => st.getState().deleteGridRow(selected[0].y)}
+              >
+                − Row
+              </button>
+              <button
+                className="btn"
+                title="Insert an empty column left of this stitch's column"
+                onClick={() => st.getState().insertGridCol(selected[0].x, false)}
+              >
+                + Col left
+              </button>
+              <button
+                className="btn"
+                title="Insert an empty column right of this stitch's column"
+                onClick={() => st.getState().insertGridCol(selected[0].x, true)}
+              >
+                + Col right
+              </button>
+              <button
+                className="btn danger"
+                title="Delete this column and close the gap"
+                onClick={() => st.getState().deleteGridCol(selected[0].x)}
+              >
+                − Col
+              </button>
+            </div>
+            <p className="hint">Relative to the selected stitch's row and column.</p>
+          </>
+        )}
         {craft.colourwork && (doc.yarns?.length ?? 0) > 0 && (
           <Row>
             <div className="swatch-row" role="group" aria-label="Colour">
@@ -345,10 +395,13 @@ export function Inspector() {
   // ---- nothing selected: document settings ----
   const items = legendItems(doc, defMap)
   const gauge = doc.unitsPer10cm ?? null
+  const rowGauge = doc.rowGauge ?? null
   const sizeHint = gauge
     ? (() => {
         const bbox = contentBBox(doc, defMap, { includeLegend: true })
-        return bbox ? `≈ ${((bbox.w / gauge) * 10).toFixed(1)} × ${((bbox.h / gauge) * 10).toFixed(1)} cm` : null
+        return bbox
+          ? `≈ ${((bbox.w / gauge) * 10).toFixed(1)} × ${((bbox.h / (rowGauge || gauge)) * 10).toFixed(1)} cm`
+          : null
       })()
     : null
   return (
@@ -371,11 +424,41 @@ export function Inspector() {
         {craft.gauge && (
           <NumField
             label={craft.gauge.label}
-            value={doc.unitsPer10cm ?? 0}
-            onChange={(v) => st.getState().setGauge(v > 0 ? v : null)}
+            value={(doc.unitsPer10cm ?? 0) / (craft.gauge.unitScale ?? 1)}
+            onChange={(v) => st.getState().setGauge(v > 0 ? v * (craft.gauge?.unitScale ?? 1) : null)}
+          />
+        )}
+        {craft.gauge?.label2 && (
+          <NumField
+            label={craft.gauge.label2}
+            value={(doc.rowGauge ?? 0) / (craft.gauge.unitScale ?? 1)}
+            onChange={(v) => st.getState().setRowGauge(v > 0 ? v * (craft.gauge?.unitScale ?? 1) : null)}
           />
         )}
       </Row>
+      {craft.gridInfo && (
+        <>
+          <div className="panel-title">Numbers</div>
+          <Row>
+            <label className="check">
+              <input
+                type="checkbox"
+                checked={doc.numbering?.rows ?? false}
+                onChange={(e) => st.getState().setNumbering({ rows: e.target.checked })}
+              />
+              <span>Row numbers</span>
+            </label>
+            <label className="check">
+              <input
+                type="checkbox"
+                checked={doc.numbering?.cols ?? false}
+                onChange={(e) => st.getState().setNumbering({ cols: e.target.checked })}
+              />
+              <span>Column numbers</span>
+            </label>
+          </Row>
+        </>
+      )}
       {craft.colourwork && (
         <>
           <div className="panel-title">Yarns</div>
