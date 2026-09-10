@@ -14,6 +14,13 @@ changes live in each app's own changelog:
 
 ## [Unreleased]
 
+### Added
+
+- core: bundled symbol-set artwork entries may override the glyph's visible bbox alongside the SVG,
+  so a set that redraws a base symbol at a different size frames correctly in the palette tile,
+  legend swatch and selection ring. Plain-string entries and imported packs are unchanged — the
+  persisted interchange format does not grow.
+
 ## [0.3.0] — 2026-09-10
 
 ## [0.2.0] — 2026-09-10

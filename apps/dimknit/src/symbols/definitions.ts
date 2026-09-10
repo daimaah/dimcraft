@@ -1,4 +1,5 @@
 import type { SymbolDef } from '@dimcraft/core/model/types'
+import type { ArtworkOverride } from '@dimcraft/core/symbols/sets'
 
 /**
  * Standard knitting symbols per the Craft Yarn Council chart standard.
@@ -123,4 +124,46 @@ export const FABRIC_ARTWORK: Record<string, string> = {
   k: `<path d="M 6 13.5 L 12 28 M 18 13.5 L 12 28" ${STROKE}/><path d="M 6 13.5 L 12 15.5 M 18 13.5 L 12 15.5" ${STROKE} stroke-opacity="0.45"/>`,
   // purl: a horizontal bump across the cell
   p: `<path d="M 5.5 24.5 Q 12 14 18.5 24.5 Z" ${STROKE}/>`,
+}
+
+/**
+ * DROPS-style artwork: the symbol conventions of DROPS (Garnstudio) diagrams
+ * (reference: pattern Baby 33-35). Original SVG artwork for DimKnit — no DROPS
+ * assets are bundled, only the published symbol vocabulary is followed:
+ *   - knit stays an empty grid cell (no override needed)
+ *   - purl is a corner-to-corner X with a solid centre dot
+ *   - the single decreases are full-cell slashes (k2tog rises "/", ssk falls "\";
+ *     DROPS draws them spanning two cells to mark the vanished stitch's column,
+ *     which this per-cell chart model doesn't have)
+ *   - yarn over is an upright oval ring
+ *   - the centred double decrease is a solid triangle, apex up
+ * The X, slashes and triangle outgrow the standard glyphs' bboxes, so those
+ * entries override the bbox too — it frames the palette tile, legend swatch
+ * and selection ring. All overrides stay centred on the cell so flips mirror.
+ */
+const DROPS_STROKE = 'fill="none" stroke="@INK@" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"'
+
+export const DROPS_ARTWORK: Record<string, ArtworkOverride> = {
+  p: {
+    content:
+      `<path d="M 3.5 8 L 20.5 28 M 20.5 8 L 3.5 28" ${DROPS_STROKE}/>` +
+      `<rect x="9.75" y="15.75" width="4.5" height="4.5" fill="@INK@" stroke="none"/>`,
+    bbox: { x: 3.5, y: 8, w: 17, h: 20 },
+  },
+  yo: {
+    content: `<ellipse cx="12" cy="18" rx="3.8" ry="6.4" ${DROPS_STROKE}/>`,
+    bbox: { x: 8.2, y: 11.6, w: 7.6, h: 12.8 },
+  },
+  k2tog: {
+    content: `<path d="M 4 28 L 20 8" ${DROPS_STROKE}/>`,
+    bbox: { x: 4, y: 8, w: 16, h: 20 },
+  },
+  ssk: {
+    content: `<path d="M 20 28 L 4 8" ${DROPS_STROKE}/>`,
+    bbox: { x: 4, y: 8, w: 16, h: 20 },
+  },
+  s2kp2: {
+    content: `<path d="M 12 8.5 L 20.5 28.5 L 3.5 28.5 Z" fill="@INK@" stroke="none"/>`,
+    bbox: { x: 3.5, y: 8.5, w: 17, h: 20 },
+  },
 }

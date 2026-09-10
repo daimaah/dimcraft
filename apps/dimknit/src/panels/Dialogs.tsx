@@ -276,14 +276,21 @@ export function LicensesDialog() {
             MIT License
           </a>
           . The knitting chart symbols are original artwork created for DimKnit under the same
-          license; symbol shapes follow the Craft Yarn Council chart conventions. Shares the
-          DimCraft chart-editor kernel with DimCrochet.
+          license; symbol shapes follow the Craft Yarn Council and DROPS chart conventions. Shares
+          the DimCraft chart-editor kernel with DimCrochet.
         </p>
 
-        <h3>Bundled symbol set</h3>
+        <h3>Bundled symbol sets</h3>
         <ul className="license-list">
           <li>
             <strong>Standard (CYC-style)</strong> — MIT — original artwork for DimKnit
+          </li>
+          <li>
+            <strong>Fabric (visual)</strong> — MIT — original artwork for DimKnit
+          </li>
+          <li>
+            <strong>DROPS (Garnstudio-style)</strong> — MIT — original artwork for DimKnit, following
+            the published DROPS symbol conventions (no DROPS assets are bundled)
           </li>
         </ul>
 

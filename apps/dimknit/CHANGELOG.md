@@ -13,6 +13,13 @@ follows [Keep a Changelog](https://keepachangelog.com/).
   yht."). Terminology presets relabel the legend, the written instructions and follow mode,
   two-sided per the chart-symbol conventions (a knit cell reads "os" on right-side rows and
   "ns" on wrong-side rows). Options → General → Terminology.
+- **DROPS-style symbol set** — a third bundled symbol set drawing the chart conventions of DROPS
+  (Garnstudio) diagrams: the purl as a corner-to-corner X with a solid centre dot, the yarn over as
+  an upright oval ring, the single decreases as full-cell slashes and the centred double decrease as
+  a solid triangle, while the knit stays an empty grid cell. Original artwork — no DROPS assets are
+  bundled, only the published symbol vocabulary is followed. Inspector → Symbol set →
+  "DROPS (Garnstudio-style)"; pairs with the Finnish terminology preset for working from
+  Finnish DROPS patterns.
 
 ## [0.3.0] — 2026-09-10
 

@@ -1,5 +1,5 @@
 import { registerCraft, type CraftModule, type PaletteToolDef } from '@dimcraft/core/craft'
-import { FABRIC_ARTWORK, KNIT_SYMBOLS } from './symbols/definitions'
+import { DROPS_ARTWORK, FABRIC_ARTWORK, KNIT_SYMBOLS } from './symbols/definitions'
 import { applyTerminologyToDoc, TERMINOLOGY_PRESETS } from './symbols/terminology'
 import { followSteps, gridInfo, mirrorSymbol } from './geometry/rows'
 
@@ -35,6 +35,15 @@ export const knitCraft: CraftModule = {
       description: 'Knit cells as V-stitch columns and purls as bumps — a visual fabric view; crossings stay symbolic.',
       license: 'MIT — original artwork for DimKnit',
       artwork: FABRIC_ARTWORK,
+    },
+    {
+      id: 'drops',
+      name: 'DROPS (Garnstudio-style)',
+      description:
+        'Symbols as DROPS (Garnstudio) diagrams draw them: crossed purl with a centre dot, oval yarn over, full-cell decrease slashes and a solid triangle for the centred double decrease.',
+      license: 'MIT — original artwork for DimKnit, following the published DROPS chart conventions',
+      sourceUrl: 'https://www.garnstudio.com/pattern.php?id=9166&cid=11',
+      artwork: DROPS_ARTWORK,
     },
   ],
   defaultSymbolId: 'k',
