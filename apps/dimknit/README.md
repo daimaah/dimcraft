@@ -26,19 +26,21 @@ in this repository) while keeping their own craft, identity and data.
 ## Deploying (Docker / Portainer)
 
 Same delivery model as DimCrochet: one container serves the app plus the
-self-hosted encrypted short-link sidecar.
+self-hosted encrypted short-link sidecar. The repository's root
+`docker-compose.yml` ships with DimCrochet enabled and a ready-made commented
+**dimknit** block — uncomment that block (and comment the DimCrochet service
+out if you only want knitting) and deploy:
 
 ```bash
-# from the repository root (builds the DimKnit image)
-docker build --build-arg APP=dimknit -t dimknit .
-docker compose -f apps/dimknit/docker-compose.yml up -d
+# from the repository root, after uncommenting the dimknit block
+docker compose up -d --build   # DimKnit on http://localhost:8081
 ```
 
 As a Portainer stack, point the stack at the `dimcraft` repository with the
-compose path `apps/dimknit/docker-compose.yml`. Images are published on every
-passing build as `ghcr.io/daimaah/dimknit` (`develop` tracks the development
-branch, `latest` the newest passing main build, `dimknit-vX.Y.Z` the
-releases — pin a version for deployments).
+compose path `docker-compose.yml`. Images are also pre-built on every passing
+run as `ghcr.io/daimaah/dimknit` (`develop` tracks the development branch,
+`latest` the newest passing main build, `dimknit-vX.Y.Z` the releases — pin a
+version for deployments).
 
 ## Development
 

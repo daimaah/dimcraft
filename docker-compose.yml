@@ -1,10 +1,18 @@
-# DimCrochet — deployable as a Portainer stack (Stacks → Add stack → Repository,
-# pointing at this repo) or locally with: docker compose up -d --build
+# DimCraft stack — DimCrochet and/or DimKnit, deployable as a Portainer stack
+# (Stacks → Add stack → Repository, pointing at this repo) or locally with:
+#   docker compose up -d --build
 #
-# The named volume keeps self-hosted encrypted short links; charts themselves
-# live in each user's browser (IndexedDB), so upgrading is just a redeploy.
-# Optional env: DIMCROCHET_MAX_AGE_HOURS — days an unused short link survives
-# (default 720 = 30 days, refreshed every time the link is opened).
+# Only DimCrochet runs by default. To also run DimKnit (the knitting chart
+# composer), uncomment the dimknit service block below — that's it. Only need
+# one of them? Comment the other service block out; each app builds from this
+# repository, keeps its own data volume, and serves on its own port.
+#
+# The named volumes keep the self-hosted encrypted short links; charts live in
+# each user's browser (IndexedDB), so upgrading is just a redeploy.
+# Optional env (Portainer's environment editor):
+#   DIMCROCHET_PORT / DIMKNIT_PORT — host ports (defaults: 8080 / 8081)
+#   DIMCRAFT_MAX_AGE_HOURS — days an unused short link survives
+#     (default 720 = 30 days, refreshed every time the link is opened)
 
 services:
   dimcrochet:
@@ -18,5 +26,22 @@ services:
     volumes:
       - dimcrochet-data:/data
 
+  # ---- DimKnit: uncomment this block to enable it --------------------------
+  # dimknit:
+  #   build:
+  #     context: .
+  #     args:
+  #       APP: dimknit
+  #   image: dimknit:latest
+  #   container_name: dimknit
+  #   restart: unless-stopped
+  #   ports:
+  #     # change the host port in Portainer's environment editor (DIMKNIT_PORT)
+  #     - "${DIMKNIT_PORT:-8081}:80"
+  #   volumes:
+  #     - dimknit-data:/data
+
 volumes:
   dimcrochet-data:
+  # declared for when DimKnit is enabled; compose only creates used volumes
+  dimknit-data:

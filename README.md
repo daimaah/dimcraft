@@ -52,21 +52,23 @@ npm run preview
 
 A single container serves everything: the app's static build and the self-hosted short-link sidecar are baked into the same image (one Node process — no second service, no nginx). Charts live in each visitor's browser (IndexedDB); the only server-side state is the sidecar's short-link store in `/data`, which the volume mapping below preserves across redeploys.
 
+The same repository builds **both apps**: DimCrochet (this chart composer) and DimKnit (the knitting sibling, `apps/dimknit`). The example stack below runs DimCrochet; the repository's `docker-compose.yml` contains a ready-made, commented DimKnit block — uncomment it to run DimKnit alongside (or instead of) DimCrochet, each on its own port and data volume.
+
 ### Portainer — Repository method (builds the image for you)
 
 1. **Stacks → Add stack**
 2. Name: `dimcrochet`, Build method: **Repository**
-3. Repository URL: `https://github.com/daimaah/dimcrochet.git`; Compose path: `docker-compose.yml`
+3. Repository URL: `https://github.com/daimaah/dimcraft.git`; Compose path: `docker-compose.yml`
 4. **Update the stack** — Portainer clones the repo and builds the image
 5. Open `http://your-server:8080`
 
 The repository is public — Portainer can clone it without credentials.
 
-To change the port, add an environment variable in the stack editor: `DIMCROCHET_PORT = 3000`.
+To change the port, add an environment variable in the stack editor: `DIMCROCHET_PORT = 3000`. To run DimKnit too, uncomment the `dimknit` block in the compose file (or paste it from the commented example) — it serves on `8081` by default, customizable via `DIMKNIT_PORT`.
 
 ### Portainer — Web editor method (pre-built image)
 
-The [GitHub workflow](.github/workflows/docker.yml) publishes the pre-built image to GHCR: every push to `main` updates the `main` **and** `latest` tags, and every version tag `vX.Y.Z` publishes `vX.Y.Z` plus `latest`. Paste this as the stack:
+The [GitHub workflow](.github/workflows/docker.yml) publishes pre-built images to GHCR: every push to `main` updates the `main` **and** `latest` tags, and every version tag publishes the version plus `latest` (`vX.Y.Z` for DimCrochet, `dimknit-vX.Y.Z` for DimKnit). Paste this as the stack:
 
 ```yaml
 services:
@@ -79,16 +81,29 @@ services:
     volumes:
       - dimcrochet-data:/data   # encrypted short-link store
 
+  # uncomment to also run DimKnit (https://github.com/daimaah/dimcraft/tree/develop/apps/dimknit)
+  # dimknit:
+  #   image: ghcr.io/daimaah/dimknit:latest
+  #   container_name: dimknit
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8081:80"
+  #   volumes:
+  #     - dimknit-data:/data   # encrypted short-link store
+
 volumes:
   dimcrochet-data:
+  # dimknit-data:
 ```
 
-The volume mapping matters: `/data` holds the sidecar's encrypted short links, and without it every stack update starts from an empty store, breaking previously shared links. Pin `v0.8.0` instead of `latest` if you want upgrades to be explicit. The image is public on GHCR — pulling needs no login.
+The volume mapping matters: `/data` holds the sidecar's encrypted short links, and without it every stack update starts from an empty store, breaking previously shared links. Pin `v0.8.0` (DimCrochet) or `dimknit-v0.1.0` (DimKnit) instead of `latest` if you want upgrades to be explicit. The images are public on GHCR — pulling needs no login.
 
 ### Plain Docker / docker compose
 
 ```bash
-docker compose up -d --build   # build & run on http://localhost:8080
+docker compose up -d --build   # build & run DimCrochet on http://localhost:8080
+# uncomment the dimknit block in docker-compose.yml first to also serve
+# DimKnit on http://localhost:8081
 ```
 
 ### Reverse proxy & HTTPS notes
