@@ -13,6 +13,12 @@ const makeDist = () => {
   return dir
 }
 
+const makeDistWithWhoami = () => {
+  const dir = makeDist()
+  writeFileSync(join(dir, 'whoami.json'), JSON.stringify({ app: 'dimknit', version: '0.1.0', core: '0.1.0' }))
+  return dir
+}
+
 const contexts = []
 async function start(opts = {}) {
   const dataDir = mkdtempSync(join(tmpdir(), 'dimcrochet-links-'))
@@ -91,5 +97,19 @@ describe('sidecar', () => {
     expect(asset.status).toBe(200)
     const missing = await fetch(`${base}/assets/nope.js`)
     expect(missing.status).toBe(404)
+  })
+
+  it('serves /api/whoami with permissive CORS when the app baked its identity', async () => {
+    const { base } = await start({ distDir: makeDistWithWhoami() })
+    const res = await fetch(`${base}/api/whoami`)
+    expect(res.status).toBe(200)
+    expect(res.headers.get('access-control-allow-origin')).toBe('*')
+    expect(await res.json()).toEqual({ app: 'dimknit', version: '0.1.0', core: '0.1.0' })
+  })
+
+  it('404s /api/whoami when the dist has no baked identity', async () => {
+    const { base } = await start()
+    const res = await fetch(`${base}/api/whoami`)
+    expect(res.status).toBe(404)
   })
 })

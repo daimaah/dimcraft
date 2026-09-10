@@ -16,6 +16,21 @@ changes live in each app's own changelog:
 
 ### Added
 
+- **Sibling-app discovery** — the sidecar now serves a baked `/api/whoami`
+  (app id + version, permissive CORS, no user data), and each app probes the
+  sibling's default port on the same host: when the other DimCraft app answers
+  and identifies itself, the gallery shows an "Open DimKnit / DimCrochet →"
+  button. A wrong app on that port is ignored (the handshake is verified). For
+  custom ports, reverse-proxy paths or separate hosts, the Options → General
+  tab takes a manual companion URL.
+
+### Fixed
+
+- Short-link sidecar: `/api/whoami` 404s cleanly when a deployment's dist has
+  no baked identity (dev mode).
+
+### Added
+
 - **DimKnit** (`apps/dimknit`) — a sibling app for knitting charts, built on
   the same core: CYC-style knit palette, serpentine row reading with
   RS/WS-aware written instructions, row-language follow mode, stitch-count

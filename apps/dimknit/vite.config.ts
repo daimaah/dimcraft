@@ -32,6 +32,19 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    {
+      // served by the sidecar at /api/whoami so the sibling DimCraft app can
+      // discover this deployment (see packages/core/src/sibling.ts)
+      name: 'bake-whoami',
+      apply: 'build',
+      generateBundle() {
+        this.emitFile({
+          type: 'asset',
+          fileName: 'whoami.json',
+          source: JSON.stringify({ app: 'dimknit', version: pkg.version, core: corePkg.version }),
+        })
+      },
+    },
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],

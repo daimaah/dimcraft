@@ -146,6 +146,23 @@ export function createHandler(opts = {}) {
 
       if (url.pathname === '/healthz') return sendJson(res, 200, { ok: true })
 
+      // lets a sibling DimCraft app identify this deployment: baked
+      // whoami.json (app id + version, no user data) served with permissive
+      // CORS so the other app's JS may read it cross-origin
+      if (url.pathname === '/api/whoami') {
+        try {
+          const info = JSON.parse(readFileSync(join(distDir, 'whoami.json'), 'utf8'))
+          res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Cache-Control': 'no-store',
+          })
+          return res.end(JSON.stringify(info))
+        } catch {
+          return sendJson(res, 404, { error: 'unknown app' })
+        }
+      }
+
       if (req.method === 'POST' && url.pathname === '/api/links') {
         if (rateLimited(ip)) return sendJson(res, 429, { error: 'too many links, try later' })
         let body

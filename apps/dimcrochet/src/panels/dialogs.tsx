@@ -1,5 +1,6 @@
 import { Fragment, useRef, useState } from 'react'
 import { useStore } from '../state/store'
+import { getManualSiblingUrl, saveManualSiblingUrl, siblingAppName } from '@dimcraft/core/sibling'
 import { getDefMap } from '@dimcraft/core/symbols/registry'
 import { guideSample } from '@dimcraft/core/geometry/guides'
 import { contentBBox } from '@dimcraft/core/geometry/bounds'
@@ -567,6 +568,7 @@ export function OptionsDialog() {
   const [tab, setTab] = useState<'general' | 'buttons' | 'danger'>('general')
   const [confirmText, setConfirmText] = useState('')
   const [wiping, setWiping] = useState(false)
+  const [siblingUrl, setSiblingUrl] = useState(getManualSiblingUrl)
   const [sidecarUrl, setSidecarUrl] = useState(
     () => localStorage.getItem('dimcrochet.sidecarUrl') ?? location.origin,
   )
@@ -792,6 +794,24 @@ export function OptionsDialog() {
               placeholder="https://charts.example.com"
               spellCheck={false}
               data-testid="opt-sidecar-url"
+            />
+          </div>
+          <div className="form-row" data-testid="opt-sibling">
+            <span>
+              <strong>Companion app URL</strong>
+              <br />
+              <span className="hint">
+                Link to {siblingAppName()} when it runs on another address. Leave empty to
+                auto-detect it on this host (ports 8080/8081) via the sibling's sidecar.
+              </span>
+            </span>
+            <input
+              value={siblingUrl}
+              onChange={(e) => setSiblingUrl(e.target.value)}
+              onBlur={() => saveManualSiblingUrl(siblingUrl)}
+              placeholder="auto-detect"
+              spellCheck={false}
+              data-testid="opt-sibling-url"
             />
           </div>
         </div>

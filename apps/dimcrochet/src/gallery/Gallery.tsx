@@ -14,6 +14,7 @@ import { guideSvgPath } from '@dimcraft/core/geometry/guides'
 import { placementTransform } from '@dimcraft/core/geometry/transform'
 import { lineSvg } from '@dimcraft/core/render/markup'
 import { editedLabel, editedTimestamp } from '@dimcraft/core/ui/relativeTime'
+import { siblingAppName, useSiblingApp } from '@dimcraft/core/sibling'
 
 const SEEN_MINE_KEY = 'dimcrochet.seenMine'
 const SORT_KEY = 'dimcrochet.designsSort'
@@ -22,6 +23,7 @@ type Tab = 'starters' | 'mine'
 
 export function Gallery() {
   const clock24h = useStore((s) => s.clock24h)
+  const sibling = useSiblingApp()
   const [projects, setProjects] = useState<ProjectRecord[] | null>(null)
   const [renamingId, setRenamingId] = useState<string | null>(null)
   const [renameValue, setRenameValue] = useState('')
@@ -156,6 +158,15 @@ export function Gallery() {
           </div>
         </div>
         <div className="gallery-actions">
+          {sibling && (
+            <button
+              className="btn"
+              title={`Opens ${siblingAppName()} at ${sibling.url} — detected via the sibling app's sidecar`}
+              onClick={() => window.open(sibling.url, '_blank', 'noopener')}
+            >
+              Open {siblingAppName()} →
+            </button>
+          )}
           {hasClipboard() && (
             <button
               className="btn"

@@ -122,6 +122,10 @@ volumes:
 
 The volume mapping matters: `/data` holds the sidecar's encrypted short links, and without it every stack update starts from an empty store, breaking previously shared links. Pin `v0.8.0` (DimCrochet) or `dimknit-v0.1.0` (DimKnit) instead of `latest` if you want upgrades to be explicit. The images are public on GHCR — pulling needs no login.
 
+#### Linking the two apps
+
+When both apps run on the same host, each one detects the other automatically (via the sibling's sidecar identity handshake on the default ports 8080/8081) and shows an **Open DimKnit / DimCrochet →** button on its projects screen — a wrong app on that port is ignored. Custom ports, reverse-proxy paths or separate hosts are covered by a manual **Companion app URL** in Options → General. Serving both under one origin with path routing (`/crochet/`, `/knit/`) needs no detection at all — relative links just work.
+
 ### Plain Docker / docker compose
 
 ```bash

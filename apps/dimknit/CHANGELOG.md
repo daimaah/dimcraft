@@ -7,6 +7,17 @@ follows [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- **"Open DimCrochet →" companion link** — when a DimCrochet deployment
+  answers on the same host (default ports), the gallery offers a jump to it;
+  verified via the sibling's sidecar identity handshake. A manual companion
+  URL can be set in Options → General for custom ports or proxies.
+  (Underlying discovery machinery and the `/api/whoami` endpoint are core
+  changes — see the root CHANGELOG.)
+- **Legend spacing** — the legend title no longer crowds the first row of
+  entries (shared-rendering fix, also in DimCrochet).
+
+### Added
+
 - First development builds of DimKnit: knitting chart composer sharing the
   DimCraft chart-editor kernel.
 - CYC-style knitting palette (k, p, yo, k2tog, ssk, s2kp2, no-stitch) and a

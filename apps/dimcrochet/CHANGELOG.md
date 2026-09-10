@@ -12,6 +12,17 @@ and summarized in the [repository-root CHANGELOG](../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Added
+
+- **"Open DimKnit →" companion link** — when a DimKnit deployment answers on
+  the same host (default ports), the gallery offers a jump to it; verified
+  via the sibling's sidecar identity handshake. A manual companion URL can be
+  set in Options → General for custom ports or proxies. (Underlying
+  discovery machinery and the `/api/whoami` endpoint are core changes — see
+  the root CHANGELOG.)
+- **Legend spacing** — the legend title no longer crowds the first row of
+  entries (shared-rendering fix, also in DimKnit).
+
 ## [0.8.0] — 2026-09-09
 
 Community groundwork and animation polish: symbol packs get a curated
