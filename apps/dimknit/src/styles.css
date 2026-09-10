@@ -2128,3 +2128,23 @@ button {
   margin: 8px 0 0;
   font-size: 13px;
 }
+
+/* picture-import preview: original beside the quantized grid */
+.img-preview {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  max-height: 300px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 8px;
+  background: #fff;
+}
+
+.img-preview img {
+  max-width: 160px;
+  max-height: 260px;
+  object-fit: contain;
+}

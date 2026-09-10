@@ -9,6 +9,7 @@ import changelogRaw from '../../CHANGELOG.md?raw'
 import { InstructionsDialog } from './InstructionsDialog'
 import { ExportDialog } from './ExportDialog'
 import { PatternImportDialog } from './PatternImportDialog'
+import { ImageImportDialog } from './ImageImportDialog'
 import { useStore } from '../state/store'
 
 /** Dialog frame: draggable by its title bar, clamped to the viewport —
@@ -411,6 +412,7 @@ export function Dialogs() {
   if (dialog === 'instructions') return <InstructionsDialog />
   if (dialog === 'export') return <ExportDialog />
   if (dialog === 'pattern-import') return <PatternImportDialog />
+  if (dialog === 'image-import') return <ImageImportDialog />
   if (dialog === 'options') return <OptionsDialog />
   if (dialog === 'licenses') return <LicensesDialog />
   if (dialog === 'changelog') return <ChangelogDialog />

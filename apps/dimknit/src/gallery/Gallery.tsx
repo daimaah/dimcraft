@@ -172,6 +172,9 @@ export function Gallery() {
           <button className="btn" onClick={() => useStore.getState().openDialog('pattern-import')}>
             + From written rows
           </button>
+          <button className="btn" onClick={() => useStore.getState().openDialog('image-import')}>
+            + From picture
+          </button>
         </div>
       </header>
 

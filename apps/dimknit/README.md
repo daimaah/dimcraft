@@ -40,6 +40,9 @@ picked up if its maintainers ever step away.
   playback and speed control.
 - **Colourwork** — build a yarn palette (MC, CC1, CC2…), arm a yarn and paint cells; colours
   show in the legend, written instructions (`k3 CC1, k2tog MC`), follow mode and every export.
+- **Chart from picture** — turn a logo, silhouette or pixel-art image into a colourwork chart:
+  choose the chart width and yarn count, clean stray pixels, pick the background treatment, and
+  compare live against the original before creating anything.
 - **Chart furniture** — repeat brackets with auto-counts and ×N labels, row numbers printed where
   each row starts (right for RS rows, left for WS rows), column numbers along the bottom, and
   insert/delete of whole rows and columns.

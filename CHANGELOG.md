@@ -69,6 +69,15 @@ changes live in each app's own changelog:
   right-side row (no wrong-side reversal in written instructions or follow playback) and row
   numbers all print on the right. Sanitized into the document model.
 
+### Added (M9 — picture → colourwork chart)
+
+- **Guided image→chart pipeline in the core** (`import/imageChart.ts`): nearest-neighbour
+  downsampling to the stitch grid (uniform regions stay exact), deterministic k-means palette
+  quantization (2–8 yarns), an isolated-pixel cleanup pass, picture-aspect preservation against
+  the chart's cell aspect (gauge-aware), and three background treatments (blank background
+  stitches / its own yarn as MC / no-stitch placeholders). Pure pixel math, no DOM — unit-tested
+  and available to every craft app.
+
 ### Changed
 
 - `mirrorSelection` consults `craft.mirrorSymbol` when present: on a horizontal mirror the craft

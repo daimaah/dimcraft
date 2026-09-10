@@ -48,6 +48,11 @@ follows [Keep a Changelog](https://keepachangelog.com/).
   pattern's instructions reproduces its chart.
 - **True-scale PDF tiling** — charts larger than one A4 sheet at true scale now tile across
   pages (each page a full-size window of the chart) instead of silently shrinking to fit.
+- **Chart from picture** — the gallery's **＋ From picture** turns a photo or logo into a
+  colourwork chart: pick the chart width, how many yarns it needs (2–8, quantized), whether to
+  clean isolated pixels, and what the background becomes (background stitches / its own yarn as
+  MC / no-stitch placeholders) — with a live before/after preview on the chart's real gauge
+  proportions. The quantized colours become the chart's yarn palette, ready to relabel.
 
 ### Fixed
 
