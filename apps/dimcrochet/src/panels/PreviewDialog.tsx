@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useStore } from '../state/store'
 import { buildFabricSvg, previewRounds } from '../render/fabric'
-import { rasterizeSvgToPngBlob } from '../export/png'
+import { rasterizeSvgToPngBlob } from '@dimcraft/core/export/png'
 import { downloadBlob, safeFilename } from '@dimcraft/core/export/download'
 
 function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {

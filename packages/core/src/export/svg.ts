@@ -1,7 +1,7 @@
-import type { ChartDoc } from '@dimcraft/core/model/types'
-import { contentBBox } from '@dimcraft/core/geometry/bounds'
-import { guideSvgPath } from '@dimcraft/core/geometry/guides'
-import { placementTransform } from '@dimcraft/core/geometry/transform'
+import type { ChartDoc } from '../model/types'
+import { contentBBox } from '../geometry/bounds'
+import { guideSvgPath } from '../geometry/guides'
+import { placementTransform } from '../geometry/transform'
 import { bracketSvg, legendSvgPlaced, lineSvg, textSvg } from '../render/markup'
 import { getDefMap, symbolInner } from '../symbols/registry'
 

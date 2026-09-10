@@ -1,5 +1,5 @@
 import type { ChartDoc, Placement, SymbolDef, Vec } from '@dimcraft/core/model/types'
-import { getDefMap } from '../symbols/registry'
+import { getDefMap } from '@dimcraft/core/symbols/registry'
 
 export interface RoundGroup {
   meanRadius: number
@@ -76,14 +76,9 @@ export function smallestPeriod(runs: Run[]): number {
   return 0
 }
 
-export interface FollowStep {
-  label: string
-  text: string
-  ids: string[]
-  /** ids in true working order, for stitch-by-stitch playback */
-  order: string[]
-  radius: number | null
-}
+import type { FollowStep } from '@dimcraft/core/craft'
+
+export type { FollowStep }
 
 /**
  * Direction stitches are worked around a round, as seen on the chart (which

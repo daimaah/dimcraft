@@ -1,9 +1,9 @@
 import { jsPDF } from 'jspdf'
 import { svg2pdf } from 'svg2pdf.js'
-import type { ChartDoc } from '@dimcraft/core/model/types'
+import type { ChartDoc } from '../model/types'
 import { buildExportSvg, type SvgExportOptions } from './svg'
-import { downloadBlob, safeFilename } from '@dimcraft/core/export/download'
-import { computePdfLayout, type PaperFormat, type PageOrientation } from '@dimcraft/core/export/pdfLayout'
+import { downloadBlob, safeFilename } from './download'
+import { computePdfLayout, type PaperFormat, type PageOrientation } from './pdfLayout'
 
 export type { PaperFormat, PageOrientation }
 

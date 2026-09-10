@@ -10,11 +10,16 @@ repository log remains the complete, transparent record.
 
 ### Changed
 
+- **Shared chart editor is now craft-agnostic.** The crochet palette, bundled
+  symbol sets, regional terminology and the round-reading follow logic are
+  injected into the shared shell (canvas, symbol registry, exports, editor
+  state) through a registered craft module instead of being hard-wired — the
+  architectural step that lets sibling craft apps share the same editor. No
+  user-facing changes: same app, same features, same behaviour.
 - Repository restructured as the DimCraft monorepo (`packages/core` +
   `apps/dimcrochet`): the craft-agnostic chart-editor kernel (document model,
   geometry toolkit, interchange formats, storage, routing) now lives in a
-  shared core package, in preparation for sibling apps. No user-facing
-  changes — same app, same features, same formats.
+  shared core package.
 
 ### Fixed
 

@@ -1,7 +1,7 @@
-import type { ChartDoc, RepeatBracket, StitchLine, SymbolDef, TextElement } from '@dimcraft/core/model/types'
-import { LINE_LEGEND_ID } from '@dimcraft/core/model/types'
-import { legendItems } from '@dimcraft/core/geometry/legend'
-import { LEGEND_HEAD, LEGEND_ROW_H, LEGEND_W } from '@dimcraft/core/geometry/bounds'
+import type { ChartDoc, RepeatBracket, StitchLine, SymbolDef, TextElement } from '../model/types'
+import { LINE_LEGEND_ID } from '../model/types'
+import { legendItems } from '../geometry/legend'
+import { LEGEND_HEAD, LEGEND_ROW_H, LEGEND_W } from '../geometry/bounds'
 import { symbolInner } from '../symbols/registry'
 
 const r2 = (v: number) => Math.round(v * 100) / 100

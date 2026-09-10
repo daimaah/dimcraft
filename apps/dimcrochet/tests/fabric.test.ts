@@ -1,3 +1,4 @@
+import '../src/craft'
 import { describe, expect, it } from 'vitest'
 import { buildFabricSvg, fabricGlyph, previewRounds, shade } from '../src/render/fabric'
 import { createStarterDoc, } from '../src/model/starter'

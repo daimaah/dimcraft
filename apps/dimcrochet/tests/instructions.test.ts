@@ -1,3 +1,4 @@
+import '../src/craft'
 import { describe, expect, it } from 'vitest'
 import { checkRoundGrowth, followSteps, generateInstructions, groupRounds } from '../src/geometry/instructions'
 import { createStarterDoc } from '../src/model/starter'

@@ -1,18 +1,7 @@
-/**
- * Regional terminology presets: what each stitch is *called* per market.
- * Applying a preset fills the document's label overrides for the basic
- * stitch ladder; other symbol labels are left untouched.
- *
- * Abbreviations follow commonly published conventions (e.g. Yarn Council
- * US, UK guild charts, Novita/Sandra-style Nordic abbreviations). Deep-ladder
- * abbreviations vary between publishers — labels stay editable per chart.
- */
-export interface TerminologyPreset {
-  id: string
-  name: string
-  /** ids covered by this preset */
-  labels: Record<string, string>
-}
+import type { ChartDoc } from '@dimcraft/core/model/types'
+import type { TerminologyPreset } from '@dimcraft/core/craft'
+
+export type { TerminologyPreset }
 
 export const LADDER_IDS = ['ch', 'slst', 'sc', 'hdc', 'dc', 'tr', 'dtr', 'trtr'] as const
 
@@ -74,3 +63,18 @@ export const TERMINOLOGY_PRESETS: TerminologyPreset[] = [
     labels: { ch: 'вп', slst: 'сс', sc: 'сбн', hdc: 'псн', dc: 'ссн', tr: 'с2н', dtr: 'с3н', trtr: 'с4н' },
   },
 ]
+
+/**
+ * Apply a preset's labels to a document's overrides ('us' resets the ladder
+ * back to the US defaults). Wired into the craft module for the store's
+ * applyTerminology action.
+ */
+export function applyTerminologyToDoc(doc: ChartDoc, presetId: string): void {
+  if (presetId === 'us') {
+    for (const k of LADDER_IDS) delete doc.labelOverrides[k]
+    return
+  }
+  const preset = TERMINOLOGY_PRESETS.find((p) => p.id === presetId)
+  if (!preset) return
+  for (const [k, v] of Object.entries(preset.labels)) doc.labelOverrides[k] = v
+}

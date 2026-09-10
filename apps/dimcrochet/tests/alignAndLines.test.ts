@@ -1,7 +1,8 @@
+import '../src/craft'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { useStore } from '../src/state/store'
 import { cornersBBox, placementCorners } from '@dimcraft/core/geometry/transform'
-import { getDefMap } from '../src/symbols/registry'
+import { getDefMap } from '@dimcraft/core/symbols/registry'
 import type { ChartDoc } from '@dimcraft/core/model/types'
 
 beforeEach(() => {
@@ -123,12 +124,12 @@ describe('backstitch lines', () => {
     expect(after.placements).toHaveLength(2) // still in the document
     expect(after.placements[1].visible).toBe(false)
 
-    const { buildExportSvg } = await import('../src/export/svg')
+    const { buildExportSvg } = await import('@dimcraft/core/export/svg')
     const { svg } = buildExportSvg(after, { includeLegend: false })
     expect((svg.match(/<g transform="translate\(/g) ?? []).length).toBe(1)
 
     const { contentBBox } = await import('@dimcraft/core/geometry/bounds')
-    const { getDefMap } = await import('../src/symbols/registry')
+    const { getDefMap } = await import('@dimcraft/core/symbols/registry')
     const bbox = contentBBox(after, getDefMap(after), { includeLegend: false })
     expect(bbox!.w).toBeLessThan(50) // only the stitch at the origin remains
   })

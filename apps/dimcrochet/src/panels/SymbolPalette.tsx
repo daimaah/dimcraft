@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 import { useStore } from '../state/store'
-import { builtInDefsFor, normalizeCustomSvg, symbolInner } from '../symbols/registry'
+import { builtInDefsFor, normalizeCustomSvg, symbolInner } from '@dimcraft/core/symbols/registry'
 import { uid } from '@dimcraft/core/model/doc'
 
 export function SymbolPalette() {

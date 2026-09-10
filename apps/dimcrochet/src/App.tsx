@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { ChartCanvas } from './canvas/ChartCanvas'
+import { ChartCanvas } from '@dimcraft/core/canvas/ChartCanvas'
 import { Gallery } from './gallery/Gallery'
 import { FollowBar, stepFollow, toggleFollowPlayback } from './panels/FollowBar'
 import { Inspector } from './panels/Inspector'

@@ -1,21 +1,24 @@
-import { FRAME, type ChartDoc, type SymbolDef } from '@dimcraft/core/model/types'
-import { BUILT_IN_MAP } from './definitions'
+import { FRAME, type ChartDoc, type SymbolDef } from '../model/types'
 import { applySetToDefs, resolveSet } from './sets'
-
-export { BUILT_IN_SYMBOLS, BUILT_IN_MAP } from './definitions'
+import { getCraft } from '../craft'
 
 /** Built-in symbols with the document's symbol set applied (for the palette). */
 export function builtInDefsFor(doc: { symbolSet?: string; customSets?: CustomSetLike[] }): SymbolDef[] {
-  return [...applySetToDefs(new Map<string, SymbolDef>(BUILT_IN_MAP), resolveSet(doc).artwork).values()]
+  return [...applySetToDefs(baseMap(), resolveSet(doc).artwork).values()]
 }
 
 type CustomSetLike = { id: string; name: string; artwork: Record<string, string> }
 
 /** All symbols available in a document: set-styled built-ins plus custom symbols. */
 export function getDefMap(doc: ChartDoc): Map<string, SymbolDef> {
-  const map = new Map<string, SymbolDef>(BUILT_IN_MAP)
+  const map = baseMap()
   for (const s of doc.customSymbols) map.set(s.id, s)
   return applySetToDefs(map, resolveSet(doc).artwork)
+}
+
+/** The craft's base palette as an id → def map (fresh copy each call). */
+function baseMap(): Map<string, SymbolDef> {
+  return new Map<string, SymbolDef>(getCraft().baseSymbols.map((d) => [d.id, d]))
 }
 
 /** Symbol markup with the ink colour baked in. */

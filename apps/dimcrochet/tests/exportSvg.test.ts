@@ -1,5 +1,6 @@
+import '../src/craft'
 import { describe, expect, it } from 'vitest'
-import { buildExportSvg } from '../src/export/svg'
+import { buildExportSvg } from '@dimcraft/core/export/svg'
 import { createEmptyDoc, uid } from '@dimcraft/core/model/doc'
 import { createStarterDoc } from '../src/model/starter'
 import type { CircleGuide, Placement } from '@dimcraft/core/model/types'

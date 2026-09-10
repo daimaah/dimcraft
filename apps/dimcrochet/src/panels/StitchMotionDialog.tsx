@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useStore } from '../state/store'
-import { getDefMap } from '../symbols/registry'
+import { getDefMap } from '@dimcraft/core/symbols/registry'
 import { STITCH_MOTIONS, motionForAny } from '../motion/stitches'
 import { MotionPlayer } from './MotionPlayer'
 import { Modal } from './dialogs'

@@ -1,3 +1,4 @@
+import '../src/craft'
 import { describe, expect, it } from 'vitest'
 import { generateInstructions } from '../src/geometry/instructions'
 import { parsePattern } from '../src/geometry/patternParser'

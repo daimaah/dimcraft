@@ -1,5 +1,5 @@
 import { useStore } from '../state/store'
-import { getDefMap } from '../symbols/registry'
+import { getDefMap } from '@dimcraft/core/symbols/registry'
 import type { ChartDoc } from '@dimcraft/core/model/types'
 
 interface StitchGroup {

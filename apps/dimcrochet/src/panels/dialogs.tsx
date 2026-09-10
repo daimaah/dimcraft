@@ -1,6 +1,6 @@
 import { Fragment, useRef, useState } from 'react'
 import { useStore } from '../state/store'
-import { getDefMap } from '../symbols/registry'
+import { getDefMap } from '@dimcraft/core/symbols/registry'
 import { guideSample } from '@dimcraft/core/geometry/guides'
 import { contentBBox } from '@dimcraft/core/geometry/bounds'
 import { exportProjectFile } from '@dimcraft/core/export/projectFile'
@@ -15,8 +15,8 @@ import { DEFAULT_ORDER, PALETTE_BUTTONS } from '../ui/ToolPalette'
 import { Icon } from '@dimcraft/core/ui/icons'
 import changelogRaw from '../../../../CHANGELOG.md?raw'
 import type { RotationMode } from '@dimcraft/core/model/types'
-import type { SvgExportOptions } from '../export/svg'
-import type { PaperFormat, PageOrientation } from '../export/pdf'
+import type { SvgExportOptions } from '@dimcraft/core/export/svg'
+import type { PaperFormat, PageOrientation } from '@dimcraft/core/export/pdf'
 
 export function Modal({
   title,
@@ -285,15 +285,15 @@ export function ExportDialog() {
         background: background === 'white' ? '#ffffff' : null,
       }
       if (format === 'svg') {
-        const { buildExportSvg } = await import('../export/svg')
+        const { buildExportSvg } = await import('@dimcraft/core/export/svg')
         const { downloadBlob, safeFilename } = await import('@dimcraft/core/export/download')
         const { svg } = buildExportSvg(doc, opts)
         downloadBlob(`${safeFilename(projectName)}.svg`, new Blob([svg], { type: 'image/svg+xml' }))
       } else if (format === 'png') {
-        const { exportPng } = await import('../export/png')
+        const { exportPng } = await import('@dimcraft/core/export/png')
         await exportPng(doc, projectName, { ...opts, scale: pngScale })
       } else {
-        const { exportPdf } = await import('../export/pdf')
+        const { exportPdf } = await import('@dimcraft/core/export/pdf')
         await exportPdf(doc, projectName, { ...opts, format: pdfFormat, orientation, trueScale, unitsPer10cm: gauge })
       }
       useStore.getState().closeDialog()

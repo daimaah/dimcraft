@@ -1,3 +1,4 @@
+import '../src/craft'
 import { describe, expect, it } from 'vitest'
 import { STARTERS } from '../src/model/starters'
 import { generateInstructions } from '../src/geometry/instructions'

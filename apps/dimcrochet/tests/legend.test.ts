@@ -1,6 +1,7 @@
+import '../src/craft'
 import { describe, expect, it } from 'vitest'
 import { legendItems } from '@dimcraft/core/geometry/legend'
-import { getDefMap } from '../src/symbols/registry'
+import { getDefMap } from '@dimcraft/core/symbols/registry'
 import { createEmptyDoc, uid } from '@dimcraft/core/model/doc'
 import type { ChartDoc, Placement } from '@dimcraft/core/model/types'
 

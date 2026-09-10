@@ -1,6 +1,6 @@
-import type { ChartDoc } from '@dimcraft/core/model/types'
+import type { ChartDoc } from '../model/types'
 import { buildExportSvg, type SvgExportOptions } from './svg'
-import { downloadBlob, safeFilename } from '@dimcraft/core/export/download'
+import { downloadBlob, safeFilename } from './download'
 
 export interface PngExportOptions extends SvgExportOptions {
   scale: number

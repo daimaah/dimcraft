@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { GuideKind, Vec } from '@dimcraft/core/model/types'
-import { useStore, type Viewport } from '../state/store'
+import type { GuideKind, Vec } from '../model/types'
+import { activeStore, type Viewport } from '../state/store'
 import { getDefMap, symbolInner } from '../symbols/registry'
-import { placementTransform, cornersBBox, bboxesIntersect, placementCorners, type BBox } from '@dimcraft/core/geometry/transform'
-import { applySnap, collectSnapTargets, type SnapKind } from '@dimcraft/core/geometry/snap'
-import { guideHandles, applyGuideHandle } from '@dimcraft/core/geometry/handles'
-import { guideSvgPath } from '@dimcraft/core/geometry/guides'
-import { legendSize } from '@dimcraft/core/geometry/bounds'
+import { placementTransform, cornersBBox, bboxesIntersect, placementCorners, type BBox } from '../geometry/transform'
+import { applySnap, collectSnapTargets, type SnapKind } from '../geometry/snap'
+import { guideHandles, applyGuideHandle } from '../geometry/handles'
+import { guideSvgPath } from '../geometry/guides'
+import { legendSize } from '../geometry/bounds'
 import { bracketSvg, legendSvgPlaced, lineSvg, textSvg } from '../render/markup'
-import { applyLineHandle } from '@dimcraft/core/geometry/handles'
-import { followSteps } from '../geometry/instructions'
+import { applyLineHandle } from '../geometry/handles'
+import { getCraft } from '../craft'
 import type { DragPositions } from '../state/store'
 
 const GRID = 24
@@ -54,17 +54,17 @@ export function ChartCanvas() {
   const spaceRef = useRef(false)
   const dragRef = useRef<DragState | null>(null)
 
-  const doc = useStore((s) => s.doc)
-  const vp = useStore((s) => s.viewport)
-  const tool = useStore((s) => s.tool)
-  const guidesVisible = useStore((s) => s.guidesVisible)
-  const gridVisible = useStore((s) => s.gridVisible)
-  const selPlacements = useStore((s) => s.selPlacements)
-  const selGuides = useStore((s) => s.selGuides)
-  const selBrackets = useStore((s) => s.selBrackets)
-  const selTexts = useStore((s) => s.selTexts)
-  const selLines = useStore((s) => s.selLines)
-  const bracketStart = useStore((s) => s.bracketStart)
+  const doc = activeStore()((s) => s.doc)
+  const vp = activeStore()((s) => s.viewport)
+  const tool = activeStore()((s) => s.tool)
+  const guidesVisible = activeStore()((s) => s.guidesVisible)
+  const gridVisible = activeStore()((s) => s.gridVisible)
+  const selPlacements = activeStore()((s) => s.selPlacements)
+  const selGuides = activeStore()((s) => s.selGuides)
+  const selBrackets = activeStore()((s) => s.selBrackets)
+  const selTexts = activeStore()((s) => s.selTexts)
+  const selLines = activeStore()((s) => s.selLines)
+  const bracketStart = activeStore()((s) => s.bracketStart)
 
   const [marquee, setMarquee] = useState<Rect | null>(null)
   const [guidePreview, setGuidePreview] = useState<{ a: Vec; b: Vec } | null>(null)
@@ -87,7 +87,7 @@ export function ChartCanvas() {
   })
 
   const snapPoint = (world: Vec, ignore?: Vec): { pos: Vec; kind: SnapKind | null } => {
-    const st = useStore.getState()
+    const st = activeStore().getState()
     if (!st.snapEnabled) return { pos: world, kind: null }
     return applySnap(
       world,
@@ -100,7 +100,7 @@ export function ChartCanvas() {
 
   // ---- selection helpers --------------------------------------------------
   const selectOnDown = (kind: string, id: string, shift: boolean) => {
-    const st = useStore.getState()
+    const st = activeStore().getState()
     const key = SEL_KEY[kind as keyof typeof SEL_KEY] ?? 'selGuides'
     if (shift) {
       const cur = st[key]
@@ -126,7 +126,7 @@ export function ChartCanvas() {
   }
 
   const captureMoveOriginals = (): DragPositions => {
-    const st = useStore.getState()
+    const st = activeStore().getState()
     const sp = new Set(st.selPlacements)
     const stx = new Set(st.selTexts)
     const sb = new Set(st.selBrackets)
@@ -143,7 +143,7 @@ export function ChartCanvas() {
 
   // ---- pointer handlers ---------------------------------------------------
   const onPointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
-    const st = useStore.getState()
+    const st = activeStore().getState()
     if (e.button === 2) return
     svgRef.current?.setPointerCapture(e.pointerId)
     const local = localScreen(e)
@@ -204,14 +204,14 @@ export function ChartCanvas() {
       }
       if (kind === 'legend') {
         st.beginDrag()
-        const cur = useStore.getState()
+        const cur = activeStore().getState()
         dragRef.current = { kind: 'legend', startWorld: world, orig: { x: cur.doc.legend.x, y: cur.doc.legend.y } }
         return
       }
       const id = target.getAttribute('data-id')!
       selectOnDown(kind, id, e.shiftKey)
       if (kind === 'placement' || kind === 'text' || kind === 'bracket' || kind === 'line') {
-        useStore.getState().beginDrag()
+        activeStore().getState().beginDrag()
         dragRef.current = { kind: 'move', startWorld: world, moved: false, orig: captureMoveOriginals() }
       }
       return
@@ -223,7 +223,7 @@ export function ChartCanvas() {
   }
 
   const onPointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
-    const st = useStore.getState()
+    const st = activeStore().getState()
     const local = localScreen(e)
     const world = screenToWorld(local)
     st.setCursor(world)
@@ -320,7 +320,7 @@ export function ChartCanvas() {
   }
 
   const onPointerUp = (e: React.PointerEvent<SVGSVGElement>) => {
-    const st = useStore.getState()
+    const st = activeStore().getState()
     const d = dragRef.current
     dragRef.current = null
     setSnapDot(null)
@@ -394,9 +394,9 @@ export function ChartCanvas() {
       if (e.ctrlKey || e.metaKey) {
         // also covers trackpad pinch gestures
         const factor = Math.exp(-e.deltaY * 0.0012)
-        useStore.getState().zoomAt(factor, e.clientX - rect.left, e.clientY - rect.top)
+        activeStore().getState().zoomAt(factor, e.clientX - rect.left, e.clientY - rect.top)
       } else {
-        const st = useStore.getState()
+        const st = activeStore().getState()
         const dx = e.shiftKey ? e.deltaY : e.deltaX
         const dy = e.shiftKey ? 0 : e.deltaY
         st.setViewport({
@@ -439,18 +439,18 @@ export function ChartCanvas() {
   const selBracketSet = useMemo(() => new Set(selBrackets), [selBrackets])
   const selTextSet = useMemo(() => new Set(selTexts), [selTexts])
   const selLineSet = useMemo(() => new Set(selLines), [selLines])
-  const followActive = useStore((s) => s.followActive)
-  const followRound = useStore((s) => s.followRound)
-  const followTolerance = useStore((s) => s.followTolerance)
-  const followStitch = useStore((s) => s.followStitch)
-  const lefty = useStore((s) => s.lefty)
+  const followActive = activeStore()((s) => s.followActive)
+  const followRound = activeStore()((s) => s.followRound)
+  const followTolerance = activeStore()((s) => s.followTolerance)
+  const followStitch = activeStore()((s) => s.followStitch)
+  const lefty = activeStore()((s) => s.lefty)
 
   // follow mode: worked stitches stay at full ink, the rest fade. With a
   // stitch cursor active, everything up to and including the cursor is lit
   // and the next stitch to work gets a pulsing marker.
   const followView = useMemo(() => {
     if (!followActive) return null
-    const steps = followSteps(doc, followTolerance, lefty ? 'cw' : 'ccw')
+    const steps = getCraft().followSteps(doc, followTolerance, lefty ? 'cw' : 'ccw')
     if (steps.length === 0) return null
     const idx = Math.min(followRound, steps.length - 1)
     if (followStitch == null) {
@@ -478,7 +478,7 @@ export function ChartCanvas() {
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
-      onPointerLeave={() => useStore.getState().setCursor(null)}
+      onPointerLeave={() => activeStore().getState().setCursor(null)}
       onContextMenu={(e) => e.preventDefault()}
     >
       <defs>
