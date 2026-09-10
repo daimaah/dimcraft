@@ -23,6 +23,10 @@ changes live in each app's own changelog:
 - **Craft seam capabilities** — `paletteTools` (each app lists its own action-bar tools),
   `mirrorSymbol` (stitch-aware horizontal mirroring), and gating flags (`terminologyPresets`,
   `symbolPacks`, `gauge`) so panels only render what a craft can actually use.
+- **DimKnit is public-facing** — the READMEs now say so out loud: a "why another knitting chart
+  tool" positioning block and an honest status note in DimKnit's README (young app, release-quality
+  core, growing craft surface), refreshed feature lists (PDF export, share links, the shared
+  editor shell, knit-aware mirroring) and a keyboard-shortcut table.
 
 ### Changed
 

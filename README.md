@@ -205,8 +205,16 @@ knitting:
   **stitch-count accounting check** — yarn overs add a stitch, decreases take one away, and the
   app flags rows where the counts stop balancing
 - **Row-language follow mode** (same movable/auto-fitting bar), four learn-to-knit starters
-  (stockinette, 2×2 rib, seed stitch, eyelet lace), SVG/PNG export, own browser storage and
-  `.dimknit.json` files — charts never cross between the two apps
+  (stockinette, 2×2 rib, seed stitch, eyelet lace), and **knit-aware mirroring** — flipping a
+  selection swaps leaning decreases for their true mirror image (k2tog ↔ ssk), the way the
+  fabric actually reverses
+- **The same editor shell**: floating customizable action bar, inspector sidebar, SVG/PNG/PDF
+  export, encrypted share links, own browser storage and `.dimknit.json` files — charts never
+  cross between the two apps
+
+DimKnit is public and deployable today, and honest about its age: the charting core is
+release-quality, while colourwork, cables and in-the-round charts are still on the roadmap —
+see [its README](apps/dimknit/README.md) for status and positioning.
 
 ## File format & compatibility
 
@@ -292,4 +300,4 @@ The DimCraft apps were designed and developed with the assistance of Z.AI large 
 
 ## License & symbols
 
-DimCrochet is released under the **MIT License** (see [LICENSE](LICENSE)). The Standard (CYC-style), Japanese-style and Solid print symbol sets are original artwork created for DimCrochet under the same license. The **International variants (Commons)** set contains third-party Wikimedia Commons artwork under per-file licenses (CC BY-SA / CC BY / CC0 / Public Domain) — attribution for every symbol is shown in-app under **Licenses & attributions** (ⓘ in the toolbar, or the link on the projects screen), and travels inside exported packs. Imported symbol packs keep **their own licenses** the same way. Terminology follows widely published chart conventions; labels are editable per chart for regional differences (e.g. “tr” vs “dtr” UK/US conventions).
+Both apps are released under the **MIT License** (see [LICENSE](LICENSE)). The Standard (CYC-style), Japanese-style and Solid print symbol sets are original artwork created for DimCrochet under the same license. The **International variants (Commons)** set contains third-party Wikimedia Commons artwork under per-file licenses (CC BY-SA / CC BY / CC0 / Public Domain) — attribution for every symbol is shown in-app under **Licenses & attributions** (ⓘ in the toolbar, or the link on the projects screen), and travels inside exported packs. Imported symbol packs keep **their own licenses** the same way. DimKnit's knitting symbols are original artwork created for DimKnit, following Craft Yarn Council chart conventions. Terminology follows widely published chart conventions; labels are editable per chart for regional differences (e.g. “tr” vs “dtr” UK/US conventions).
