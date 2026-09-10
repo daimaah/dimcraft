@@ -8,6 +8,7 @@ import { Gallery } from './gallery/Gallery'
 import { FollowBar, stepFollow, toggleFollowPlayback } from './panels/FollowBar'
 import { Dialogs } from './panels/Dialogs'
 import { SymbolPalette } from './ui/SymbolPalette'
+import { StatusBar } from './ui/StatusBar'
 import { Toolbar } from './ui/Toolbar'
 import { useStore } from './state/store'
 
@@ -28,7 +29,6 @@ function fitCenter() {
 export default function App() {
   const projectId = useStore((s) => s.projectId)
   const followActive = useStore((s) => s.followActive)
-  const savedAt = useStore((s) => s.savedAt)
 
   // centre the view on the chart whenever a project opens
   useEffect(() => {
@@ -280,13 +280,7 @@ export default function App() {
           {followActive && <FollowBar />}
         </div>
       </div>
-      <footer className="statusbar">
-        <span>Row 1 sits at the bottom · RS rows read right-to-left</span>
-        <span>
-          {savedAt ? 'Saved' : 'Unsaved'} · everything stays in this browser — no account, no uploads · v
-          {__APP_VERSION__}
-        </span>
-      </footer>
+      <StatusBar />
       <Dialogs />
     </div>
   )
