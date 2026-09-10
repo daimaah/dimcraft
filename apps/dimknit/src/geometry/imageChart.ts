@@ -18,15 +18,25 @@ export interface ImageChartRequest {
 }
 
 export async function imageFileToPixels(file: File): Promise<PixelImage> {
-  const bitmap = await createImageBitmap(file)
-  const canvas = document.createElement('canvas')
-  canvas.width = bitmap.width
-  canvas.height = bitmap.height
-  const ctx = canvas.getContext('2d', { willReadFrequently: true })!
-  ctx.drawImage(bitmap, 0, 0)
-  const data = ctx.getImageData(0, 0, bitmap.width, bitmap.height)
-  bitmap.close()
-  return { width: data.width, height: data.height, data: data.data }
+  // decode through an <img> element: handles PNG/JPEG/WebP and — unlike
+  // createImageBitmap in Chromium — SVG files with intrinsic dimensions
+  const url = URL.createObjectURL(file)
+  try {
+    const img = new Image()
+    img.src = url
+    await img.decode()
+    const width = img.naturalWidth || 400
+    const height = img.naturalHeight || 300
+    const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })!
+    ctx.drawImage(img, 0, 0, width, height)
+    const data = ctx.getImageData(0, 0, width, height)
+    return { width, height, data: data.data }
+  } finally {
+    URL.revokeObjectURL(url)
+  }
 }
 
 export async function imageFileToChart(
