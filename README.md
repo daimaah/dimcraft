@@ -137,6 +137,18 @@ When both apps run, they find each other automatically and show an **Open DimKni
 - **Same host, default ports** — even without the env wiring, the frontends probe `8080`/`8081` as a fallback.
 - **Reverse-proxy paths, separate hosts** — set `SIBLING_URL` (a full base URL) on a service instead of `SIBLING_PORT`, or leave it to each user's manual **Companion app URL** in Options → General. Serving both under one origin with path routing (`/crochet/`, `/knit/`) needs no detection at all — relative links just work.
 
+  Separate domains, for example, wire up like this:
+
+  ```yaml
+  services:
+    dimcrochet:
+      environment:
+        - SIBLING_URL=https://knit.daimaah.fi
+    dimknit:
+      environment:
+        - SIBLING_URL=https://crochet.daimaah.fi
+  ```
+
 ### Plain Docker / docker compose
 
 ```bash
