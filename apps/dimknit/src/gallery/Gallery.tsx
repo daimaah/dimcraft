@@ -169,6 +169,9 @@ export function Gallery() {
           <button className="btn accent" onClick={() => create('Untitled chart')}>
             + New chart
           </button>
+          <button className="btn" onClick={() => useStore.getState().openDialog('pattern-import')}>
+            + From written rows
+          </button>
         </div>
       </header>
 

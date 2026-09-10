@@ -92,5 +92,6 @@ export function sanitizeDoc(input: unknown): ChartDoc | null {
           }
         : undefined,
     rowGauge: typeof d.rowGauge === 'number' && Number.isFinite(d.rowGauge) ? d.rowGauge : null,
+    inTheRound: d.inTheRound === true,
   }
 }

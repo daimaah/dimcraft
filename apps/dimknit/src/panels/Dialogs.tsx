@@ -8,6 +8,7 @@ import { IslandFullOpacityCheck, ToolbarOpacityField } from '@dimcraft/core/ui/T
 import changelogRaw from '../../CHANGELOG.md?raw'
 import { InstructionsDialog } from './InstructionsDialog'
 import { ExportDialog } from './ExportDialog'
+import { PatternImportDialog } from './PatternImportDialog'
 import { useStore } from '../state/store'
 
 /** Dialog frame: draggable by its title bar, clamped to the viewport —
@@ -409,6 +410,7 @@ export function Dialogs() {
   const dialog = useStore((s) => s.dialog)
   if (dialog === 'instructions') return <InstructionsDialog />
   if (dialog === 'export') return <ExportDialog />
+  if (dialog === 'pattern-import') return <PatternImportDialog />
   if (dialog === 'options') return <OptionsDialog />
   if (dialog === 'licenses') return <LicensesDialog />
   if (dialog === 'changelog') return <ChangelogDialog />

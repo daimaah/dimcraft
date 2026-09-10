@@ -191,6 +191,8 @@ export interface ChartDoc {
   numbering?: { rows: boolean; cols: boolean }
   /** knitting row gauge: rows per 10 cm (unitsPer10cm holds the stitch gauge) */
   rowGauge?: number | null
+  /** knitting in the round: every row is a right-side row (no WS reversal) */
+  inTheRound?: boolean
 }
 
 /** Legend key under which backstitch lines are listed. */

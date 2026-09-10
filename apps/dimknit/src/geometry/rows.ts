@@ -19,7 +19,7 @@ import { yarnName } from '@dimcraft/core/model/yarns'
 /** How each cell is *worked*, per side, following the RS/WS duality.
  *  Cable crossings mirror on the wrong side (a right cross reads as its
  *  left twin), and a leaned increase flips its lean. */
-const STITCH_WORDS: Record<string, { rs: string; ws: string }> = {
+export const STITCH_WORDS: Record<string, { rs: string; ws: string }> = {
   k: { rs: 'k', ws: 'p' },
   p: { rs: 'p', ws: 'k' },
   yo: { rs: 'yo', ws: 'yo' },
@@ -117,17 +117,20 @@ export function rowInstruction(row: KnitRow, allRs = false, yarns: Yarn[] = []):
   return `Row ${row.index} (${side}): ${runLength(toks)}`
 }
 
-/** All rows as written instructions, ready for a pattern sheet. */
+/** All rows as written instructions, ready for a pattern sheet. Charts
+ *  worked in the round read every row as a right-side row. */
 export function writtenInstructions(doc: ChartDoc, tolerance = 20, allRs = false): string[] {
   const yarns = doc.yarns ?? []
-  return groupRows(doc, tolerance).map((r) => rowInstruction(r, allRs, yarns))
+  return groupRows(doc, tolerance).map((r) => rowInstruction(r, allRs || doc.inTheRound === true, yarns))
 }
 
-/** Row-serpentine follow steps for the shared follow-mode bar. */
+/** Row-serpentine follow steps for the shared follow-mode bar. In the round,
+ *  every row is a right-side row read right-to-left. */
 export function followSteps(doc: ChartDoc, tolerance = 20, _dir: FollowDirection = 'ccw'): FollowStep[] {
   const yarns = doc.yarns ?? []
+  const allRs = doc.inTheRound === true
   return groupRows(doc, tolerance).map((row) => {
-    const side = row.side.toLowerCase() as 'rs' | 'ws'
+    const side: 'rs' | 'ws' = allRs ? 'rs' : (row.side.toLowerCase() as 'rs' | 'ws')
     const cells = side === 'ws' ? row.cells : [...row.cells].reverse()
     const toks = cells.map((c) => ({
       word: STITCH_WORDS[c.symbolId]?.[side] ?? c.symbolId,
@@ -135,7 +138,7 @@ export function followSteps(doc: ChartDoc, tolerance = 20, _dir: FollowDirection
     }))
     return {
       label: `Row ${row.index}`,
-      text: `Row ${row.index} (${row.side}): ${runLength(toks)}`,
+      text: `Row ${row.index} (${allRs ? 'RS' : row.side}): ${runLength(toks)}`,
       ids: cells.map((c) => c.id),
       order: cells.map((c) => c.id),
       radius: null,
@@ -166,13 +169,19 @@ export function mirrorSymbol(symbolId: string): string {
 }
 
 /** Grid geometry for chart furniture: row bands bottom-up with their worked
- *  side, and the x of every occupied column. Feeds row/column numbering and
- *  the inspector's rows & columns controls through the craft seam. */
+ *  side, and the x of every occupied column. In the round, every row is a
+ *  right-side row, so all row numbers print on the right. Feeds row/column
+ *  numbering and the inspector's rows & columns controls via the craft seam. */
 export function gridInfo(doc: ChartDoc, tolerance = 20): {
   rows: { index: number; y: number; side: 'RS' | 'WS' }[]
   colXs: number[]
 } {
-  const rows = groupRows(doc, tolerance).map((r) => ({ index: r.index, y: r.y, side: r.side }))
+  const round = doc.inTheRound === true
+  const rows = groupRows(doc, tolerance).map((r) => ({
+    index: r.index,
+    y: r.y,
+    side: round ? ('RS' as const) : r.side,
+  }))
   const xs = new Set(doc.placements.filter((p) => p.visible !== false).map((p) => p.x))
   return { rows, colXs: [...xs].sort((a, b) => a - b) }
 }

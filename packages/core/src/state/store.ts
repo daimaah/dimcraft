@@ -187,6 +187,7 @@ interface EditorState {
   setGauge: (unitsPer10cm: number | null) => void
   setRowGauge: (rowsPer10cm: number | null) => void
   setNumbering: (patch: Partial<{ rows: boolean; cols: boolean }>) => void
+  setInTheRound: (v: boolean) => void
   /** grid furniture: insert an empty band just above (below=false) or below
    *  (below=true) the pivot row, shifting the rest of the chart aside */
   insertGridRow: (atY: number, below: boolean) => void
@@ -946,6 +947,12 @@ export const createStore = (craft: CraftModule): EditorStore => {
           rows: patch.rows ?? d.numbering?.rows ?? false,
           cols: patch.cols ?? d.numbering?.cols ?? false,
         }
+      }),
+
+    setInTheRound: (v) =>
+      commit((d) => {
+        if (v) d.inTheRound = true
+        else delete d.inTheRound
       }),
 
     insertGridRow: (atY, below) =>

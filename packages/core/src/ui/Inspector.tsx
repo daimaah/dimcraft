@@ -459,6 +459,26 @@ export function Inspector() {
           </Row>
         </>
       )}
+      {craft.roundSupport && (
+        <>
+          <div className="panel-title">Working</div>
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={doc.inTheRound ?? false}
+              onChange={(e) => st.getState().setInTheRound(e.target.checked)}
+            />
+            <span>
+              <strong>Knitting in the round</strong>
+              <br />
+              <span className="hint">
+                Every row is a right-side row, read right-to-left — no wrong-side reversal. Row
+                numbers all print on the right.
+              </span>
+            </span>
+          </label>
+        </>
+      )}
       {craft.colourwork && (
         <>
           <div className="panel-title">Yarns</div>

@@ -18,7 +18,9 @@ export interface PdfExportOptions extends SvgExportOptions {
   unitsPer10cmY?: number | null
 }
 
-/** Vector PDF via svg2pdf, centred — fit-to-page or gauge-driven true scale. */
+/** Vector PDF via svg2pdf — fit-to-page, gauge-driven true scale, and when
+ *  the true size exceeds one sheet, tiled across pages (each page shows the
+ *  full chart shifted; viewers clip to the page). */
 export async function exportPdf(doc: ChartDoc, name: string, options: PdfExportOptions): Promise<void> {
   const { svg, width, height } = buildExportSvg(doc, options)
   const layout = computePdfLayout({
@@ -34,6 +36,17 @@ export async function exportPdf(doc: ChartDoc, name: string, options: PdfExportO
   const pdf = new jsPDF({ orientation: options.orientation === 'landscape' ? 'l' : 'p', unit: 'mm', format: options.format })
   const el = new DOMParser().parseFromString(svg, 'image/svg+xml').documentElement as unknown as SVGSVGElement
   // svg2pdf is async — output() before it settles produces blank pages
-  await svg2pdf(el, pdf, { x: layout.x, y: layout.y, width: layout.w, height: layout.h })
+  if (layout.tiles) {
+    const { cols, rows, pageW, pageH } = layout.tiles
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        if (r + c > 0) pdf.addPage()
+        // draw the full chart shifted so the tile's window lands on the page
+        await svg2pdf(el, pdf, { x: -c * pageW, y: -r * pageH, width: layout.w, height: layout.h })
+      }
+    }
+  } else {
+    await svg2pdf(el, pdf, { x: layout.x, y: layout.y, width: layout.w, height: layout.h })
+  }
   downloadBlob(`${safeFilename(name)}.pdf`, pdf.output('blob'))
 }

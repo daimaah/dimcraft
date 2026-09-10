@@ -139,7 +139,7 @@ export function ExportDialog() {
               checked={canTrueScale && trueScale}
               onChange={(e) => setTrueScale(e.target.checked)}
             />
-            {canTrueScale ? 'True scale — print at your gauge' : 'True scale — set stitch & row gauge first'}
+            {canTrueScale ? 'True scale — print at your gauge (tiles across pages when larger)' : 'True scale — set stitch & row gauge first'}
           </label>
         </>
       )}

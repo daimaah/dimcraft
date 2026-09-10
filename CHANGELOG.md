@@ -57,6 +57,16 @@ changes live in each app's own changelog:
   The legend run-length writes repeated non-plain operations as "×N" so "C4B ×2" never collapses
   into a fake five-stitch token.
 
+### Added (M8 — in the round + written rows; M6.1 — PDF tiling)
+
+- **True-scale PDF tiling** — when a chart's true size exceeds one sheet, the PDF export tiles it
+  across pages (each page shows the full chart shifted; viewers clip to the page) instead of
+  silently falling back to fit-to-page. Layout math + multi-page rendering in the shared core;
+  both apps' export dialogs note it.
+- **Knitting in the round** (`craft.roundSupport`) — a chart panel toggle: every row reads as a
+  right-side row (no wrong-side reversal in written instructions or follow playback) and row
+  numbers all print on the right. Sanitized into the document model.
+
 ### Changed
 
 - `mirrorSelection` consults `craft.mirrorSymbol` when present: on a horizontal mirror the craft

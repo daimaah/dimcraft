@@ -85,6 +85,9 @@ export interface CraftModule {
   /** Grid crafts: row/column furniture — numbering toggles and insert/delete
    *  of whole rows and columns in the inspector. */
   rowsAndColumns: boolean
+  /** Whether the craft's charts can be worked in the round: the chart panel
+   *  gets the toggle and the row engine reads every row as a right-side row. */
+  roundSupport?: boolean
   /** Grid geometry of the chart, for rendering row/column numbers. Absent:
    *  the craft has no grid and numbering stays hidden. */
   gridInfo?(doc: ChartDoc, tolerance: number): {

@@ -18,9 +18,14 @@ export interface PdfLayout {
   trueScaleApplied: boolean
   /** finished-fabric size in cm at true scale (null without a gauge) */
   trueSizeCm: { w: number; h: number } | null
+  /** multi-page tiling: when true scale exceeds one page's printable area,
+   *  the chart is cut into cols×rows pages (each page shows the full chart
+   *  shifted; viewers clip to the page). Present only when tiled. */
+  tiles?: { cols: number; rows: number; pageW: number; pageH: number }
 }
 
-/** Pure layout math: fit-to-page vs gauge-driven true scale. */
+/** Pure layout math: fit-to-page vs gauge-driven true scale, tiling across
+ *  pages when the true size exceeds one sheet. */
 export function computePdfLayout(input: {
   widthUnits: number
   heightUnits: number
@@ -60,6 +65,20 @@ export function computePdfLayout(input: {
         trueScaleApplied: true,
         trueSizeCm,
       }
+    }
+    // larger than one sheet: tile across pages, each showing the sheet-sized
+    // window of the chart at true scale
+    const cols = Math.ceil(w / availW)
+    const rows = Math.ceil(h / availH)
+    return {
+      scale: mmPerUnitX,
+      w,
+      h,
+      x: 0,
+      y: 0,
+      trueScaleApplied: true,
+      trueSizeCm,
+      tiles: { cols, rows, pageW: availW, pageH: availH },
     }
   }
   const w = input.widthUnits * fitScale

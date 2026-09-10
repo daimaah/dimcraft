@@ -36,6 +36,16 @@ follows [Keep a Changelog](https://keepachangelog.com/).
   wrong-side rows read the mirrored word (a C4B row reads C4F on the WS), and repeated operations
   write honestly ("C4B ×2", never a digit suffix). The legend renders wide symbols full-width
   with the label shifted beside them.
+- **Knitting in the round** — toggle in the chart panel: every row is a right-side row read
+  right-to-left, written instructions and follow mode speak right-side words on every row, and
+  all row numbers print on the right.
+- **Chart from written rows** — the gallery's **＋ From written rows** takes run-length row text
+  ("Row 3 (RS): k3, yo, k2tog, k3" — the same format the Rows dialog produces, counts, ×N
+  repeats, colourway names tolerated) and builds an editable chart. Rows are read serpentine and
+  wrong-side rows are inverted into the chart's right-side symbols automatically, so pasting a
+  pattern's instructions reproduces its chart.
+- **True-scale PDF tiling** — charts larger than one A4 sheet at true scale now tile across
+  pages (each page a full-size window of the chart) instead of silently shrinking to fit.
 - **Action bar** — the floating, draggable tool palette from DimCrochet, restyled for the knit
   shell: select/pan/place tools plus undo/redo, snapping, grid, guides, the zoom cluster
   (in/out/editable %/fit), fullscreen, licenses and options. Drag anywhere, collapse to a

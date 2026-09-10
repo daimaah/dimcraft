@@ -42,6 +42,7 @@ export const knitCraft: CraftModule = {
   colourwork: true,
   replaceOnStamp: true,
   rowsAndColumns: true,
+  roundSupport: true,
   gridInfo,
   gauge: {
     label: 'Stitches / 10 cm',

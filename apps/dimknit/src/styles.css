@@ -2106,3 +2106,18 @@ button {
   max-width: 260px;
   justify-self: end;
 }
+
+/* written-rows import dialog */
+.pattern-input {
+  width: 100%;
+  min-height: 180px;
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.pattern-summary {
+  margin: 8px 0 0;
+  font-size: 13px;
+}

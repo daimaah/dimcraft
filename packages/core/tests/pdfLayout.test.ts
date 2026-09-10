@@ -27,7 +27,7 @@ describe('pdf layout', () => {
     expect(l.trueSizeCm).toEqual({ w: 10, h: 10 })
   })
 
-  it('falls back to fit when the true-size chart overflows the page', () => {
+  it('tiles across pages when the true-size chart overflows the page', () => {
     const l = computePdfLayout({
       widthUnits: 2000,
       heightUnits: 2000,
@@ -36,8 +36,13 @@ describe('pdf layout', () => {
       unitsPer10cm: 10, // 1 unit = 1 cm → 20 m wide
       trueScale: true,
     })
-    expect(l.trueScaleApplied).toBe(false)
-    expect(l.w).toBeCloseTo(186, 1)
+    expect(l.trueScaleApplied).toBe(true)
+    expect(l.tiles).toBeDefined()
+    // 1 unit = 1 cm → the chart is 20,000 mm wide; printable area 186×273 mm
+    // → 108 columns × 74 rows of pages
+    expect(l.tiles!.cols).toBe(108)
+    expect(l.tiles!.rows).toBe(74)
+    expect(l.w).toBeCloseTo(20000, 1)
   })
 
   it('landscape uses the long edge', () => {
