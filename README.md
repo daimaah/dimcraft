@@ -1,4 +1,21 @@
-# DimCrochet
+# DimCraft
+
+**DimCraft is a family of sister apps for yarn-craft charting** — one repository, one shared
+chart-editor kernel, two separate products with their own identity, releases and container images:
+
+| App | Craft | Version | Container image |
+|---|---|---|---|
+| **DimCrochet** | crochet round & motif charts | v0.8.0 | `ghcr.io/daimaah/dimcrochet` |
+| **DimKnit** | knitting charts | v0.1.0 (first release in preparation) | `ghcr.io/daimaah/dimknit` |
+
+DimCraft itself has **no version number** — you always deploy a *specific app* at *its* version
+(see [Versioning](#versioning)). Both apps share the chart-editor kernel in
+[`packages/core`](packages/core) (document model, geometry, canvas, exports, interchange with the
+same format-compatibility guarantees), while everything craft-specific — symbols, reading
+direction, written instructions, animations — is the app's own. One Docker/Portainer stack file
+can run either app or both side by side ([Deploy](#deploy-with-docker--portainer)).
+
+## DimCrochet
 
 **Crochet round & motif chart composer** — draw granny squares, doilies, lace motifs and circular crochet charts in the browser, then export a clean SVG, transparent PNG or print-ready PDF. No account, no uploads: every chart lives in your browser's local storage.
 
@@ -32,19 +49,22 @@ See [ROADMAP.md](ROADMAP.md) for what's planned next and notes on design decisio
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173
+npm run dev        # DimCrochet on http://localhost:5173
+npm run dev:knit   # DimKnit   on http://localhost:5174
 ```
 
 Tests:
 
 ```bash
-npm test           # vitest
+npm test           # vitest — core + both apps
+npm run typecheck  # TypeScript across all packages
 ```
 
 Production build:
 
 ```bash
-npm run build      # typechecks, then emits dist/
+npm run build      # typechecks, then emits apps/dimcrochet/dist/
+npm run build -w @dimcraft/dimknit   # DimKnit's bundle
 npm run preview
 ```
 
@@ -141,24 +161,61 @@ docker compose up -d --build   # build & run DimCrochet on http://localhost:8080
 5. `Ctrl+E` → export SVG (for editing/printing), PNG (for patterns and Etsy listings) or PDF.
 6. `Ctrl+E` → **Create share link** to send the chart to someone — it travels inside the link, no server involved.
 
+## DimKnit
+
+**Knitting chart composer** — the knitting sibling
+([its own README](apps/dimknit/README.md)): a knitting chart is an *operation matrix* read
+serpentine, not a picture of the finished fabric, so DimKnit shares DimCrochet's editor but speaks
+knitting:
+
+- **CYC-style knit palette** — knit (blank cell), purl (dot), yarn over, k2tog / ssk / centered
+  double decrease, and grey "no stitch" placeholders for shaping
+- **Serpentine rows** — Row 1 sits at the bottom and is a right-side row worked right-to-left;
+  wrong-side rows read left-to-right, each cell translated through the RS/WS duality
+  (blank cell = knit on RS but *purl* on WS, `k2tog` becomes `p2tog`, …)
+- **Written instructions** run-length-encoded the way patterns print them (`k4, p2, k4`) and a
+  **stitch-count accounting check** — yarn overs add a stitch, decreases take one away, and the
+  app flags rows where the counts stop balancing
+- **Row-language follow mode** (same movable/auto-fitting bar), four learn-to-knit starters
+  (stockinette, 2×2 rib, seed stitch, eyelet lace), SVG/PNG export, own browser storage and
+  `.dimknit.json` files — charts never cross between the two apps
+
 ## File format & compatibility
 
-Chart and symbol-pack files use a versioned envelope (`{ app, version, name, doc }`). Every import path — file picker, drag-and-drop, IndexedDB — funnels through one migration gate, so files exported by older versions of DimCrochet keep opening, and unknown fields from newer versions are preserved rather than dropped. Real export fixtures live in `tests/fixtures/` and are exercised by the test suite on every run, so format drift is caught before it ships. When the schema changes, regenerate or hand-commit fixtures from the previous version:
+Chart and symbol-pack files use a versioned envelope (`{ app, version, name, doc }`) — keyed per
+app (`dimcrochet` / `dimknit`), so a crochet chart and a knitting chart are never confused: each
+app only opens its own envelopes and rejects the sibling's cleanly. Every import path — file
+picker, drag-and-drop, IndexedDB — funnels through one migration gate in the shared core, so
+files exported by older app versions keep opening, and unknown fields from newer versions are
+preserved rather than dropped. Real export fixtures live in `packages/core/tests/fixtures/` and
+are exercised by the test suite on every run, so format drift is caught before it ships. When the
+schema changes, regenerate or hand-commit fixtures from the previous version:
 
 ```bash
-GEN_FIXTURES=1 npx vitest run tests/fixtures/gen-fixtures.test.ts
+GEN_FIXTURES=1 npx vitest run apps/dimcrochet/tests/gen-fixtures.test.ts
 ```
 
 ## Versioning
 
-The current release is **v0.8.0**; the project started numbering at v0.5.0 (nothing in any license dictates a scheme). The
-running version and commit are shown in the gallery footer, the status bar, and the Licenses dialog.
-[CHANGELOG.md](CHANGELOG.md) summarizes each release transparently from the public commit
-history.
+**Each app versions independently; DimCraft itself has no version.** You deploy an app image, not
+"DimCraft", so every version question is answered by the app you run:
 
-Branching: day-to-day work lands on the `develop` branch (published as the `develop` Docker
-tag); `main` carries released code — every push to `main` is a passing build, tagged `main`
-and `latest` on GHCR, and a formal release adds a `vX.Y.Z` tag.
+- **DimCrochet** is versioned `vX.Y.Z` (currently **v0.8.0**, numbering started at v0.5.0 — no
+  license dictates a scheme): git tags `v0.8.0`, image `ghcr.io/daimaah/dimcrochet:v0.8.0`,
+  summarized in the root [CHANGELOG.md](CHANGELOG.md).
+- **DimKnit** is versioned `dimknit-vX.Y.Z` (first release **v0.1.0** in preparation): git tags
+  `dimknit-v0.1.0`, image `ghcr.io/daimaah/dimknit:dimknit-v0.1.0`, summarized in
+  [its own changelog](apps/dimknit/CHANGELOG.md).
+
+The two cadences are independent — a DimKnit patch release never moves DimCrochet's number, and
+vice versa. The running version and commit are shown inside each app (gallery footer, status bar,
+About dialog). The root `package.json` and the private core package sit at `0.0.0` on purpose:
+there is deliberately no umbrella version to check.
+
+Branching: day-to-day work lands on the `develop` branch (published as the `develop` Docker tag
+for both apps); `main` carries released code — every push to `main` is a passing build, tagged
+`main` and `latest` on GHCR, and a formal release adds a `vX.Y.Z` (DimCrochet) or `dimknit-vX.Y.Z`
+(DimKnit) tag.
 
 ## Contributing & community packs
 
@@ -198,7 +255,7 @@ Everything stays in your browser by default: charts live in IndexedDB, exports d
 
 ## AI assistance disclosure
 
-DimCrochet was designed and developed with the assistance of Z.AI large language models — **GLM-5.3-Flash** (primary) and **GLM-5.3** — including code generation, symbol artwork drafting, and documentation. All code is human-reviewed and released under the [MIT License](LICENSE) without warranty. The Standard, Japanese-style and Solid print symbol sets were drawn for this project; the International variants set consists of third-party Wikimedia Commons artwork under its own per-file licenses. Model attribution is kept up to date in the in-app Licenses & attributions dialog as the models in use change.
+The DimCraft apps were designed and developed with the assistance of Z.AI large language models — **GLM-5.3-Flash** (primary) and **GLM-5.3** — including code generation, symbol artwork drafting, and documentation. All code is human-reviewed and released under the [MIT License](LICENSE) without warranty. The Standard, Japanese-style and Solid print symbol sets were drawn for this project; the International variants set consists of third-party Wikimedia Commons artwork under its own per-file licenses. DimKnit's knitting symbols are likewise original artwork for the project, checked against the Craft Yarn Council chart conventions. Model attribution is kept up to date in the in-app Licenses & attributions dialog as the models in use change.
 
 ## License & symbols
 

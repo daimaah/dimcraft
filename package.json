@@ -1,8 +1,9 @@
 {
   "name": "dimcraft",
   "private": true,
-  "version": "0.8.0",
+  "version": "0.0.0",
   "type": "module",
+  "description": "DimCraft — family of yarn-craft chart apps: DimCrochet (crochet charts) and DimKnit (knitting charts) sharing the chart-editor kernel in packages/core. Apps version independently; see README > Versioning.",
   "workspaces": [
     "packages/*",
     "apps/*"

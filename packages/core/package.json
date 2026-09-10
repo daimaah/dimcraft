@@ -1,7 +1,7 @@
 {
   "name": "@dimcraft/core",
   "private": true,
-  "version": "0.8.0",
+  "version": "0.0.0",
   "type": "module",
-  "description": "Craft-agnostic chart-editor kernel shared by the DimCraft apps: document model, geometry toolkit, interchange formats, storage and routing."
+  "description": "Craft-agnostic chart-editor kernel shared by the DimCraft apps: document model, geometry toolkit, interchange formats, storage and routing. Private — never published, deliberately unversioned (see README > Versioning)."
 }
