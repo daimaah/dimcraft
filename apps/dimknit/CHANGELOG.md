@@ -69,6 +69,12 @@ follows [Keep a Changelog](https://keepachangelog.com/).
 - **The preview fits the whole design** — the rendered fabric frames the chart's actual
   bounding box, so charts whose stitches don't start at the grid origin (or sit at negative
   coordinates) render centred instead of shifted or cropped.
+- **The import suggests the picture's own colours** — the yarn count starts at the number of
+  distinct colours the picture actually uses (detected on the stitch grid), and those exact
+  colours become the yarns — no muddy k-means averages for SVGs, logos and pixel art. Photos
+  with many mid-size colours still quantize, now seeded from their most frequent colours.
+- **More reliable picture decode** — SVG rasterization races Chromium's internal layout and
+  can come out blank; the capture now verifies the draw painted real content and retries.
 - **Coloured stitches render as filled colour squares** (canvas, exports, gallery previews) —
   the colourwork convention; the legend highlights its grab area while hovered or dragged.
 - **Custom symbols** — import your own SVG glyphs (a missing cable crosser, a brand

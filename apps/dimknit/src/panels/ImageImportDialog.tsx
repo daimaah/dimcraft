@@ -36,7 +36,12 @@ export function ImageImportDialog() {
       return
     }
     try {
-      setPixels(await imageFileToPixels(f))
+      const px = await imageFileToPixels(f)
+      setPixels(px)
+      // suggest the picture's own yarn count: small palettes (SVGs, pixel
+      // art, logos) import with their exact colours
+      const detected = quantize(px, { widthStitches, colours: 8 }).detected
+      if (detected >= 2 && detected <= 8) setColours(detected)
     } catch {
       setError('That picture could not be read.')
       setPixels(null)

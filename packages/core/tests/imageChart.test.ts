@@ -51,6 +51,45 @@ describe('quantize', () => {
     const bottomGridRow = chart.cells[0]
     expect(bottomGridRow.every((c) => c === '#fafafa')).toBe(true)
   })
+
+  it('keeps the picture\'s own exact colours when few are detected', () => {
+    // four exact colour regions (like an SVG with a small palette)
+    const width = 40
+    const height = 30
+    const data = new Uint8ClampedArray(width * height * 4)
+    const put = (x0: number, y0: number, w: number, h: number, rgb: [number, number, number]) => {
+      for (let y = y0; y < y0 + h; y++) for (let x = x0; x < x0 + w; x++) {
+        const i = (y * width + x) * 4
+        data[i] = rgb[0]; data[i + 1] = rgb[1]; data[i + 2] = rgb[2]; data[i + 3] = 255
+      }
+    }
+    put(0, 0, 40, 30, [246, 239, 227])   // cream field
+    put(2, 2, 18, 12, [184, 67, 58])     // red
+    put(22, 2, 16, 12, [63, 125, 78])    // green
+    put(2, 16, 18, 12, [47, 111, 63])    // dark green
+    put(22, 16, 16, 12, [217, 111, 78])  // orange
+    const chart = quantize({ width, height, data }, { widthStitches: 20, colours: 8 })
+    // no invented averages: the palette IS the picture's own colours
+    // (order is by frequency, so assert the set)
+    expect(chart.detected).toBe(5)
+    expect([...chart.palette].sort()).toEqual([
+      '#2f6f3f', '#3f7d4e', '#b8433a', '#d96f4e', '#f6efe3',
+    ])
+  })
+
+  it('snaps rare sub-threshold colours to the nearest kept colour', () => {
+    // two exact colours + a single off-palette cell (1 of 100 < 2% threshold)
+    const img = image(10, 10, [240, 240, 240], { x: 0, y: 0, w: 5, h: 10, rgb: [180, 40, 40] })
+    const data = img.data as Uint8ClampedArray
+    data[(0 * 10 + 9) * 4 + 0] = 120
+    data[(0 * 10 + 9) * 4 + 1] = 120
+    data[(0 * 10 + 9) * 4 + 2] = 120
+    const chart = quantize(img, { widthStitches: 10, colours: 2 })
+    expect(chart.palette).toHaveLength(2)
+    // the blend cell resolved to one of the kept colours, not a third yarn
+    expect(chart.palette).toContain('#f0f0f0')
+    expect(chart.palette).toContain('#b42828')
+  })
 })
 
 describe('denoiseCells', () => {

@@ -38,6 +38,9 @@ export interface QuantizedChart {
   cells: (string | null)[][]
   /** quantized palette, most frequent first (index 0 = background) */
   palette: string[]
+  /** how many dominant colours the source picture itself has (the yarn-count
+   *  suggestion for the import dialog) */
+  detected: number
 }
 
 const hex = (r: number, g: number, b: number): string =>
@@ -70,12 +73,63 @@ export function quantize(image: PixelImage, options: ImageChartOptions): Quantiz
     }
   }
 
-  // --- k-means: even-spread seed, 8 refinement passes --------------------
-  const centres: { r: number; g: number; b: number }[] = []
-  for (let c = 0; c < colours; c++) {
-    const idx = Math.floor(((c + 0.5) / colours) * px.length)
-    centres.push({ ...px[idx] })
+  // --- the picture's own palette ------------------------------------------
+  // Count exact cell-colour frequencies. SVGs, logos and pixel art have a
+  // small true palette — those colours are kept EXACTLY (no invented
+  // averages). Anti-alias blends are one-offs and filtered by a 2-cell
+  // floor; photos have many mid-size colours and fall through to k-means
+  // seeded with their most frequent colours.
+  const freq = new Map<string, { n: number; r: number; g: number; b: number }>()
+  const exact: string[] = px.map((p) => hex(p.r, p.g, p.b))
+  for (let i = 0; i < px.length; i++) {
+    const e = freq.get(exact[i])
+    if (e) e.n++
+    else freq.set(exact[i], { n: 1, ...px[i] })
   }
+  const contentFloor = Math.max(2, Math.floor(px.length * 0.004))
+  const keepable = [...freq.entries()]
+    .map(([hexc, v]) => ({ hex: hexc, n: v.n, r: v.r, g: v.g, b: v.b }))
+    .sort((a, b) => b.n - a.n)
+    .filter((c) => c.n >= contentFloor)
+  let detected = keepable.length
+
+  if (keepable.length <= 64) {
+    // --- exact mode: keep the picture's own colours ------------------------
+    // the user's yarn count caps the palette; rarer colours snap to the
+    // nearest kept one rather than being averaged away
+    const palette = keepable.slice(0, colours).map((c) => c.hex)
+    const palRgb = keepable.slice(0, colours).map((c) => ({ r: c.r, g: c.g, b: c.b }))
+    const nearest = (r: number, g: number, b: number): number => {
+      let best = 0
+      let bestD = Infinity
+      palRgb.forEach((c, i) => {
+        const d = (r - c.r) ** 2 + (g - c.g) ** 2 + (b - c.b) ** 2
+        if (d < bestD) {
+          bestD = d
+          best = i
+        }
+      })
+      return best
+    }
+    const kept = new Set(palette)
+    const cells: (string | null)[][] = []
+    for (let row = 0; row < rows; row++) {
+      const line: (string | null)[] = []
+      for (let col = 0; col < cols; col++) {
+        const i = row * cols + col
+        const idx = kept.has(exact[i]) ? palette.indexOf(exact[i]) : nearest(px[i].r, px[i].g, px[i].b)
+        line.push(palette[idx] ?? palette[0])
+      }
+      cells.push(line)
+    }
+    cells.reverse()
+    return { cols, rows, cells, palette, detected }
+  }
+
+  // --- k-means: seeded with the most frequent colours, 8 refinement passes
+  const centres: { r: number; g: number; b: number }[] = keepable
+    .slice(0, colours)
+    .map((d) => ({ r: d.r, g: d.g, b: d.b }))
   const assign = new Array<number>(px.length).fill(0)
   for (let iter = 0; iter < 8; iter++) {
     let moved = false
@@ -141,7 +195,7 @@ export function quantize(image: PixelImage, options: ImageChartOptions): Quantiz
   // image row 0 is the TOP of the picture — flip so the grid reads bottom-up
   cells.reverse()
 
-  return { cols, rows, cells, palette }
+  return { cols, rows, cells, palette, detected }
 }
 
 /** Remove isolated single cells: any cell whose colour differs from all four
