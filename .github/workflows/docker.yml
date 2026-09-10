@@ -1,15 +1,16 @@
-name: Test and publish Docker image
+name: Test and publish Docker images
 
-# Tests run on every push and pull request; the Docker image is published only
-# after the tests (including the golden compatibility fixtures) pass.
-# Branch model: `develop` builds publish the `develop` tag; the default branch
-# `main` carries released code and refreshes `main` + `latest`; `v*` tags
-# publish `vX.Y.Z` + `latest`.
+# Tests run on every push and pull request; each app's Docker image is
+# published only after the tests (including the golden compatibility
+# fixtures) pass. Branch model: `develop` builds publish the `develop` tag;
+# the default branch `main` carries released code and refreshes `main` +
+# `latest`. `v*` tags publish DimCrochet releases, `dimknit-v*` tags publish
+# DimKnit releases (each as its own version tag + latest for the app).
 
 on:
   push:
     branches: [main, develop]
-    tags: ['v*']
+    tags: ['v*', 'dimknit-v*']
   pull_request:
   workflow_dispatch:
 
@@ -32,6 +33,10 @@ jobs:
   docker:
     needs: test
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [dimcrochet, dimknit]
     steps:
       - uses: actions/checkout@v7
 
@@ -46,12 +51,12 @@ jobs:
       - uses: docker/metadata-action@v6
         id: meta
         with:
-          # pinned to the dimcrochet package name, not derived from the repo
-          # (the repo is becoming `dimcraft`): an unpinned name would start
-          # publishing a new ghcr.io/daimaah/dimcraft image and strand existing
-          # deployments on a frozen dimcrochet one. Add dimknit as its own
-          # pinned entry when that app exists — never derive from repo name.
-          images: ghcr.io/${{ github.repository_owner }}/dimcrochet
+          # pinned to the per-app package names, not derived from the repo
+          # (the repo is `dimcraft`): an unpinned name would publish under a
+          # name that drifts with the repo and strand existing deployments.
+          # DimCrochet keeps ghcr.io/daimaah/dimcrochet, DimKnit gets
+          # ghcr.io/daimaah/dimknit.
+          images: ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}
           # default branch builds always refresh :latest, so deployments
           # tracking it get the newest passing build, not just releases
           tags: |
@@ -63,6 +68,7 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
+          build-args: APP=${{ matrix.app }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha

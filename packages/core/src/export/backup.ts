@@ -1,14 +1,15 @@
 import { clearProjects, listProjects, saveProject } from '../storage/db'
+import { APP_ID } from '../appId'
 import { downloadBlob, safeFilename } from './download'
 import type { BackupFile } from './projectFile'
 
 /**
- * Full-user backup: every saved project plus all dimcrochet.* settings from
+ * Full-user backup: every saved project plus all app-specific settings from
  * localStorage, in one downloadable JSON file. Restoring adds/overwrites
  * projects by id (other charts are kept) and replays the settings.
  */
 
-const SETTINGS_PREFIX = 'dimcrochet.'
+const SETTINGS_PREFIX = `${APP_ID}.`
 
 export async function createBackup(): Promise<BackupFile> {
   const projects = (await listProjects()).map(({ id, name, createdAt, updatedAt, doc }) => ({
@@ -27,13 +28,13 @@ export async function createBackup(): Promise<BackupFile> {
   } catch {
     /* storage unavailable */
   }
-  return { app: 'dimcrochet-backup', version: 1, savedAt: Date.now(), settings, projects }
+  return { app: `${APP_ID}-backup`, version: 1, savedAt: Date.now(), settings, projects }
 }
 
 export async function downloadBackup(): Promise<string> {
   const backup = await createBackup()
   const date = new Date(backup.savedAt).toISOString().slice(0, 10)
-  const filename = `${safeFilename(`dimcrochet-backup-${date}`)}.json`
+  const filename = `${safeFilename(`${APP_ID}-backup-${date}`)}.json`
   downloadBlob(filename, new Blob([JSON.stringify(backup)], { type: 'application/json' }))
   return filename
 }
@@ -52,12 +53,12 @@ export async function applyBackup(backup: BackupFile): Promise<number> {
   return backup.projects.length
 }
 
-/** Wipe everything local: all charts, all dimcrochet.* settings, the clipboard. */
+/** Wipe everything local: all charts, all app settings, the clipboard. */
 export async function deleteAllLocalData(): Promise<void> {
   await clearProjects()
   try {
     for (const key of Object.keys(localStorage)) {
-      if (key.startsWith('dimcrochet.')) localStorage.removeItem(key)
+      if (key.startsWith(SETTINGS_PREFIX)) localStorage.removeItem(key)
     }
   } catch {
     /* storage unavailable */

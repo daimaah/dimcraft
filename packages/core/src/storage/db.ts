@@ -1,8 +1,11 @@
 import { clear, createStore, del, entries, get, set } from 'idb-keyval'
 import { sanitizeDoc } from '../model/doc'
+import { APP_ID } from '../appId'
 import type { ChartDoc, ProjectRecord } from '../model/types'
 
-const store = typeof indexedDB !== 'undefined' ? createStore('dimcrochet-db', 'projects') : undefined
+// each app gets its own IndexedDB database so sibling apps in one browser
+// never share projects
+const store = typeof indexedDB !== 'undefined' ? createStore(`${APP_ID}-db`, 'projects') : undefined
 
 /** Migrate records saved by older app versions so every reader sees a full doc. */
 function migrate(rec: ProjectRecord): ProjectRecord {

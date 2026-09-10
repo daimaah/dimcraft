@@ -22,7 +22,7 @@ export default defineConfig({
     },
   },
   define: {
-    __APP_ID__: JSON.stringify('dimcrochet'),
+    __APP_ID__: JSON.stringify('dimknit'),
     __APP_VERSION__: JSON.stringify(pkg.version),
     __GIT_COMMIT__: JSON.stringify(gitHash),
   },
@@ -32,12 +32,12 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],
       manifest: {
-        name: 'DimCrochet — Crochet Chart Composer',
-        short_name: 'DimCrochet',
+        name: 'DimKnit — Knitting Chart Composer',
+        short_name: 'DimKnit',
         description:
-          'Draw granny squares, doilies, lace motifs and circular crochet charts. Place stitches evenly along circles, arcs, spirals and repeats — export SVG, PNG and PDF.',
-        theme_color: '#221f26',
-        background_color: '#faf8f4',
+          'Draw knitting charts on a stitch grid — flat rows read serpentine with RS/WS-aware written instructions. Export SVG, PNG and PDF.',
+        theme_color: '#1c2427',
+        background_color: '#f4f6f5',
         display: 'standalone',
         start_url: '/',
         icons: [

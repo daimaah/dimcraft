@@ -1,9 +1,10 @@
 import { sanitizeDoc, uid } from '../model/doc'
+import { APP_ID } from '../appId'
 import { downloadBlob, safeFilename } from './download'
 import type { ChartDoc, CustomSet, ProjectRecord } from '../model/types'
 
 export interface ProjectFile {
-  app: 'dimcrochet'
+  app: string
   version: number
   name: string
   savedAt: number
@@ -12,7 +13,7 @@ export interface ProjectFile {
 
 export function serializeProject(rec: ProjectRecord): string {
   const file: ProjectFile = {
-    app: 'dimcrochet',
+    app: APP_ID,
     version: 1,
     name: rec.name,
     savedAt: rec.updatedAt,
@@ -22,7 +23,7 @@ export function serializeProject(rec: ProjectRecord): string {
 }
 
 export function exportProjectFile(rec: ProjectRecord): void {
-  downloadBlob(`${safeFilename(rec.name)}.dimcrochet.json`, new Blob([serializeProject(rec)], { type: 'application/json' }))
+  downloadBlob(`${safeFilename(rec.name)}.${APP_ID}.json`, new Blob([serializeProject(rec)], { type: 'application/json' }))
 }
 
 /**
@@ -35,7 +36,7 @@ export async function readProjectFile(file: File): Promise<ProjectFile | null> {
 }
 
 export interface SymbolPackFile {
-  app: 'dimcrochet-symbol-pack'
+  app: string
   version: number
   name: string
   artwork: Record<string, string>
@@ -57,9 +58,9 @@ export type InterchangeImport =
   | { type: 'pack'; set: CustomSet }
   | { type: 'backup'; backup: BackupFile }
 
-/** A full-user backup: every project plus the app's dimcrochet.* settings. */
+/** A full-user backup: every project plus the app's own settings. */
 export interface BackupFile {
-  app: 'dimcrochet-backup'
+  app: string
   version: 1
   savedAt: number
   settings: Record<string, string>
@@ -69,7 +70,7 @@ export interface BackupFile {
 export function parseBackupText(text: string): BackupFile | null {
   try {
     const parsed = JSON.parse(text) as Partial<BackupFile>
-    if (!parsed || parsed.app !== 'dimcrochet-backup' || parsed.version !== 1 || !Array.isArray(parsed.projects)) {
+    if (!parsed || parsed.app !== `${APP_ID}-backup` || parsed.version !== 1 || !Array.isArray(parsed.projects)) {
       return null
     }
     const projects: BackupFile['projects'] = []
@@ -88,11 +89,11 @@ export function parseBackupText(text: string): BackupFile | null {
     const settings: Record<string, string> = {}
     if (parsed.settings && typeof parsed.settings === 'object') {
       for (const [k, v] of Object.entries(parsed.settings)) {
-        if (k.startsWith('dimcrochet.') && typeof v === 'string') settings[k] = v
+        if (k.startsWith(`${APP_ID}.`) && typeof v === 'string') settings[k] = v
       }
     }
     return {
-      app: 'dimcrochet-backup',
+      app: `${APP_ID}-backup`,
       version: 1,
       savedAt: typeof parsed.savedAt === 'number' ? parsed.savedAt : Date.now(),
       settings,
@@ -106,11 +107,11 @@ export function parseBackupText(text: string): BackupFile | null {
 function parseProjectText(text: string): ProjectFile | null {
   try {
     const parsed = JSON.parse(text) as Partial<ProjectFile>
-    if (!parsed || parsed.app !== 'dimcrochet' || !parsed.doc) return null
+    if (!parsed || parsed.app !== APP_ID || !parsed.doc) return null
     const doc = sanitizeDoc(parsed.doc)
     if (!doc) return null
     return {
-      app: 'dimcrochet',
+      app: APP_ID,
       version: parsed.version ?? 1,
       name: parsed.name ?? doc.title,
       savedAt: typeof parsed.savedAt === 'number' ? parsed.savedAt : Date.now(),
@@ -147,15 +148,15 @@ export function parseInterchangeText(text: string): InterchangeImport | null {
   try {
     const parsed = JSON.parse(text) as Record<string, unknown>
     if (!parsed || typeof parsed !== 'object') return null
-    if (parsed.app === 'dimcrochet-symbol-pack') {
+    if (parsed.app === `${APP_ID}-symbol-pack`) {
       const set = parsePackText(text)
       return set ? { type: 'pack', set } : null
     }
-    if (parsed.app === 'dimcrochet-backup') {
+    if (parsed.app === `${APP_ID}-backup`) {
       const backup = parseBackupText(text)
       return backup ? { type: 'backup', backup } : null
     }
-    if (parsed.app === 'dimcrochet') {
+    if (parsed.app === APP_ID) {
       const project = parseProjectText(text)
       return project ? { type: 'chart', name: project.name, doc: project.doc } : null
     }

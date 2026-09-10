@@ -9,8 +9,9 @@
   ],
   "scripts": {
     "dev": "npm run dev -w @dimcraft/dimcrochet",
+    "dev:knit": "npm run dev -w @dimcraft/dimknit",
     "build": "npm run typecheck && npm run build -w @dimcraft/dimcrochet",
-    "typecheck": "tsc --noEmit -p packages/core && tsc --noEmit -p apps/dimcrochet",
+    "typecheck": "tsc --noEmit -p packages/core && tsc --noEmit -p apps/dimcrochet && tsc --noEmit -p apps/dimknit",
     "preview": "npm run preview -w @dimcraft/dimcrochet",
     "test": "vitest run",
     "test:watch": "vitest",

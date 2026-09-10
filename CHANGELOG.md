@@ -8,6 +8,16 @@ repository log remains the complete, transparent record.
 
 ## [Unreleased]
 
+### Added
+
+- **DimKnit** (`apps/dimknit`) — a sibling app for knitting charts, built on
+  the same shared chart-editor kernel: CYC-style knit palette, serpentine row
+  reading with RS/WS-aware written instructions, follow mode, stitch-count
+  accounting, learn-to-knit starters, SVG/PNG export, its own container image
+  (`ghcr.io/daimaah/dimknit`, released with `dimknit-v*` tags) and its own
+  per-app browser storage. DimCrochet is unaffected — same features, same
+  formats, same image, and charts never cross between the two apps.
+
 ### Changed
 
 - **Toolchain majors:** TypeScript 7 (native compiler), Vite 8 (native

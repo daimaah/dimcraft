@@ -218,7 +218,7 @@ const isMain = process.argv[1] && import.meta.url === pathToFileURL(resolve(proc
 if (isMain) {
   const port = Number(process.env.PORT ?? 80)
   const dataDir = process.env.DATA_DIR ?? './data'
-  const maxAgeMs = Number(process.env.DIMCROCHET_MAX_AGE_HOURS ?? 720) * 3600 * 1000
+  const maxAgeMs = Number(process.env.DIMCRAFT_MAX_AGE_HOURS ?? process.env.DIMCROCHET_MAX_AGE_HOURS ?? 720) * 3600 * 1000
   const distDir = process.env.DIST_DIR ?? './dist'
   const { server } = startServer({ dataDir, distDir, maxAgeMs })
   server.listen(port, () => {
