@@ -84,7 +84,11 @@ export function buildExportSvg(doc: ChartDoc, options: SvgExportOptions = {}): B
     .map((p) => {
       const def = defMap.get(p.symbolId)
       if (!def) return ''
-      return `<g transform="${placementTransform(p)}">${symbolInner(def, p.colour ?? ink)}</g>`
+      // colourwork tile: the yarn colour fills the cell behind the glyph
+      const tile = p.colour
+        ? `<rect x="${def.bbox.x}" y="${def.bbox.y}" width="${def.bbox.w}" height="${def.bbox.h}" fill="${p.colour}" fill-opacity="0.85" stroke="none"/>`
+        : ''
+      return `<g transform="${placementTransform(p)}">${tile}${symbolInner(def, p.colour ?? ink)}</g>`
     })
     .join('')
   if (stitches) layer.push(`<g>${stitches}</g>`)

@@ -77,6 +77,13 @@ changes live in each app's own changelog:
   the chart's cell aspect (gauge-aware), and three background treatments (blank background
   stitches / its own yarn as MC / no-stitch placeholders). Pure pixel math, no DOM — unit-tested
   and available to every craft app.
+- **Coloured placements render as filled tiles** — a placement carrying a yarn colour draws
+  its cell filled with the yarn (85% opacity) behind the glyph, in the canvas, every export and
+  gallery previews. A tinted outline alone was nearly invisible for blank knit cells — the
+  convention for colourwork charts is solid colour squares, and that is what a picture import
+  now looks like. Symbol-only strokes (decreases, cables) keep their glyph on top of the tile.
+- **The legend shows its bounding box** — a dashed accent border appears while the pointer is
+  over the legend or while it is being dragged, making the grab area obvious.
 
 ### Added (M10 — grading model; knit polish)
 

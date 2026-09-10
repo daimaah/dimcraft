@@ -71,6 +71,8 @@ export function ChartCanvas() {
   const [linePreview, setLinePreview] = useState<{ a: Vec; b: Vec } | null>(null)
   const [snapDot, setSnapDot] = useState<{ pos: Vec; kind: SnapKind } | null>(null)
   const [spaceDown, setSpaceDown] = useState(false)
+  /** the legend shows its bounding box while the pointer is over it or while it is dragged */
+  const [legendActive, setLegendActive] = useState(false)
   const [panning, setPanning] = useState(false)
 
   const defMap = useMemo(() => getDefMap(doc), [doc])
@@ -547,6 +549,12 @@ export function ChartCanvas() {
               )
             }
             const selected = selPlacementSet.has(p.id)
+            // colourwork: a placement carrying a yarn colour renders as a
+            // filled tile behind its glyph — a tinted stroke on the blank-cell
+            // outline would be nearly invisible
+            const tile = p.colour
+              ? `<rect x="${def.bbox.x}" y="${def.bbox.y}" width="${def.bbox.w}" height="${def.bbox.h}" fill="${p.colour}" fill-opacity="0.85" stroke="none"/>`
+              : ''
             return (
               <g
                 key={p.id}
@@ -563,7 +571,7 @@ export function ChartCanvas() {
                       : undefined
                 }
               >
-                <g dangerouslySetInnerHTML={{ __html: symbolInner(def, p.colour ?? ink) }} />
+                <g dangerouslySetInnerHTML={{ __html: tile + symbolInner(def, p.colour ?? ink) }} />
                 {followView?.currentId === p.id && (
                   <circle
                     className="follow-cursor-ring"
@@ -630,10 +638,15 @@ export function ChartCanvas() {
         {doc.legend.visible && (
           <g
             data-kind="legend"
+            onPointerEnter={() => setLegendActive(true)}
+            onPointerLeave={() => setLegendActive(false)}
             dangerouslySetInnerHTML={{
               __html:
                 legendSvgPlaced(doc, defMap, ink) +
-                `<rect x="${doc.legend.x}" y="${doc.legend.y}" width="${legendBox.w}" height="${legendBox.h}" fill="transparent" />`,
+                `<rect x="${doc.legend.x}" y="${doc.legend.y}" width="${legendBox.w}" height="${legendBox.h}" fill="transparent" />` +
+                (legendActive || dragRef.current?.kind === 'legend'
+                  ? `<rect x="${doc.legend.x - 4}" y="${doc.legend.y - 4}" width="${legendBox.w + 8}" height="${legendBox.h + 8}" fill="none" stroke="#d96f4e" stroke-width="${1.4 / vp.zoom}" stroke-dasharray="6 4" rx="4" opacity="0.9"/>`
+                  : ''),
             }}
           />
         )}

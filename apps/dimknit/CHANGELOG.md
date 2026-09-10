@@ -59,6 +59,8 @@ follows [Keep a Changelog](https://keepachangelog.com/).
   clean isolated pixels, and what the background becomes (background stitches / its own yarn as
   MC / no-stitch placeholders) — with a live before/after preview on the chart's real gauge
   proportions. The quantized colours become the chart's yarn palette, ready to relabel.
+- **Coloured stitches render as filled colour squares** (canvas, exports, gallery previews) —
+  the colourwork convention; the legend highlights its grab area while hovered or dragged.
 - **Custom symbols** — import your own SVG glyphs (a missing cable crosser, a brand
   mark, an unusual decrease): they join the palette, arm like any stitch, and travel with
   exported charts.
