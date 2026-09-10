@@ -66,6 +66,9 @@ follows [Keep a Changelog](https://keepachangelog.com/).
   validated against reference photography of real stockinette and ribbing: a continuous
   fabric field (no tiles or gaps), fat V legs that tuck under the row above (chevron
   interlock), and purl bumps anchored at the bottom of their cells.
+- **The preview fits the whole design** — the rendered fabric frames the chart's actual
+  bounding box, so charts whose stitches don't start at the grid origin (or sit at negative
+  coordinates) render centred instead of shifted or cropped.
 - **Coloured stitches render as filled colour squares** (canvas, exports, gallery previews) —
   the colourwork convention; the legend highlights its grab area while hovered or dragged.
 - **Custom symbols** — import your own SVG glyphs (a missing cable crosser, a brand

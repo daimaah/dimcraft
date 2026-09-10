@@ -121,16 +121,32 @@ function jitterFor(row: number, col: number): { dx: number; dy: number } {
 }
 
 /** Simulated-knit 2D preview: every chart cell drawn as its RS fabric
- *  appearance in its yarn colour, rows at the chart's gauge aspect. */
+ *  appearance in its yarn colour, rows at the chart's gauge aspect. The
+ *  viewBox fits the design's actual bounding box (cells need not start at
+ *  the origin, and negative coordinates crop correctly rather than shifting
+ *  or clipping the fabric). */
 export function buildFabricSvg(doc: ChartDoc, options: FabricOptions): BuiltFabric {
   const aspect = gridAspect(doc)
   const placements = doc.placements.filter((p) => p.visible !== false && p.symbolId !== 'ns')
-  let cols = 1
-  let rows = 1
-  for (const p of placements) {
-    cols = Math.max(cols, Math.round(p.x / 24) + 1)
-    rows = Math.max(rows, Math.round(-p.y / 24) + 1)
+  if (placements.length === 0) {
+    const empty = `<rect x="0" y="0" width="200" height="120" fill="${options.background}"/>`
+    return { svg: empty, width: 200, height: 120 }
   }
+  // the design's bounding box in stitch columns/rows (row 0 = bottom)
+  let minCol = Infinity
+  let maxCol = -Infinity
+  let minRow = Infinity
+  let maxRow = -Infinity
+  for (const p of placements) {
+    const col = Math.round(p.x / 24)
+    const row = Math.round(-p.y / 24)
+    minCol = Math.min(minCol, col)
+    maxCol = Math.max(maxCol, col)
+    minRow = Math.min(minRow, row)
+    maxRow = Math.max(maxRow, row)
+  }
+  const cols = maxCol - minCol + 1
+  const rows = maxRow - minRow + 1
   const width = cols * 24 + MARGIN * 2
   const height = rows * 24 * aspect + MARGIN * 2
 
@@ -163,9 +179,14 @@ export function buildFabricSvg(doc: ChartDoc, options: FabricOptions): BuiltFabr
   }
   const cells = [bases.join(''), glyphs.join('')]
 
+  // normalize: shift the bounding box so the fabric sits centred in the
+  // viewBox (cells may live anywhere in world space, including negatives)
+  const offsetX = MARGIN - minCol * 24
+  const offsetY = MARGIN + maxRow * 24 * aspect
+
   const svg =
     `<rect x="0" y="0" width="${width}" height="${height}" fill="${options.background}"/>` +
-    `<g transform="translate(${MARGIN} ${MARGIN + rows * 24 * aspect}) scale(1 ${aspect})">${cells.join('')}</g>`
+    `<g transform="translate(${offsetX} ${offsetY}) scale(1 ${aspect})">${cells.join('')}</g>`
 
   return { svg, width, height }
 }
