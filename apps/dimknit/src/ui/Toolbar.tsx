@@ -42,6 +42,9 @@ export function Toolbar() {
       <button className="btn" onClick={() => st.getState().openDialog('instructions')} title="Written row-by-row instructions">
         <Icon name="list" /> Rows
       </button>
+      <button className="btn" onClick={() => st.getState().openDialog('preview')} title="2D fabric preview">
+        <Icon name="eye" /> Preview
+      </button>
       <button className="btn accent" onClick={() => st.getState().openDialog('export')} title="Export the chart">
         <Icon name="export" /> Export
       </button>

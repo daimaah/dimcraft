@@ -10,6 +10,7 @@ import { InstructionsDialog } from './InstructionsDialog'
 import { ExportDialog } from './ExportDialog'
 import { PatternImportDialog } from './PatternImportDialog'
 import { ImageImportDialog } from './ImageImportDialog'
+import { PreviewDialog } from './PreviewDialog'
 import { useStore } from '../state/store'
 
 /** Dialog frame: draggable by its title bar, clamped to the viewport —
@@ -413,6 +414,7 @@ export function Dialogs() {
   if (dialog === 'export') return <ExportDialog />
   if (dialog === 'pattern-import') return <PatternImportDialog />
   if (dialog === 'image-import') return <ImageImportDialog />
+  if (dialog === 'preview') return <PreviewDialog />
   if (dialog === 'options') return <OptionsDialog />
   if (dialog === 'licenses') return <LicensesDialog />
   if (dialog === 'changelog') return <ChangelogDialog />

@@ -48,6 +48,8 @@ picked up if its maintainers ever step away.
   insert/delete of whole rows and columns.
 - **Gauge & true-scale PDF** — set stitches and rows per 10 cm: cells take their real aspect (no
   square-knitting-cell compromise) and the vector PDF prints at true size.
+- **2D fabric preview** — see the chart as simulated knitted fabric (Vs, bumps, eyelets) in
+  your yarn colours, and download it as a PNG.
 - **Knit-aware editing** — the same editor shell as DimCrochet: a floating,
   customizable action bar (undo/redo, snapping, zoom, fullscreen), an
   inspector sidebar for selection and chart properties, and **mirroring that

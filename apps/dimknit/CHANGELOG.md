@@ -59,6 +59,10 @@ follows [Keep a Changelog](https://keepachangelog.com/).
   clean isolated pixels, and what the background becomes (background stitches / its own yarn as
   MC / no-stitch placeholders) — with a live before/after preview on the chart's real gauge
   proportions. The quantized colours become the chart's yarn palette, ready to relabel.
+- **2D fabric preview** — the toolbar's **Preview** renders the chart as simulated knitted
+  fabric: knit cells as columns of fat Vs, purls as bumps, eyelets as holes, crossings as fat
+  strands — in the yarn colours, with a handmade-jitter toggle, a main-yarn picker and a
+  PNG download. Cells render at the chart's gauge proportions.
 - **Coloured stitches render as filled colour squares** (canvas, exports, gallery previews) —
   the colourwork convention; the legend highlights its grab area while hovered or dragged.
 - **Custom symbols** — import your own SVG glyphs (a missing cable crosser, a brand

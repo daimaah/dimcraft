@@ -359,8 +359,15 @@ function MiniChart({ doc }: { doc: ChartDoc }) {
         {doc.placements.slice(0, 500).map((p) => {
           const def = defMap.get(p.symbolId)
           if (!def) return null
+          const tile = p.colour
+            ? `<rect x="${def.bbox.x}" y="${def.bbox.y}" width="${def.bbox.w}" height="${def.bbox.h}" fill="${p.colour}" fill-opacity="0.85" stroke="none"/>`
+            : ''
           return (
-            <g key={p.id} transform={placementTransform(p)} dangerouslySetInnerHTML={{ __html: symbolInner(def, p.colour ?? ink) }} />
+            <g
+              key={p.id}
+              transform={placementTransform(p)}
+              dangerouslySetInnerHTML={{ __html: tile + symbolInner(def, p.colour ?? ink) }}
+            />
           )
         })}
         {doc.lines.map((l) => (
