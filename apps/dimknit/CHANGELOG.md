@@ -62,7 +62,10 @@ follows [Keep a Changelog](https://keepachangelog.com/).
 - **2D fabric preview** — the toolbar's **Preview** renders the chart as simulated knitted
   fabric: knit cells as columns of fat Vs, purls as bumps, eyelets as holes, crossings as fat
   strands — in the yarn colours, with a handmade-jitter toggle, a main-yarn picker and a
-  PNG download. Cells render at the chart's gauge proportions.
+  PNG download. Cells render at the chart's gauge proportions, and the stitch anatomy was
+  validated against reference photography of real stockinette and ribbing: a continuous
+  fabric field (no tiles or gaps), fat V legs that tuck under the row above (chevron
+  interlock), and purl bumps anchored at the bottom of their cells.
 - **Coloured stitches render as filled colour squares** (canvas, exports, gallery previews) —
   the colourwork convention; the legend highlights its grab area while hovered or dragged.
 - **Custom symbols** — import your own SVG glyphs (a missing cable crosser, a brand
