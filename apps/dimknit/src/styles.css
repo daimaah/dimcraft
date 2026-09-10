@@ -232,6 +232,7 @@ button {
 
 .inspector-panel {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -826,6 +827,11 @@ button {
    Panels stay mounted and slide via width; gated by the animations toggle. */
 .side-wrap {
   flex: none;
+  /* flex column so the child panel's height is bounded and its
+     own overflow-y: auto engages — content taller than the viewport scrolls
+     instead of being clipped */
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   transition: width 0.2s ease, opacity 0.2s ease;
 }
@@ -844,7 +850,8 @@ button {
 }
 
 .side-wrap > * {
-  flex: none;
+  flex: 1;
+  min-height: 0;
 }
 
 :root[data-anim='off'] .side-wrap {

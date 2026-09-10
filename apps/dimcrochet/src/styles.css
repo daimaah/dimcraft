@@ -224,6 +224,7 @@ button {
 .right-col {
   width: 268px;
   flex: none;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   border-left: 1px solid var(--line);
@@ -232,6 +233,7 @@ button {
 
 .inspector-panel {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -491,6 +493,12 @@ button {
 }
 
 /* ---- layers -------------------------------------------------------------- */
+/* the layers panel shares the right column: it may shrink and scroll */
+.right-col > .layers {
+  flex: 0 1 auto;
+  min-height: 0;
+}
+
 .layers ul {
   list-style: none;
   margin: 6px 0;
@@ -826,6 +834,11 @@ button {
    Panels stay mounted and slide via width; gated by the animations toggle. */
 .side-wrap {
   flex: none;
+  /* flex column so the child panel's height is bounded and its
+     own overflow-y: auto engages — content taller than the viewport scrolls
+     instead of being clipped */
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   transition: width 0.2s ease, opacity 0.2s ease;
 }
@@ -844,7 +857,8 @@ button {
 }
 
 .side-wrap > * {
-  flex: none;
+  flex: 1;
+  min-height: 0;
 }
 
 :root[data-anim='off'] .side-wrap {

@@ -46,6 +46,14 @@ follows [Keep a Changelog](https://keepachangelog.com/).
   pattern's instructions reproduces its chart.
 - **True-scale PDF tiling** — charts larger than one A4 sheet at true scale now tile across
   pages (each page a full-size window of the chart) instead of silently shrinking to fit.
+
+### Fixed
+
+- **The side panels scroll when their content outgrows the window** — with the inspector's new
+  sections the chart panel's bottom (legend preview, Delete, rows & columns) was silently cut
+  off on shorter windows instead of being reachable by scrolling. Both side columns now bound
+  their panel's height so each panel scrolls internally; collapse animation and edge tabs are
+  unchanged.
 - **Action bar** — the floating, draggable tool palette from DimCrochet, restyled for the knit
   shell: select/pan/place tools plus undo/redo, snapping, grid, guides, the zoom cluster
   (in/out/editable %/fit), fullscreen, licenses and options. Drag anywhere, collapse to a

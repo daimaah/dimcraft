@@ -12,6 +12,15 @@ and summarized in the [repository-root CHANGELOG](../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Fixed
+
+- **The side panels scroll when their content outgrows the window** — the symbol palette (90+
+  symbols plus custom import) and the inspector/layers column silently clipped their lower
+  content on shorter windows instead of scrolling. Both side columns now bound their panel's
+  height so each panel scrolls internally; collapse animation and edge tabs are unchanged.
+- **The action bar's zoom controls (− % +) wrap as one block** when the floating palette runs
+  out of width, instead of stranding the − button at the end of the row.
+
 ## [0.9.0] — 2026-09-10
 
 The sibling release: DimKnit (the knitting chart composer) lands beside
