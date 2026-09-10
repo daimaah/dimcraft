@@ -15,6 +15,4 @@ follows [Keep a Changelog](https://keepachangelog.com/).
   follow mode, stitch-count accounting checks, four learn-to-knit starters,
   SVG/PNG export, per-app storage and encrypted short-link sidecar.
 
-## [0.1.0] — unreleased
-
-Initial development release.
+The first numbered release will be **0.1.0**, tagged `dimknit-v0.1.0`.

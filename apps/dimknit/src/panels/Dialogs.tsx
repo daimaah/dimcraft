@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { deleteAllLocalData } from '@dimcraft/core/export/backup'
+import { changelogBlocks, recentChangelog, unreleasedChangelog } from '@dimcraft/core/export/changelog'
+import changelogRaw from '../../CHANGELOG.md?raw'
 import { InstructionsDialog } from './InstructionsDialog'
 import { ExportDialog } from './ExportDialog'
 import { useStore } from '../state/store'
@@ -292,11 +294,80 @@ export function LicensesDialog() {
   )
 }
 
+/** Minimal inline-markdown rendering for changelog bodies: bold + code. */
+function inline(text: string): ReactNode[] {
+  const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`)/g).filter(Boolean)
+  return parts.map((p, i) => {
+    if (p.startsWith('**') && p.endsWith('**')) return <strong key={i}>{p.slice(2, -2)}</strong>
+    if (p.startsWith('`') && p.endsWith('`')) return <code key={i}>{p.slice(1, -1)}</code>
+    return <span key={i}>{p}</span>
+  })
+}
+
+/** Version history: the knit app's changelog, current release highlighted. */
+export function ChangelogDialog() {
+  const up = unreleasedChangelog(changelogRaw)
+  const { current, older } = recentChangelog(changelogRaw, __APP_VERSION__, 5)
+  const renderBody = (body: string) => (
+    <>
+      {changelogBlocks(body).map((b, i) =>
+        b.kind === 'heading' ? (
+          <h3 key={i}>{inline(b.text)}</h3>
+        ) : b.kind === 'bullets' ? (
+          <ul key={i}>
+            {b.items.map((item, j) => (
+              <li key={j}>{inline(item)}</li>
+            ))}
+          </ul>
+        ) : (
+          <p key={i}>{inline(b.text)}</p>
+        ),
+      )}
+    </>
+  )
+  return (
+    <Modal title="Version history" onClose={() => useStore.getState().closeDialog()} wide>
+      <p className="hint">
+        Showing the current release and the last five. The app's history lives in
+        apps/dimknit/CHANGELOG.md; the shared kernel and sidecar are versioned separately as the
+        DimCraft core (currently {__CORE_VERSION__}) — see the CHANGELOG.md at the repository root.
+      </p>
+      {up && (
+        <div className="changelog-entry unreleased">
+          <div className="changelog-head">
+            <strong>Changes coming in next version</strong>
+            <span className="level-chip level-3">unreleased</span>
+          </div>
+          {renderBody(up.body)}
+        </div>
+      )}
+      {current && (
+        <div className="changelog-entry current">
+          <div className="changelog-head">
+            <strong>v{current.version}</strong>
+            <span className="level-chip level-1">current</span>
+          </div>
+          {renderBody(current.body)}
+        </div>
+      )}
+      {older.map((e) => (
+        <div key={e.version} className="changelog-entry">
+          <div className="changelog-head">
+            <strong>v{e.version}</strong>
+          </div>
+          {renderBody(e.body)}
+        </div>
+      ))}
+    </Modal>
+  )
+}
+
 export function Dialogs() {
   const dialog = useStore((s) => s.dialog)
   if (dialog === 'instructions') return <InstructionsDialog />
   if (dialog === 'export') return <ExportDialog />
   if (dialog === 'options') return <OptionsDialog />
   if (dialog === 'licenses') return <LicensesDialog />
+  if (dialog === 'changelog') return <ChangelogDialog />
   return null
 }
