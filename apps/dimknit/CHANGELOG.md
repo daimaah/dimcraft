@@ -53,6 +53,17 @@ follows [Keep a Changelog](https://keepachangelog.com/).
   clean isolated pixels, and what the background becomes (background stitches / its own yarn as
   MC / no-stitch placeholders) — with a live before/after preview on the chart's real gauge
   proportions. The quantized colours become the chart's yarn palette, ready to relabel.
+- **Custom symbols** — import your own SVG glyphs (a missing cable crosser, a brand
+  mark, an unusual decrease): they join the palette, arm like any stitch, and travel with
+  exported charts.
+- **Fabric view** — a second symbol set ("Fabric (visual)") draws knit cells as columns of
+  V stitches and purls as bumps — the chart reads as the fabric it makes. Flip any chart
+  between symbolic and fabric in the inspector; yarn colours carry over.
+- **Graded sizes (M10)** — define named sizes (+8 sts, +16, …) in the chart panel: each size
+  adds background stitches symmetrically at both edges of the base chart, keeping the motif's
+  position. Written instructions show and download every size (one base chart, all sizes
+  derived from it — edits propagate automatically), and the export dialog renders SVG/PNG/PDF
+  for the selected size. True stitch-count grading, not naive scaling.
 
 ### Fixed
 

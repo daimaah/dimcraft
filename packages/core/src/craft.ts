@@ -88,6 +88,10 @@ export interface CraftModule {
   /** Whether the craft's charts can be worked in the round: the chart panel
    *  gets the toggle and the row engine reads every row as a right-side row. */
   roundSupport?: boolean
+  /** Whether the chart can be graded into named sizes: background-column
+   *  paddings applied symmetrically around the base chart, with per-size
+   *  written instructions and exports derived from the one canonical design. */
+  grading?: boolean
   /** Grid geometry of the chart, for rendering row/column numbers. Absent:
    *  the craft has no grid and numbering stays hidden. */
   gridInfo?(doc: ChartDoc, tolerance: number): {

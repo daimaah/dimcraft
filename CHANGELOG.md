@@ -78,6 +78,16 @@ changes live in each app's own changelog:
   stitches / its own yarn as MC / no-stitch placeholders). Pure pixel math, no DOM — unit-tested
   and available to every craft app.
 
+### Added (M10 — grading model; knit polish)
+
+- **Graded-size model** — `ChartDoc.sizes` (named symmetric background-column paddings) joins
+  the document model, sanitized on import; `craft.grading` gates the UI. Per-size instructions
+  and exports derive from the single base chart (edits propagate by construction); validation
+  runs per size and stays balanced since every row gains the same padding.
+- **Fabric artwork sets are data** — a second bundled symbol set flips a whole chart's artwork
+  through the existing set machinery (no new rendering code); the knit inspector's symbol-set
+  dropdown appears automatically once a craft bundles two sets.
+
 ### Changed
 
 - `mirrorSelection` consults `craft.mirrorSymbol` when present: on a horizontal mirror the craft

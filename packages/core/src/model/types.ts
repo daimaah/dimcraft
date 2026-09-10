@@ -165,6 +165,15 @@ export interface Yarn {
   name?: string
 }
 
+/** One graded size: a named background-column padding applied symmetrically
+ *  around the base chart. */
+export interface ChartSize {
+  id: string
+  name: string
+  /** extra background columns total (split left/right around the chart) */
+  pad: number
+}
+
 export interface ChartDoc {
   schemaVersion: number
   title: string
@@ -193,6 +202,9 @@ export interface ChartDoc {
   rowGauge?: number | null
   /** knitting in the round: every row is a right-side row (no WS reversal) */
   inTheRound?: boolean
+  /** graded sizes: named background-column paddings applied symmetrically
+   *  around the base chart (the base itself is not listed) */
+  sizes?: ChartSize[]
 }
 
 /** Legend key under which backstitch lines are listed. */

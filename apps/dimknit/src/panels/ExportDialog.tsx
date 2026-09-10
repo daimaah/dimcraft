@@ -6,6 +6,7 @@ import { exportPdf, type PageOrientation } from '@dimcraft/core/export/pdf'
 import { exportProjectFile } from '@dimcraft/core/export/projectFile'
 import { createShareFragment } from '@dimcraft/core/export/share'
 import { createShortLink, sidecarAvailable } from '@dimcraft/core/export/secureShare'
+import { sizeDoc } from '../geometry/rows'
 import { Modal } from './Dialogs'
 import { useStore } from '../state/store'
 
@@ -76,13 +77,21 @@ export function ExportDialog() {
     padding: 24,
   }
 
+  // graded sizes: exports derive from the base chart with the selected
+  // size's symmetric background padding; share links stay on the base
+  const sizes = doc.sizes ?? []
+  const [exportSizeId, setExportSizeId] = useState('base')
+  const exportSize = sizes.find((s) => s.id === exportSizeId)
+  const viewDoc = exportSize ? sizeDoc(doc, exportSize.pad) : doc
+
   const run = async () => {
     const safe = safeFilename(projectName)
+    const suffix = exportSize ? ` - ${exportSize.name.replace(/^[+\s]+/, '')}` : ''
     if (format === 'svg') {
-      const { svg } = buildExportSvg(doc, opts)
-      downloadBlob(`${safe}.svg`, new Blob([svg], { type: 'image/svg+xml' }))
+      const { svg } = buildExportSvg(viewDoc, opts)
+      downloadBlob(`${safe}${suffix}.svg`, new Blob([svg], { type: 'image/svg+xml' }))
     } else if (format === 'pdf') {
-      await exportPdf(doc, safe, {
+      await exportPdf(viewDoc, `${safe}${suffix}`, {
         ...opts,
         format: 'a4',
         orientation,
@@ -91,7 +100,7 @@ export function ExportDialog() {
         unitsPer10cmY: gaugeRows,
       })
     } else {
-      await exportPng(doc, safe, { ...opts, scale })
+      await exportPng(viewDoc, `${safe}${suffix}`, { ...opts, scale })
     }
     useStore.getState().closeDialog()
   }
@@ -109,6 +118,21 @@ export function ExportDialog() {
           <input type="radio" checked={format === 'pdf'} onChange={() => setFormat('pdf')} /> PDF (A4)
         </label>
       </div>
+      {sizes.length > 0 && (
+        <div className="field-row">
+          <label>
+            Size
+            <select value={exportSizeId} onChange={(e) => setExportSizeId(e.target.value)} data-testid="export-size">
+              <option value="base">Base chart</option>
+              {sizes.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      )}
       {format === 'png' && (
         <div className="field-row">
           <label>

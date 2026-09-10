@@ -186,6 +186,37 @@ export function gridInfo(doc: ChartDoc, tolerance = 20): {
   return { rows, colXs: [...xs].sort((a, b) => a - b) }
 }
 
+/**
+ * Grading: derive a size's chart from the base by adding `pad` background
+ * (knit) columns, split symmetrically around each row band's own extent.
+ * Motif placement is controlled — extra stitches only appear at the edges,
+ * so the pattern keeps its position relative to the centre. The base chart
+ * stays the single canonical design; every size is derived from it, so base
+ * edits propagate to all sizes by construction.
+ */
+export function sizeDoc(doc: ChartDoc, pad: number): ChartDoc {
+  if (!pad || pad <= 0) return doc
+  const left = Math.ceil(pad / 2)
+  const right = pad - left
+  const rows = groupRows(doc)
+  const extra: Placement[] = []
+  for (const row of rows) {
+    const xs = row.cells.map((c) => c.x)
+    const x0 = Math.min(...xs)
+    const x1 = Math.max(...xs)
+    for (let i = 1; i <= left; i++) {
+      extra.push({ id: `pad-${row.y}-l${i}`, symbolId: 'k', x: x0 - i * 24, y: row.y, rotation: 0, scale: 1, flip: false })
+    }
+    for (let i = 1; i <= right; i++) {
+      extra.push({ id: `pad-${row.y}-r${i}`, symbolId: 'k', x: x1 + i * 24, y: row.y, rotation: 0, scale: 1, flip: false })
+    }
+  }
+  return {
+    ...doc,
+    placements: [...doc.placements, ...extra],
+  }
+}
+
 /** Stitch-count accounting: the stitches row N works must equal the stitches
  *  row N-1 leaves. Every symbol declares how many stitches it WORKS (takes
  *  from the row below — k2tog takes 2, a 4-stitch cable takes 4, M1 takes 0:

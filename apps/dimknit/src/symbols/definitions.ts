@@ -108,3 +108,19 @@ export const KNIT_SYMBOLS: SymbolDef[] = [
   def('m1r', 'Make 1 right', 'M1R', `<path d="M 8 29 L 16 10" ${STROKE}/><path d="M 16 10 L 11 12.5 M 16 10 L 16.5 15.5" ${STROKE}/>`, [8, 9, 9, 21]),
   def('m1l', 'Make 1 left', 'M1L', `<path d="M 16 29 L 8 10" ${STROKE}/><path d="M 8 10 L 13 12.5 M 8 10 L 7.5 15.5" ${STROKE}/>`, [7, 9, 10, 21]),
 ]
+
+/**
+ * Fabric view: the same symbol ids drawn the way the FABRIC looks — knit
+ * cells as columns of V stitches, purl cells as horizontal bumps. Decreases,
+ * cables and yarn overs keep their conventional glyphs (a fabric rendering
+ * of a crossing would be unreadable at cell size). Offered as a second
+ * bundled symbol set, so the inspector's symbol-set dropdown flips the whole
+ * chart between symbolic and fabric views — per-stitch yarn colours carry
+ * over because artwork only ever uses the @INK@ token.
+ */
+export const FABRIC_ARTWORK: Record<string, string> = {
+  // knit: a column of V stitches (legs spread at the top, point at the bottom)
+  k: `<path d="M 6 13.5 L 12 28 M 18 13.5 L 12 28" ${STROKE}/><path d="M 6 13.5 L 12 15.5 M 18 13.5 L 12 15.5" ${STROKE} stroke-opacity="0.45"/>`,
+  // purl: a horizontal bump across the cell
+  p: `<path d="M 5.5 24.5 Q 12 14 18.5 24.5 Z" ${STROKE}/>`,
+}

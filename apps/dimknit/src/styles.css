@@ -340,8 +340,10 @@ button {
   align-items: stretch;
 }
 
-.custom-list li > .symbol-cell {
+.custom-list li > .symbol-cell,
+.custom-list li > .symbol-btn {
   flex: 1;
+  width: auto;
 }
 
 .hint {

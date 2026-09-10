@@ -93,5 +93,19 @@ export function sanitizeDoc(input: unknown): ChartDoc | null {
         : undefined,
     rowGauge: typeof d.rowGauge === 'number' && Number.isFinite(d.rowGauge) ? d.rowGauge : null,
     inTheRound: d.inTheRound === true,
+    sizes: Array.isArray(d.sizes)
+      ? (d.sizes as unknown[])
+          .filter(
+            (raw): raw is { id: string; name: string; pad: number } =>
+              !!raw &&
+              typeof raw === 'object' &&
+              typeof (raw as { id?: unknown }).id === 'string' &&
+              typeof (raw as { name?: unknown }).name === 'string' &&
+              typeof (raw as { pad?: unknown }).pad === 'number' &&
+              Number.isFinite((raw as { pad: number }).pad) &&
+              (raw as { pad: number }).pad > 0,
+          )
+          .map((sz) => ({ id: sz.id, name: sz.name, pad: Math.round(sz.pad) }))
+      : undefined,
   }
 }

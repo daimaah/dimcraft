@@ -1,5 +1,5 @@
 import { registerCraft, type CraftModule, type PaletteToolDef } from '@dimcraft/core/craft'
-import { KNIT_SYMBOLS } from './symbols/definitions'
+import { FABRIC_ARTWORK, KNIT_SYMBOLS } from './symbols/definitions'
 import { applyTerminologyToDoc } from './symbols/terminology'
 import { followSteps, gridInfo, mirrorSymbol } from './geometry/rows'
 
@@ -29,6 +29,13 @@ export const knitCraft: CraftModule = {
       license: 'MIT — original artwork for DimKnit',
       artwork: {},
     },
+    {
+      id: 'fabric',
+      name: 'Fabric (visual)',
+      description: 'Knit cells as V-stitch columns and purls as bumps — a visual fabric view; crossings stay symbolic.',
+      license: 'MIT — original artwork for DimKnit',
+      artwork: FABRIC_ARTWORK,
+    },
   ],
   defaultSymbolId: 'k',
   applyTerminology: applyTerminologyToDoc,
@@ -43,6 +50,7 @@ export const knitCraft: CraftModule = {
   replaceOnStamp: true,
   rowsAndColumns: true,
   roundSupport: true,
+  grading: true,
   gridInfo,
   gauge: {
     label: 'Stitches / 10 cm',

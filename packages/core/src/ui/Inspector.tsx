@@ -479,6 +479,59 @@ export function Inspector() {
           </label>
         </>
       )}
+      {craft.grading && (
+        <>
+          <div className="panel-title">Sizes</div>
+          {(doc.sizes ?? []).map((sz) => (
+            <Row key={sz.id}>
+              <input
+                type="text"
+                className="grow"
+                value={sz.name}
+                aria-label="Size name"
+                onChange={(e) =>
+                  st.getState().setSizes((doc.sizes ?? []).map((s) => (s.id === sz.id ? { ...s, name: e.target.value } : s)))
+                }
+              />
+              <NumField
+                label="+ sts"
+                value={sz.pad}
+                width={58}
+                onChange={(v) =>
+                  st.getState().setSizes((doc.sizes ?? []).map((s) => (s.id === sz.id ? { ...s, pad: Math.max(2, Math.round(v)) } : s)))
+                }
+              />
+              <button
+                className="icon-btn"
+                title={`Remove size ${sz.name}`}
+                onClick={() => st.getState().setSizes((doc.sizes ?? []).filter((s) => s.id !== sz.id))}
+              >
+                ✕
+              </button>
+            </Row>
+          ))}
+          <Row>
+            <button
+              className="btn"
+              onClick={() => {
+                const sizes = doc.sizes ?? []
+                const next = sizes.length ? Math.max(...sizes.map((s) => s.pad)) + 8 : 8
+                st
+                  .getState()
+                  .setSizes([...sizes, { id: `size-${Date.now().toString(36)}`, name: `+${next} sts`, pad: next }])
+              }}
+            >
+              ＋ Add size
+            </button>
+          </Row>
+          <p className="hint">
+            Sizes grade the chart by adding background stitches symmetrically at both edges — the
+            motif keeps its position, and every size's instructions and exports derive from this
+            one base chart, so edits propagate automatically. Written instructions (Rows) can show
+            and download each size.
+          </p>
+        </>
+      )}
       {craft.colourwork && (
         <>
           <div className="panel-title">Yarns</div>

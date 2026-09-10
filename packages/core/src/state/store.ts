@@ -9,6 +9,7 @@ import type {
   Tool,
   Vec,
   Yarn,
+  ChartSize,
 } from '../model/types'
 import { createEmptyDoc, sanitizeDoc, uid } from '../model/doc'
 import { guideCenter, guideSample } from '../geometry/guides'
@@ -188,6 +189,8 @@ interface EditorState {
   setRowGauge: (rowsPer10cm: number | null) => void
   setNumbering: (patch: Partial<{ rows: boolean; cols: boolean }>) => void
   setInTheRound: (v: boolean) => void
+  /** replace the graded-size list (one call = one undo step) */
+  setSizes: (sizes: ChartSize[]) => void
   /** grid furniture: insert an empty band just above (below=false) or below
    *  (below=true) the pivot row, shifting the rest of the chart aside */
   insertGridRow: (atY: number, below: boolean) => void
@@ -953,6 +956,11 @@ export const createStore = (craft: CraftModule): EditorStore => {
       commit((d) => {
         if (v) d.inTheRound = true
         else delete d.inTheRound
+      }),
+
+    setSizes: (sizes) =>
+      commit((d) => {
+        d.sizes = sizes.length ? sizes : undefined
       }),
 
     insertGridRow: (atY, below) =>
