@@ -29,20 +29,29 @@ export function shade(hex: string, t: number): string {
 const Y = 'fill="none" stroke="@YARN@" stroke-linecap="round" stroke-linejoin="round"'
 const H = 'fill="none" stroke="@HI@" stroke-linecap="round"'
 
-/** one knit V: two fat legs converging at the bottom point */
+// Real-stockinette anatomy (vs reference photography): the fabric is
+// CONTINUOUS — fat Vs spread nearly the full stitch width, each row tucks
+// under the one above, and the darker between-stitch tone shows only in
+// small triangles. So: full-bleed base fill, fat slightly-curved legs whose
+// point overlaps the next row, and bottom-up paint order for the interlock.
+
+/** one knit V: two fat, slightly curved legs converging into a point that
+ *  reaches past the cell bottom (the row above's tile covers it) */
 function knitV(cx: number, top: number, bottom: number, spread: number): string {
   return (
-    `<path d="M ${cx - spread} ${top} L ${cx} ${bottom}" ${Y} stroke-width="3.6"/>` +
-    `<path d="M ${cx + spread} ${top} L ${cx} ${bottom}" ${Y} stroke-width="3.6"/>` +
-    `<path d="M ${cx - spread + 0.8} ${top + 1.5} L ${cx - 0.4} ${bottom - 2}" ${H} stroke-width="1.1" opacity="0.65"/>`
+    `<path d="M ${cx - spread} ${top} C ${cx - spread + 0.6} ${(top + bottom) / 2} ${cx - 1.5} ${bottom - 6} ${cx} ${bottom}" ${Y} stroke-width="4.2"/>` +
+    `<path d="M ${cx + spread} ${top} C ${cx + spread - 0.6} ${(top + bottom) / 2} ${cx + 1.5} ${bottom - 6} ${cx} ${bottom}" ${Y} stroke-width="4.2"/>` +
+    `<path d="M ${cx - spread + 1.1} ${top + 2} C ${cx - spread + 1.5} ${(top + bottom) / 2} ${cx - 1.2} ${bottom - 5.5}" ${H} stroke-width="1.2" opacity="0.6"/>`
   )
 }
 
-/** one purl bump: a horizontal dome sitting on the cell's baseline */
+/** one purl bump: a full-width horizontal dome anchored at the BOTTOM of the
+ *  cell (where real purl bumps sit), with a recessed shadow above it */
 function purlBump(cx: number, cy: number, w: number): string {
   return (
-    `<path d="M ${cx - w} ${cy + 2.6} Q ${cx} ${cy - 6.4} ${cx + w} ${cy + 2.6} Z" fill="@YARN@" stroke="none"/>` +
-    `<path d="M ${cx - w + 1.4} ${cy + 0.6} Q ${cx} ${cy - 4.6} ${cx + w - 1.4} ${cy + 0.6}" ${H} stroke-width="1.1" opacity="0.7"/>`
+    `<path d="M ${cx - w} ${cy + 4.5} Q ${cx} ${cy - 6} ${cx + w} ${cy + 4.5} Z" fill="@YARN@" stroke="none"/>` +
+    `<path d="M ${cx - w + 1.4} ${cy + 2.6} Q ${cx} ${cy - 3.8} ${cx + w - 1.4} ${cy + 2.6}" ${H} stroke-width="1.2" opacity="0.7"/>` +
+    `<path d="M ${cx - w} ${cy - 4.5} L ${cx + w} ${cy - 4.5}" stroke="@DK@" stroke-width="1.6" opacity="0.45"/>`
   )
 }
 
@@ -55,36 +64,36 @@ function fatStrand(x0: number, x1: number, top: number, bottom: number, broken: 
     const ax = x0 + (x1 - x0) * 0.4
     const bx = x0 + (x1 - x0) * 0.6
     return (
-      `<path d="M ${x0} ${y0} L ${ax} ${(y0 + y1) / 2 - 1.5}" ${Y} stroke-width="3.4"/>` +
-      `<path d="M ${bx} ${(y0 + y1) / 2 + 1.5} L ${x1} ${y1}" ${Y} stroke-width="3.4"/>`
+      `<path d="M ${x0} ${y0} L ${ax} ${(y0 + y1) / 2 - 2}" ${Y} stroke-width="3.8"/>` +
+      `<path d="M ${bx} ${(y0 + y1) / 2 + 2} L ${x1} ${y1}" ${Y} stroke-width="3.8"/>`
     )
   }
-  return `<path d="M ${x0} ${y0} L ${x1} ${y1}" ${Y} stroke-width="3.4"/>`
+  return `<path d="M ${x0} ${y0} L ${x1} ${y1}" ${Y} stroke-width="3.8"/>`
 }
 
 /** fabric artwork per symbol id; unknown ids fall back to a plain knit V */
 const FABRIC: Record<string, string> = {
-  k: knitV(12, 9, 28.5, 5.4),
-  p: purlBump(12, 18, 6.4),
+  k: knitV(12, 8.5, 31, 7.4),
+  p: purlBump(12, 21, 7.4),
   yo:
     `<circle cx="12" cy="18.5" r="5" fill="none" stroke="@DK@" stroke-width="1.2" opacity="0.5"/>` +
     `<circle cx="12" cy="18.5" r="4" fill="none" stroke="@YARN@" stroke-width="2.6"/>` +
     `<path d="M 9.6 16.4 A 4 4 0 0 1 13.6 15.4" ${H} stroke-width="1" opacity="0.7"/>`,
   k2tog:
-    knitV(15, 10, 28, 4) +
-    `<path d="M 8 28 C 10.5 22 12.5 16 14.2 12.5" fill="none" stroke="@DK@" stroke-width="2.4" stroke-linecap="round" opacity="0.75"/>`,
+    knitV(15, 10, 30, 5.5) +
+    `<path d="M 8 30 C 10.5 24 12.5 17 14.2 13" fill="none" stroke="@DK@" stroke-width="2.6" stroke-linecap="round" opacity="0.75"/>`,
   ssk:
-    knitV(9, 10, 28, 4) +
-    `<path d="M 16 28 C 13.5 22 11.5 16 9.8 12.5" fill="none" stroke="@DK@" stroke-width="2.4" stroke-linecap="round" opacity="0.75"/>`,
+    knitV(9, 10, 30, 5.5) +
+    `<path d="M 16 30 C 13.5 24 11.5 17 9.8 13" fill="none" stroke="@DK@" stroke-width="2.6" stroke-linecap="round" opacity="0.75"/>`,
   s2kp2:
-    knitV(12, 8, 28.5, 4.6) +
-    `<path d="M 5.5 12.5 Q 12 7.5 18.5 12.5" fill="none" stroke="@DK@" stroke-width="2.2" stroke-linecap="round" opacity="0.7"/>`,
-  c4b: fatStrand(4.5, 19.5, 9, 28.5, false) + fatStrand(19.5, 4.5, 9, 28.5, true),
-  c4f: fatStrand(4.5, 19.5, 9, 28.5, true) + fatStrand(19.5, 4.5, 9, 28.5, false),
-  rt: fatStrand(7.5, 16.5, 11, 27, false) + fatStrand(16.5, 7.5, 11, 27, true),
-  lt: fatStrand(7.5, 16.5, 11, 27, true) + fatStrand(16.5, 7.5, 11, 27, false),
-  m1r: knitV(13, 12, 28, 4.2) + `<path d="M 7 24.5 L 10.4 21.5" fill="none" stroke="@DK@" stroke-width="2" stroke-linecap="round" opacity="0.7"/>`,
-  m1l: knitV(11, 12, 28, 4.2) + `<path d="M 17 24.5 L 13.6 21.5" fill="none" stroke="@DK@" stroke-width="2" stroke-linecap="round" opacity="0.7"/>`,
+    knitV(12, 8, 31, 5.4) +
+    `<path d="M 5.5 13 Q 12 7.5 18.5 13" fill="none" stroke="@DK@" stroke-width="2.4" stroke-linecap="round" opacity="0.7"/>`,
+  c4b: fatStrand(4.5, 19.5, 9, 30, false) + fatStrand(19.5, 4.5, 9, 30, true),
+  c4f: fatStrand(4.5, 19.5, 9, 30, true) + fatStrand(19.5, 4.5, 9, 30, false),
+  rt: fatStrand(7.5, 16.5, 11, 29, false) + fatStrand(16.5, 7.5, 11, 29, true),
+  lt: fatStrand(7.5, 16.5, 11, 29, true) + fatStrand(16.5, 7.5, 11, 29, false),
+  m1r: knitV(13, 12, 30, 5) + `<path d="M 7 26.5 L 10.4 23" fill="none" stroke="@DK@" stroke-width="2.2" stroke-linecap="round" opacity="0.7"/>`,
+  m1l: knitV(11, 12, 30, 5) + `<path d="M 17 26.5 L 13.6 23" fill="none" stroke="@DK@" stroke-width="2.2" stroke-linecap="round" opacity="0.7"/>`,
 }
 
 export interface FabricOptions {
@@ -125,8 +134,11 @@ export function buildFabricSvg(doc: ChartDoc, options: FabricOptions): BuiltFabr
   const width = cols * 24 + MARGIN * 2
   const height = rows * 24 * aspect + MARGIN * 2
 
-  const cells: string[] = []
-  for (const p of placements as (Placement & { __col?: number })[]) {
+  const bases: string[] = []
+  const glyphs: string[] = []
+  // paint bottom rows first so each row's stitches tuck under the row above
+  const sorted = [...placements].sort((a, b) => a.y - b.y)
+  for (const p of sorted as (Placement & { __col?: number })[]) {
     const glyph = FABRIC[p.symbolId] ?? FABRIC.k
     const col = Math.round(p.x / 24)
     const row = Math.round(-p.y / 24)
@@ -137,14 +149,19 @@ export function buildFabricSvg(doc: ChartDoc, options: FabricOptions): BuiltFabr
       .replaceAll('@YARN@', colour)
       .replaceAll('@HI@', shade(colour, 0.38))
       .replaceAll('@DK@', shade(colour, -0.32))
-    // the cell's base fill keeps colourwork fields solid between the stitches
-    cells.push(
-      `<g transform="translate(${col * 24 + j.dx} ${-row * 24 + j.dy}) scale(1 ${aspect})">` +
-        `<rect x="1" y="7.5" width="22" height="21.5" fill="${fill}" stroke="none" rx="2"/>` +
-        artwork +
+    // full-bleed base fill keeps the fabric continuous (no background between
+    // stitches — only the darker between-stitch tone, like real stockinette);
+    // the field stays unjittered — only the stitches wobble
+    bases.push(
+      `<g transform="translate(${col * 24} ${-row * 24}) scale(1 ${aspect})">` +
+        `<rect x="0" y="7" width="24" height="24" fill="${fill}" stroke="none"/>` +
         `</g>`,
     )
+    glyphs.push(
+      `<g transform="translate(${col * 24 + j.dx} ${-row * 24 + j.dy}) scale(1 ${aspect})">${artwork}</g>`,
+    )
   }
+  const cells = [bases.join(''), glyphs.join('')]
 
   const svg =
     `<rect x="0" y="0" width="${width}" height="${height}" fill="${options.background}"/>` +
