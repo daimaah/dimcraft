@@ -30,23 +30,6 @@ changes live in each app's own changelog:
   live status line that always states whether and where the sibling app is
   currently detected.
 
-### Fixed
-
-- Short-link sidecar: `/api/whoami` 404s cleanly when a deployment's dist has
-  no baked identity (dev mode).
-
-### Changed
-
-- **Share receive paths are app-id aware.** The fragment-share decoder and
-  the short-link receiver (`fetchShortLink`) used to hard-code the
-  DimCrochet app id; both now validate the envelope against the serving
-  build's own app id via the shared project-envelope parser. Behaviour for
-  DimCrochet is unchanged, and DimKnit gains working share links — a
-  sibling app's link simply fails to parse instead of loading a chart with
-  foreign stitch semantics.
-
-### Added
-
 - **DimKnit** (`apps/dimknit`) — a sibling app for knitting charts, built on
   the same core: CYC-style knit palette, serpentine row reading with
   RS/WS-aware written instructions, row-language follow mode, stitch-count
@@ -57,6 +40,25 @@ changes live in each app's own changelog:
   (`dimcrochet` / `dimknit` app ids) — charts never cross between the two.
 
 ### Changed
+
+- **Sibling pairing is deployment-configured.** The sidecar now reads
+  `SIBLING_PORT` (a host port) or `SIBLING_URL` (a full base URL, for proxies
+  and separate hosts) and advertises the hint on `/api/whoami`; the shipped
+  `docker-compose.yml` wires it to follow `DIMKNIT_PORT` /
+  `DIMCROCHET_PORT`, so a stack with both apps enabled needs no manual
+  companion-URL entry — even on custom ports. Discovery order in both
+  frontends: the user's manual URL, then the deployment's advertisement,
+  then the default-port probe (8080/8081), and the Options status line now
+  states which path found the sibling ("via this deployment's
+  configuration" / "on the default ports").
+
+- **Share receive paths are app-id aware.** The fragment-share decoder and
+  the short-link receiver (`fetchShortLink`) used to hard-code the
+  DimCrochet app id; both now validate the envelope against the serving
+  build's own app id via the shared project-envelope parser. Behaviour for
+  DimCrochet is unchanged, and DimKnit gains working share links — a
+  sibling app's link simply fails to parse instead of loading a chart with
+  foreign stitch semantics.
 
 - Repository restructured as the DimCraft monorepo: the craft-agnostic
   chart-editor kernel (document model, geometry toolkit, interchange formats,
@@ -77,8 +79,13 @@ changes live in each app's own changelog:
 
 ### Fixed
 
+- Short-link sidecar: `/api/whoami` 404s cleanly when a deployment's dist has
+  no baked identity (dev mode).
+
 - Short-link sidecar: oversized upload payloads could get their 413 response
   lost when the connection was torn down mid-reply; the request is now
   drained so the error reliably reaches the client.
 - Short-link sidecar: unknown `/api/…` routes fell through to the app and
-  served HTML with a 200; the API namespace now answers 404 instead.
+  served HTML with a 200; the API namespace now answers 404 instead
+
+.

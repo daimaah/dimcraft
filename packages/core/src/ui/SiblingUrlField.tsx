@@ -44,8 +44,8 @@ export function SiblingUrlField() {
     auto.kind === 'probing'
       ? 'Checking for the sibling app…'
       : auto.kind === 'ok'
-        ? `✓ ${siblingAppName()} v${auto.info!.version || '?'}${auto.info!.core ? ` · core ${auto.info!.core}` : ''} at ${auto.info!.url} (${manual ? 'from the URL above' : 'auto-detected'})`
-        : `✗ No ${siblingAppName()} answered ${manual ? 'at this URL' : 'on the default ports (8080/8081)'}.`
+        ? `✓ ${siblingAppName()} v${auto.info!.version || '?'}${auto.info!.core ? ` · core ${auto.info!.core}` : ''} at ${auto.info!.url} (${manual ? 'from the URL above' : auto.info!.source === 'deployment' ? "auto-detected via this deployment's configuration" : 'auto-detected on the default ports'})`
+        : `✗ No ${siblingAppName()} answered ${manual ? 'at this URL' : 'on this host — check that the sibling app is running, or set its address above'}.`
 
   return (
     <div className="form-row" data-testid="opt-sibling">
@@ -53,8 +53,8 @@ export function SiblingUrlField() {
         <strong>Companion app URL</strong>
         <br />
         <span className="hint">
-          Link to {siblingAppName()} when it runs on another address. Leave empty to auto-detect it
-          on this host.
+          Link to {siblingAppName()} when it runs on another address. Leave empty to auto-detect
+          it — from this deployment's configuration or the default ports on this host.
         </span>
         <span className={`hint sibling-status${auto.kind === 'ok' ? ' ok' : auto.kind === 'none' ? ' fail' : ''}`} data-testid="sibling-auto">
           {autoText}
@@ -68,7 +68,7 @@ export function SiblingUrlField() {
               ? 'Checking…'
               : verify.kind === 'ok'
                 ? `✓ Verify: ${siblingAppName()} v${verify.info!.version || '?'} answered at ${verify.info!.url}`
-                : `✗ Verify: no ${siblingAppName()} answered ${manual ? 'at this URL' : 'on the default ports'}.`}
+                : `✗ Verify: no ${siblingAppName()} answered ${manual ? 'at this URL' : 'on the auto-detected addresses'}.`}
           </span>
         )}
       </span>
@@ -85,7 +85,7 @@ export function SiblingUrlField() {
           className="btn"
           data-testid="sibling-verify-btn"
           disabled={verify.kind === 'busy'}
-          title="Probe this URL (or the default ports when empty) for the sibling app"
+          title="Probe this URL (or what auto-detection finds when empty) for the sibling app"
           onClick={doVerify}
         >
           {verify.kind === 'busy' ? '…' : 'Verify'}

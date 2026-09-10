@@ -112,4 +112,24 @@ describe('sidecar', () => {
     const res = await fetch(`${base}/api/whoami`)
     expect(res.status).toBe(404)
   })
+
+  it('rides the deployment-configured sibling hint on /api/whoami', async () => {
+    const withPort = await start({ distDir: makeDistWithWhoami(), siblingPort: ' 9097 ' })
+    const res1 = await fetch(`${withPort.base}/api/whoami`)
+    expect(await res1.json()).toEqual({ app: 'dimknit', version: '0.1.0', core: '0.1.0', siblingPort: '9097' })
+
+    const withUrl = await start({ distDir: makeDistWithWhoami(), siblingUrl: 'https://knit.example.com/knit///' })
+    const res2 = await fetch(`${withUrl.base}/api/whoami`)
+    expect(await res2.json()).toEqual({ app: 'dimknit', version: '0.1.0', core: '0.1.0', siblingUrl: 'https://knit.example.com/knit' })
+
+    // a full URL wins over the port when both are configured
+    const withBoth = await start({ distDir: makeDistWithWhoami(), siblingUrl: 'https://x.example', siblingPort: '9097' })
+    const res3 = await fetch(`${withBoth.base}/api/whoami`)
+    expect(await res3.json()).toEqual({ app: 'dimknit', version: '0.1.0', core: '0.1.0', siblingUrl: 'https://x.example' })
+
+    // no env → the baked identity stays untouched
+    const plain = await start({ distDir: makeDistWithWhoami() })
+    const res4 = await fetch(`${plain.base}/api/whoami`)
+    expect(await res4.json()).toEqual({ app: 'dimknit', version: '0.1.0', core: '0.1.0' })
+  })
 })

@@ -17,6 +17,14 @@ follows [Keep a Changelog](https://keepachangelog.com/).
   the entered URL, or the default ports when empty) and shows a live status
   line for auto-detection. (Underlying discovery machinery and the
   `/api/whoami` endpoint are core changes — see the root CHANGELOG.)
+- **Zero-config sibling pairing for stacks** — the shipped `docker-compose.yml`
+  now hands each sidecar the sibling's host port (`SIBLING_PORT`, following
+  `DIMKNIT_PORT`/`DIMCROCHET_PORT`), and the frontends try that advertised
+  address before the default-port fallback: with both apps enabled in the
+  stack, they detect each other even on custom ports, no manual URL needed.
+  The Options status line states how the sibling was found ("via this
+  deployment's configuration" vs "on the default ports"). (Core change — see
+  the root CHANGELOG.)
 - **Legend spacing** — the legend title no longer crowds the first row of
   entries (shared-rendering fix, also in DimCrochet).
 - **Encrypted short links** — Export → Short link posts the chart

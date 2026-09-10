@@ -39,6 +39,11 @@ export function createHandler(opts = {}) {
   const rateLimitMax = opts.rateLimitMax ?? 20
   const rateLimitWindowMs = opts.rateLimitWindowMs ?? 3600 * 1000
   const now = opts.now ?? (() => Date.now())
+  // deployment-configured sibling hint (docker-compose wires these so both
+  // apps find each other even on custom ports): SIBLING_URL is a full base
+  // URL (reverse proxies / other hosts), SIBLING_PORT a port on this host
+  const siblingUrl = typeof opts.siblingUrl === 'string' ? opts.siblingUrl.replace(/\/+$/, '') : ''
+  const siblingPort = typeof opts.siblingPort === 'string' ? opts.siblingPort.trim() : ''
 
   mkdirSync(linksDir, { recursive: true })
 
@@ -148,10 +153,15 @@ export function createHandler(opts = {}) {
 
       // lets a sibling DimCraft app identify this deployment: baked
       // whoami.json (app id + version, no user data) served with permissive
-      // CORS so the other app's JS may read it cross-origin
+      // CORS so the other app's JS may read it cross-origin. Deployment
+      // configuration (SIBLING_PORT / SIBLING_URL) rides along so the other
+      // app's frontend learns where this stack placed the sibling — even on
+      // custom ports, no manual URL entry needed.
       if (url.pathname === '/api/whoami') {
         try {
           const info = JSON.parse(readFileSync(join(distDir, 'whoami.json'), 'utf8'))
+          if (siblingUrl) info.siblingUrl = siblingUrl
+          else if (siblingPort) info.siblingPort = siblingPort
           res.writeHead(200, {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
@@ -237,7 +247,9 @@ if (isMain) {
   const dataDir = process.env.DATA_DIR ?? './data'
   const maxAgeMs = Number(process.env.DIMCRAFT_MAX_AGE_HOURS ?? process.env.DIMCROCHET_MAX_AGE_HOURS ?? 720) * 3600 * 1000
   const distDir = process.env.DIST_DIR ?? './dist'
-  const { server } = startServer({ dataDir, distDir, maxAgeMs })
+  const siblingUrl = process.env.SIBLING_URL ?? ''
+  const siblingPort = process.env.SIBLING_PORT ?? ''
+  const { server } = startServer({ dataDir, distDir, maxAgeMs, siblingUrl, siblingPort })
   server.listen(port, () => {
     console.log(`DimCrochet sidecar listening on :${port} (links expire after ${Math.round(maxAgeMs / 86400000)} days idle)`)
   })

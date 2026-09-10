@@ -88,7 +88,7 @@ The same repository builds **both apps**: DimCrochet (this chart composer) and D
 
 The repository is public — Portainer can clone it without credentials.
 
-To change the port, add an environment variable in the stack editor: `DIMCROCHET_PORT = 3000`. To run DimKnit too, uncomment the `dimknit` block in the compose file (or paste it from the commented example) — it serves on `8081` by default, customizable via `DIMKNIT_PORT`.
+To change the port, add an environment variable in the stack editor: `DIMCROCHET_PORT = 3000`. To run DimKnit too, uncomment the `dimknit` block in the compose file (or paste it from the commented example) — it serves on `8081` by default, customizable via `DIMKNIT_PORT`. With both enabled, the apps detect each other automatically (see **Linking the two apps** below).
 
 ### Portainer — Web editor method (pre-built image)
 
@@ -102,6 +102,9 @@ services:
     restart: unless-stopped
     ports:
       - "8080:80"
+    environment:
+      # tells the browser where DimKnit lives (follows the port below)
+      - SIBLING_PORT=8081
     volumes:
       - dimcrochet-data:/data   # encrypted short-link store
 
@@ -112,6 +115,9 @@ services:
   #   restart: unless-stopped
   #   ports:
   #     - "8081:80"
+  #   environment:
+  #     # tells the browser where DimCrochet lives (follows the port above)
+  #     - SIBLING_PORT=8080
   #   volumes:
   #     - dimknit-data:/data   # encrypted short-link store
 
@@ -124,7 +130,11 @@ The volume mapping matters: `/data` holds the sidecar's encrypted short links, a
 
 #### Linking the two apps
 
-When both apps run on the same host, each one detects the other automatically (via the sibling's sidecar identity handshake on the default ports 8080/8081) and shows an **Open DimKnit / DimCrochet →** button on its projects screen — a wrong app on that port is ignored. Custom ports, reverse-proxy paths or separate hosts are covered by a manual **Companion app URL** in Options → General. Serving both under one origin with path routing (`/crochet/`, `/knit/`) needs no detection at all — relative links just work.
+When both apps run, they find each other automatically and show an **Open DimKnit / DimCrochet →** button on their projects screens — a wrong app on a probed port is ignored. Detection needs no manual setup:
+
+- **Repository stack / compose file** — each service carries a `SIBLING_PORT` environment variable pointing at the other app's host port (it follows `DIMKNIT_PORT` / `DIMCROCHET_PORT` automatically). The sidecar advertises it on `/api/whoami`, so the frontends pair up even on fully custom ports.
+- **Same host, default ports** — even without the env wiring, the frontends probe `8080`/`8081` as a fallback.
+- **Reverse-proxy paths, separate hosts** — set `SIBLING_URL` (a full base URL) on a service instead of `SIBLING_PORT`, or leave it to each user's manual **Companion app URL** in Options → General. Serving both under one origin with path routing (`/crochet/`, `/knit/`) needs no detection at all — relative links just work.
 
 ### Plain Docker / docker compose
 

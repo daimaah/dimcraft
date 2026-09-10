@@ -18,6 +18,10 @@ export interface SiblingInfo {
   app: string
   version: string
   core?: string
+  /** how discovery found it: an explicit user URL, this deployment's
+   *  advertised configuration (SIBLING_PORT / SIBLING_URL on the sidecar),
+   *  or the default-port fallback */
+  source?: 'manual' | 'deployment' | 'default'
 }
 
 const SIBLING_OF: Record<string, string> = { dimcrochet: 'dimknit', dimknit: 'dimcrochet' }
@@ -61,6 +65,26 @@ export function saveManualSiblingUrl(url: string): void {
 
 // ---- discovery -------------------------------------------------------------
 
+/** The deployment's own sidecar can advertise where the stack placed the
+ *  sibling (docker-compose wires SIBLING_PORT / SIBLING_URL): fetch our own
+ *  origin's whoami — same-origin, no CORS involved — and pick the hint up.
+ *  Resolves null outside a browser, in dev mode (no sidecar), or when the
+ *  deployment advertises nothing. */
+export async function deploymentSiblingHint(): Promise<{ url?: string; port?: string } | null> {
+  if (typeof location === 'undefined') return null
+  try {
+    const res = await fetch(`${location.origin}/api/whoami`)
+    if (!res.ok) return null
+    const data = (await res.json()) as { siblingUrl?: unknown; siblingPort?: unknown }
+    const url = typeof data?.siblingUrl === 'string' ? data.siblingUrl.replace(/\/+$/, '') : ''
+    const port = typeof data?.siblingPort === 'string' ? data.siblingPort.trim() : ''
+    if (!url && !port) return null
+    return { url: url || undefined, port: port || undefined }
+  } catch {
+    return null
+  }
+}
+
 /** Where the sibling might live: the manual URL if set, else the sibling's
  *  default ports on the same host (skipping our own port and, on https,
  *  http candidates that mixed content would block anyway). */
@@ -96,11 +120,32 @@ export async function probeSibling(base: string, timeoutMs = 1500): Promise<Sibl
   }
 }
 
-/** First valid sibling among the candidates, or null. */
+/** First valid sibling among the candidates, or null. Candidate order:
+ *  the user's manual URL, then what this deployment advertises (a full
+ *  sibling URL, then the advertised port on this host), then the default
+ *  ports — so a stack file wired for both apps just works, even when the
+ *  user moved them off 8080/8081. */
 export async function discoverSibling(): Promise<SiblingInfo | null> {
+  const manual = getManualSiblingUrl()
+  if (manual) {
+    const found = await probeSibling(manual)
+    return found ? { ...found, source: 'manual' } : null
+  }
+  const hint = await deploymentSiblingHint()
+  if (hint?.url) {
+    const found = await probeSibling(hint.url)
+    if (found) return { ...found, source: 'deployment' }
+  }
+  if (hint?.port && typeof location !== 'undefined') {
+    const base = `${location.protocol}//${location.hostname}:${hint.port}`
+    if (base !== location.origin) {
+      const found = await probeSibling(base)
+      if (found) return { ...found, source: 'deployment' }
+    }
+  }
   for (const base of siblingCandidates()) {
     const found = await probeSibling(base)
-    if (found) return found
+    if (found) return { ...found, source: 'default' }
   }
   return null
 }

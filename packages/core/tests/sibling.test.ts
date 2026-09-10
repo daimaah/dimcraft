@@ -1,5 +1,13 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { probeSibling, siblingAppName, siblingAppId, siblingCandidates, verifySiblingUrl } from '../src/sibling'
+import {
+  deploymentSiblingHint,
+  discoverSibling,
+  probeSibling,
+  siblingAppName,
+  siblingAppId,
+  siblingCandidates,
+  verifySiblingUrl,
+} from '../src/sibling'
 import { registerCraft } from '../src/craft'
 import type { CraftModule } from '../src/craft'
 
@@ -13,6 +21,7 @@ const realFetch = globalThis.fetch
 
 afterEach(() => {
   globalThis.fetch = realFetch
+  delete (globalThis as { location?: unknown }).location
 })
 
 describe('sibling identity', () => {
@@ -81,5 +90,88 @@ describe('probeSibling', () => {
     const start = Date.now()
     expect(await probeSibling('http://host:8081', 50)).toBeNull()
     expect(Date.now() - start).toBeLessThan(1000)
+  })
+})
+// discoverSibling reads location (origin/hostname) for the deployment hint and
+// the default-port fallback — node tests install a fake location global.
+const fakeLocation = {
+  origin: 'http://host:9000',
+  hostname: 'host',
+  protocol: 'http:',
+  port: '9000',
+} as unknown as Location
+
+describe('discoverSibling (candidate order)', () => {
+  it('prefers the port this deployment advertises on its own /api/whoami', async () => {
+    ;(globalThis as { location?: unknown }).location = fakeLocation
+    globalThis.fetch = (async (input: unknown) => {
+      const url = String(input)
+      if (url === 'http://host:9000/api/whoami') {
+        return new Response(JSON.stringify({ app: 'dimcrochet', version: '0.8.0', siblingPort: '9097' }), { status: 200 })
+      }
+      if (url === 'http://host:9097/api/whoami') {
+        return new Response(JSON.stringify({ app: 'dimknit', version: '0.2.0', core: '0.1.0' }), { status: 200 })
+      }
+      return new Response('nope', { status: 404 })
+    }) as typeof fetch
+    const info = await discoverSibling()
+    expect(info).toMatchObject({ url: 'http://host:9097', app: 'dimknit', version: '0.2.0', source: 'deployment' })
+  })
+
+  it('prefers a full advertised sibling URL over the advertised port', async () => {
+    ;(globalThis as { location?: unknown }).location = fakeLocation
+    const seen: string[] = []
+    globalThis.fetch = (async (input: unknown) => {
+      const url = String(input)
+      seen.push(url)
+      if (url === 'http://host:9000/api/whoami') {
+        return new Response(JSON.stringify({ app: 'dimcrochet', version: '0.8.0', siblingUrl: 'https://knit.example.com/knit' }), { status: 200 })
+      }
+      if (url === 'https://knit.example.com/knit/api/whoami') {
+        return new Response(JSON.stringify({ app: 'dimknit', version: '0.2.0' }), { status: 200 })
+      }
+      return new Response('nope', { status: 404 })
+    }) as typeof fetch
+    const info = await discoverSibling()
+    expect(info).toMatchObject({ url: 'https://knit.example.com/knit', app: 'dimknit', source: 'deployment' })
+    // the default-port fallback must never fire when the advertised URL answers
+    expect(seen).not.toContain('http://host:8080/api/whoami')
+  })
+
+  it('skips the advertised port when it is just our own origin', async () => {
+    ;(globalThis as { location?: unknown }).location = fakeLocation
+    const seen: string[] = []
+    globalThis.fetch = (async (input: unknown) => {
+      const url = String(input)
+      seen.push(url)
+      if (url === 'http://host:9000/api/whoami') {
+        return new Response(JSON.stringify({ app: 'dimcrochet', version: '0.8.0', siblingPort: '9000' }), { status: 200 })
+      }
+      return new Response('nope', { status: 404 })
+    }) as typeof fetch
+    expect(await discoverSibling()).toBeNull()
+    // no second probe of our own origin — the self-match was skipped, and the
+    // default-port fallback ran (and 404'd) as usual
+    expect(seen).toEqual(['http://host:9000/api/whoami', 'http://host:8080/api/whoami', 'http://host:8081/api/whoami'])
+  })
+
+  it('falls back to the default ports when the deployment advertises nothing', async () => {
+    ;(globalThis as { location?: unknown }).location = fakeLocation
+    globalThis.fetch = (async (input: unknown) => {
+      const url = String(input)
+      if (url === 'http://host:9000/api/whoami') {
+        return new Response(JSON.stringify({ app: 'dimcrochet', version: '0.8.0' }), { status: 200 })
+      }
+      if (url === 'http://host:8081/api/whoami') {
+        return new Response(JSON.stringify({ app: 'dimknit', version: '0.1.0' }), { status: 200 })
+      }
+      return new Response('nope', { status: 404 })
+    }) as typeof fetch
+    const info = await discoverSibling()
+    expect(info).toMatchObject({ url: 'http://host:8081', app: 'dimknit', source: 'default' })
+  })
+
+  it('deploymentSiblingHint resolves null without a browser location', async () => {
+    expect(await deploymentSiblingHint()).toBeNull()
   })
 })
