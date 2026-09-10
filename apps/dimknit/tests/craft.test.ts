@@ -9,9 +9,9 @@ describe('knit craft module', () => {
     expect(getCraft().defaultSymbolId).toBe('k')
   })
 
-  it('ships the CYC-style palette with the RS/WS duality cells', () => {
+  it('ships the CYC-style palette with the duality cells and texture stitches', () => {
     const ids = getCraft().baseSymbols.map((d) => d.id)
-    expect(ids).toEqual(['k', 'p', 'yo', 'k2tog', 'ssk', 's2kp2', 'ns'])
+    expect(ids).toEqual(['k', 'p', 'yo', 'k2tog', 'ssk', 's2kp2', 'ns', 'c4b', 'c4f', 'rt', 'lt', 'm1r', 'm1l'])
   })
 
   it('produces follow steps through the craft module interface', () => {

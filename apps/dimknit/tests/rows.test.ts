@@ -75,7 +75,8 @@ describe('stitch-count accounting', () => {
     const doc = gridDoc([
       ['k', 'yo', 'k2tog', 'k', 'k'],
       ['k', 'yo', 'k2tog', 'k', 'k'],
-      ['k', 'k', 'k2tog', 'k', 'k'],
+      // the k2tog merges two of row 2's five stitches, so row 3 has 4 cells
+      ['k', 'k', 'k2tog', 'k'],
     ])
     expect(rowCountIssues(doc)).toEqual([])
   })

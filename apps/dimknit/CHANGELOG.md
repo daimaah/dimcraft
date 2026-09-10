@@ -28,9 +28,14 @@ follows [Keep a Changelog](https://keepachangelog.com/).
 - **Gauge & true-scale PDF** — set stitches and rows per 10 cm and the chart cells take their
   real aspect (no more square knitting cells); the PDF export's true-scale mode then prints each
   axis by its own gauge.
-
-### Added
-
+- **Cables, twists and leaned increases** — C4B/C4F (2/2 right and left cross, drawn at their
+  true four-stitch width with the front strand continuous and the back strand broken), the 1/1
+  right/left twists (RT/LT), and M1R/M1L leaned increases. The row engine accounts every symbol
+  by its real stitch count (a cable works and leaves 4, a twist 2, an increase creates 1 while
+  the row below still supplies every stitch it had), cables mirror to their opposite crossing,
+  wrong-side rows read the mirrored word (a C4B row reads C4F on the WS), and repeated operations
+  write honestly ("C4B ×2", never a digit suffix). The legend renders wide symbols full-width
+  with the label shifted beside them.
 - **Action bar** — the floating, draggable tool palette from DimCrochet, restyled for the knit
   shell: select/pan/place tools plus undo/redo, snapping, grid, guides, the zoom cluster
   (in/out/editable %/fit), fullscreen, licenses and options. Drag anywhere, collapse to a

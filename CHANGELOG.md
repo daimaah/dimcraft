@@ -46,6 +46,17 @@ changes live in each app's own changelog:
   label2), chart cells render at their true aspect in the canvas and exports instead of squares,
   and the PDF's true-scale mode prints each axis by its own gauge (`unitsPer10cmY`).
 
+### Added (M7 — stitch library)
+
+- **Variable-width symbols in the shared engine** — a symbol's bbox now declares how many stitch
+  columns it owns: selection, bounds, legend (with a dynamic label position for wide swatches)
+  and the palette all handle multi-cell artwork. The row-accounting model moved to explicit
+  per-symbol tables: how many stitches a symbol WORKS from the row below (decreases absorb more,
+  cables span their width, yarn overs and leaned increases work none) and how many it LEAVES —
+  which fixed the old checker's leniency where unpaired yarn overs inflated both sides equally.
+  The legend run-length writes repeated non-plain operations as "×N" so "C4B ×2" never collapses
+  into a fake five-stitch token.
+
 ### Changed
 
 - `mirrorSelection` consults `craft.mirrorSymbol` when present: on a horizontal mirror the craft

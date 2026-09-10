@@ -16,7 +16,9 @@ import { yarnName } from '@dimcraft/core/model/yarns'
  * keeps all rows RS when a chart opts in via `allRs`.
  */
 
-/** How each cell is *worked*, per side, following the RS/WS duality. */
+/** How each cell is *worked*, per side, following the RS/WS duality.
+ *  Cable crossings mirror on the wrong side (a right cross reads as its
+ *  left twin), and a leaned increase flips its lean. */
 const STITCH_WORDS: Record<string, { rs: string; ws: string }> = {
   k: { rs: 'k', ws: 'p' },
   p: { rs: 'p', ws: 'k' },
@@ -25,6 +27,12 @@ const STITCH_WORDS: Record<string, { rs: string; ws: string }> = {
   ssk: { rs: 'ssk', ws: 'ssp' },
   // worked purlwise on the WS to keep the same RS appearance
   s2kp2: { rs: 's2kp2', ws: 'cddp' },
+  c4b: { rs: 'C4B', ws: 'C4F' },
+  c4f: { rs: 'C4F', ws: 'C4B' },
+  rt: { rs: 'RT', ws: 'LT' },
+  lt: { rs: 'LT', ws: 'RT' },
+  m1r: { rs: 'M1R', ws: 'M1L' },
+  m1l: { rs: 'M1L', ws: 'M1R' },
 }
 
 export interface KnitRow {
@@ -75,7 +83,10 @@ function runLength(toks: Tok[]): string {
     let n = 1
     while (i + n < toks.length && toks[i + n].word === toks[i].word && toks[i + n].suffix === toks[i].suffix) n++
     const plain = toks[i].word === 'k' || toks[i].word === 'p'
-    const count = n > 1 || plain ? String(n) : ''
+    // plain k/p carry their count ("p3"); multi-letter ops stay bare when
+    // single and repeat as "×N" — "C4B ×2", never "C4B2" (which would read
+    // as a five-stitch cable)
+    const count = plain ? String(n) : n > 1 ? ` ×${n}` : ''
     runs.push(`${toks[i].word}${count}${toks[i].suffix}`)
     i += n
   }
@@ -132,15 +143,22 @@ export function followSteps(doc: ChartDoc, tolerance = 20, _dir: FollowDirection
   })
 }
 
-/** Horizontal mirror image of each stitch: a right-leaning decrease mirrors
- *  to its left-leaning twin and vice versa; symmetric stitches (k, p, yo,
- *  s2kp2, ns) map to themselves. Mirroring is a drawing operation — unlike
- *  the RS/WS duality above it changes the chart, not how a cell is read. */
+/** Horizontal mirror image of each stitch: right-leaning operations mirror
+ *  to their left-leaning twins (decreases, cable crossings, twists, leaned
+ *  increases); symmetric stitches (k, p, yo, s2kp2, ns) map to themselves.
+ *  Mirroring is a drawing operation — unlike the RS/WS duality above it
+ *  changes the chart, not how a cell is read. */
 const MIRROR: Record<string, string> = {
   k2tog: 'ssk',
   ssk: 'k2tog',
   p2tog: 'ssp',
   ssp: 'p2tog',
+  c4b: 'c4f',
+  c4f: 'c4b',
+  rt: 'lt',
+  lt: 'rt',
+  m1r: 'm1l',
+  m1l: 'm1r',
 }
 
 export function mirrorSymbol(symbolId: string): string {
@@ -160,11 +178,37 @@ export function gridInfo(doc: ChartDoc, tolerance = 20): {
 }
 
 /** Stitch-count accounting: the stitches row N works must equal the stitches
- *  row N-1 leaves. A row leaves one live stitch per cell plus one per yarn
- *  over; decrease cells absorb extra stitches from the row below (k2tog/ssk
- *  take 2, s2kp2 takes 3), which closes the accounting. Shaped charts
- *  legitimately vary; the check flags unexplained jumps. */
-const EXTRA_CONSUMED: Record<string, number> = { k2tog: 1, ssk: 1, s2kp2: 2 }
+ *  row N-1 leaves. Every symbol declares how many stitches it WORKS (takes
+ *  from the row below — k2tog takes 2, a 4-stitch cable takes 4, M1 takes 0:
+ *  it lifts a new stitch from the strand between two stitches) and how many
+ *  it LEAVES as live stitches (a yo leaves the one it creates, decreases
+ *  still leave their single resulting stitch). Shaped charts legitimately
+ *  vary; the check flags unexplained jumps. */
+const WORKS: Record<string, number> = {
+  yo: 0, // a yo creates a stitch, it doesn't take one from the row below
+  k2tog: 2,
+  ssk: 2,
+  s2kp2: 3,
+  c4b: 4,
+  c4f: 4,
+  rt: 2,
+  lt: 2,
+  m1r: 0,
+  m1l: 0,
+}
+
+const LEAVES: Record<string, number> = {
+  k2tog: 1,
+  ssk: 1,
+  s2kp2: 1,
+  c4b: 4,
+  c4f: 4,
+  rt: 2,
+  lt: 2,
+  yo: 1,
+  m1r: 1,
+  m1l: 1,
+}
 
 export function rowCountIssues(doc: ChartDoc, tolerance = 20): string[] {
   const rows = groupRows(doc, tolerance)
@@ -172,8 +216,8 @@ export function rowCountIssues(doc: ChartDoc, tolerance = 20): string[] {
   for (let i = 1; i < rows.length; i++) {
     const prev = rows[i - 1]
     const row = rows[i]
-    const leaves = prev.cells.length + prev.cells.filter((c) => c.symbolId === 'yo').length
-    const works = row.cells.length + row.cells.reduce((sum, c) => sum + (EXTRA_CONSUMED[c.symbolId] ?? 0), 0)
+    const leaves = prev.cells.reduce((sum, c) => sum + (LEAVES[c.symbolId] ?? 1), 0)
+    const works = row.cells.reduce((sum, c) => sum + (WORKS[c.symbolId] ?? 1), 0)
     if (works !== leaves) {
       issues.push(`Row ${row.index} works ${works} stitches, but row ${prev.index} leaves ${leaves}.`)
     }

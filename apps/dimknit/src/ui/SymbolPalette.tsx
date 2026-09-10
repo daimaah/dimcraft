@@ -57,7 +57,16 @@ export function SymbolPalette() {
               useStore.getState().setTool('place')
             }}
           >
-            <svg viewBox="0 0 24 32" aria-hidden>
+            {/* wide multi-stitch symbols (cables) get their own viewBox so the
+                full span is visible; 1-cell symbols keep the shared frame */}
+            <svg
+              viewBox={
+                d.bbox.w > 24
+                  ? `${d.bbox.x} ${d.bbox.y} ${d.bbox.w} ${d.bbox.h}`
+                  : '0 0 24 32'
+              }
+              aria-hidden
+            >
               <g
                 dangerouslySetInnerHTML={{
                   __html: d.content.replaceAll('@INK@', 'currentColor'),

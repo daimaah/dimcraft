@@ -87,6 +87,7 @@ export function legendSvg(doc: ChartDoc, defMap: Map<string, SymbolDef>, ink: st
   )
   items.forEach((item, i) => {
     const rowY = LEGEND_HEAD + i * LEGEND_ROW_H
+    let labelX = 28
     if (item.symbolId === LINE_LEGEND_ID) {
       parts.push(
         `<g transform="translate(1 ${rowY})"><path d="M 2 9 L 20 -7" fill="none" stroke="${ink}" stroke-width="2" stroke-linecap="round"/></g>`,
@@ -94,7 +95,12 @@ export function legendSvg(doc: ChartDoc, defMap: Map<string, SymbolDef>, ink: st
     } else {
       const def = defMap.get(item.symbolId)!
       const b = def.bbox
-      const k = 18 / Math.max(b.w, b.h)
+      // fit the glyph in a square-ish slot, but wide multi-stitch symbols
+      // (cables) may use up to ~half the legend width — the label shifts
+      // right of the swatch instead of colliding
+      const k = Math.min(18 / Math.max(b.w, b.h), (LEGEND_W * 0.55) / b.w)
+      const swatchW = b.w * k
+      labelX = Math.max(28, 2 + swatchW + 6)
       parts.push(
         `<g transform="translate(2 ${rowY}) scale(${k}) translate(${-(b.x + b.w / 2)} ${-(b.y + b.h / 2)})">` +
           symbolInner(def, ink) +
@@ -102,7 +108,7 @@ export function legendSvg(doc: ChartDoc, defMap: Map<string, SymbolDef>, ink: st
       )
     }
     parts.push(
-      `<text x="28" y="${rowY + 5}" fill="${ink}" font-family="${FONT}" font-size="13" stroke="none">${escapeXml(
+      `<text x="${r2(labelX)}" y="${rowY + 5}" fill="${ink}" font-family="${FONT}" font-size="13" stroke="none">${escapeXml(
         item.label,
       )}</text>`,
     )
