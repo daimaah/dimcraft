@@ -12,6 +12,8 @@ and summarized in the [repository-root CHANGELOG](../../CHANGELOG.md).
 
 ## [Unreleased]
 
+## [0.9.1] — 2026-09-10
+
 ### Fixed
 
 - **The side panels scroll when their content outgrows the window** — the symbol palette (90+

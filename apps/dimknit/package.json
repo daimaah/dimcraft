@@ -1,7 +1,7 @@
 {
   "name": "@dimcraft/dimknit",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "Knitting chart composer — draw flat and in-the-round knitting charts on a stitch grid, with row-serpentine follow mode and RS/WS-aware written instructions.",
   "scripts": {

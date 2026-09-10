@@ -356,14 +356,14 @@ export function ExportDialog() {
                 </button>
               </div>
             </Row2>
-            <label className="check" title={gauge ? 'Print at the gauge-derived true size' : 'Set a gauge in the inspector first'}>
+            <label className="check" title={gauge ? 'Print at the gauge-derived true size; charts larger than one sheet tile across pages' : 'Set a gauge in the inspector first'}>
               <input
                 type="checkbox"
                 checked={trueScale && !!gauge}
                 disabled={!gauge}
                 onChange={(e) => setTrueScale(e.target.checked)}
               />
-              <span>True scale{gauge ? ` (≈ ${trueSizeLabel(doc, gauge)})` : ' — set gauge first'}</span>
+              <span>True scale{gauge ? ` (≈ ${trueSizeLabel(doc, gauge)}; tiles across pages when larger)` : ' — set gauge first'}</span>
             </label>
           </>
         )}

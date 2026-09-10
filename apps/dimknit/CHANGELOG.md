@@ -5,6 +5,8 @@ follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-09-10
+
 ### Added
 
 - **Colourwork** — the chart's yarn palette lives in the inspector (add yarns, recolour, name

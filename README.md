@@ -5,12 +5,12 @@ chart-editor kernel, two separate products with their own identity, releases and
 
 | App | Craft | Version | Container image |
 |---|---|---|---|
-| **DimCrochet** | crochet round & motif charts | v0.9.0 | `ghcr.io/daimaah/dimcrochet` |
-| **DimKnit** | knitting charts | v0.1.0 | `ghcr.io/daimaah/dimknit` |
+| **DimCrochet** | crochet round & motif charts | v0.9.1 | `ghcr.io/daimaah/dimcrochet` |
+| **DimKnit** | knitting charts | v0.2.0 | `ghcr.io/daimaah/dimknit` |
 
 Both apps embed the **DimCraft core** — the shared chart-editor kernel
 (`packages/core`) plus the short-link sidecar — versioned independently as
-`core-vX.Y.Z` (currently core v0.1.0). DimCraft itself has no version number:
+`core-vX.Y.Z` (currently core v0.2.0). DimCraft itself has no version number:
 you deploy an app at *its* version, and the apps pick up core versions on
 their next releases (see [Versioning](#versioning)). Both apps share the
 kernel (document model, geometry, canvas, exports, interchange with the same
@@ -125,7 +125,7 @@ volumes:
   dimknit-data:
 ```
 
-The volume mapping matters: `/data` holds the sidecar's encrypted short links, and without it every stack update starts from an empty store, breaking previously shared links. Pin `v0.9.0` (DimCrochet) or `dimknit-v0.1.0` (DimKnit) instead of `latest` if you want upgrades to be explicit. The images are public on GHCR — pulling needs no login. `latest` (and `main`) track the newest passing `main` build for each app.
+The volume mapping matters: `/data` holds the sidecar's encrypted short links, and without it every stack update starts from an empty store, breaking previously shared links. Pin `v0.9.1` (DimCrochet) or `dimknit-v0.2.0` (DimKnit) instead of `latest` if you want upgrades to be explicit. The images are public on GHCR — pulling needs no login. `latest` (and `main`) track the newest passing `main` build for each app.
 
 #### Linking the two apps
 
@@ -241,14 +241,14 @@ GEN_FIXTURES=1 npx vitest run apps/dimcrochet/tests/gen-fixtures.test.ts
 has no version.** Every version names a real artifact — the app you deploy, or the kernel it
 embeds:
 
-- **DimCrochet** is versioned `vX.Y.Z` (currently **v0.9.0**, numbering started at v0.5.0 — no
-  license dictates a scheme): git tags `v0.9.0`, image `ghcr.io/daimaah/dimcrochet:v0.9.0`,
+- **DimCrochet** is versioned `vX.Y.Z` (currently **v0.9.1**, numbering started at v0.5.0 — no
+  license dictates a scheme): git tags `v0.9.1`, image `ghcr.io/daimaah/dimcrochet:v0.9.1`,
   summarized in the [app changelog](apps/dimcrochet/CHANGELOG.md).
-- **DimKnit** is versioned `dimknit-vX.Y.Z` (first release **v0.1.0**): git tags
-  `dimknit-v0.1.0`, image `ghcr.io/daimaah/dimknit:dimknit-v0.1.0`, summarized in
+- **DimKnit** is versioned `dimknit-vX.Y.Z` (currently **v0.2.0**): git tags
+  `dimknit-v0.2.0`, image `ghcr.io/daimaah/dimknit:dimknit-v0.2.0`, summarized in
   [its own changelog](apps/dimknit/CHANGELOG.md).
 - **DimCraft core** — the shared chart-editor kernel, the short-link sidecar and the shared
-  build/deploy infra — is versioned `core-vX.Y.Z` (currently **core v0.1.0**): bumped only when
+  build/deploy infra — is versioned `core-vX.Y.Z` (currently **core v0.2.0**): bumped only when
   something ships to *both* apps, summarized in the root
   [CHANGELOG.md](CHANGELOG.md). A core release never forces an app release; each app picks it up
   on its next one.
