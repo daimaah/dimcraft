@@ -16,7 +16,7 @@ changes live in each app's own changelog:
 
 ### Added
 
-- **Sibling-app discovery** — the sidecar now serves a baked `/api/whoami`
+- **Sibling-app discovery with a two-brand front page** — the sidecar now serves a baked `/api/whoami`
   (app id + version, permissive CORS, no user data), and each app probes the
   sibling's default port on the same host: when the other DimCraft app answers
   and identifies itself, the gallery shows an "Open DimKnit / DimCrochet →"
@@ -25,7 +25,7 @@ changes live in each app's own changelog:
   tab takes a manual companion URL. On the projects screen the detected
   sibling appears as an identity card (its logo, version from the handshake
   and slogan) beside the active app's own branding, which now carries a
-  'this app' chip.
+  "this app" chip.
 
 ### Fixed
 
