@@ -1,5 +1,4 @@
-import { serializeProject, } from './projectFile'
-import { sanitizeDoc } from '../model/doc'
+import { serializeProject, parseProjectText } from './projectFile'
 import { deflateBytes, inflateBytes } from './share'
 import type { ChartDoc, ProjectRecord } from '../model/types'
 
@@ -92,7 +91,9 @@ export async function createShortLink(
   return { url: `${base}/x/${id}#k=${key}`, id }
 }
 
-/** Fetch + decrypt a shared chart from a sidecar. Returns null on any failure. */
+/** Fetch + decrypt a shared chart from a sidecar. Returns null on any
+ *  failure, including envelopes stamped by a sibling app — only this
+ *  build's own app id parses. */
 export async function fetchShortLink(
   sidecarBase: string,
   id: string,
@@ -106,11 +107,9 @@ export async function fetchShortLink(
     const deflated = await decryptSharePayload(data, key)
     if (!deflated) return null
     const json = await inflateBytes(deflated)
-    const parsed = JSON.parse(json) as { app?: string; name?: string; doc?: unknown }
-    if (parsed.app !== 'dimcrochet' || !parsed.doc) return null
-    const doc = sanitizeDoc(parsed.doc)
-    if (!doc) return null
-    return { name: parsed.name ?? doc.title, doc }
+    const file = parseProjectText(json)
+    if (!file) return null
+    return { name: file.name, doc: file.doc }
   } catch {
     return null
   }

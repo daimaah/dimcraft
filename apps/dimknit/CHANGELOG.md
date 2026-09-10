@@ -19,6 +19,17 @@ follows [Keep a Changelog](https://keepachangelog.com/).
   `/api/whoami` endpoint are core changes — see the root CHANGELOG.)
 - **Legend spacing** — the legend title no longer crowds the first row of
   entries (shared-rendering fix, also in DimCrochet).
+- **Encrypted short links** — Export → Short link posts the chart
+  AES-GCM-encrypted to a self-hosted sidecar: the decryption key rides only in
+  the link fragment and the sidecar stores ciphertext it cannot read. A link
+  arriving at `/x/<id>#k=…` opens through a **Shared chart** dialog that saves
+  it as a new copy ("Open as my copy"); links expire after 30 idle days
+  (sidecar default). Same flow as DimCrochet.
+- **Share links and the Sidecar URL option** — the Export dialog gains the
+  Share section (chart embedded in the URL fragment, nothing uploaded) and
+  the Short-link panel, plus per-chart **Save .json file** export; Options →
+  General gains the Sidecar URL field (defaults to the app's own address),
+  matching the DimCrochet shell.
 
 ### Added
 

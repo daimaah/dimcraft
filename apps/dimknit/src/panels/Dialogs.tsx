@@ -92,6 +92,9 @@ export function OptionsDialog() {
   const [tab, setTab] = useState<'general' | 'danger'>('general')
   const [confirmText, setConfirmText] = useState('')
   const [wiping, setWiping] = useState(false)
+  const [sidecarUrl, setSidecarUrl] = useState(
+    () => localStorage.getItem('dimknit.sidecarUrl') ?? location.origin,
+  )
 
   const wipe = async () => {
     setWiping(true)
@@ -175,6 +178,30 @@ export function OptionsDialog() {
                 <span className="hint">Construction guides stay editable but are skipped in exports when hidden.</span>
               </span>
             </label>
+            <div className="form-row" data-testid="opt-sidecar">
+              <span>
+                <strong>Sidecar URL</strong>
+                <br />
+                <span className="hint">
+                  Base URL of the self-hosted short-link sidecar used by Export → Short link
+                  (defaults to this app's own address).
+                </span>
+              </span>
+              <input
+                value={sidecarUrl}
+                onChange={(e) => setSidecarUrl(e.target.value)}
+                onBlur={() => {
+                  try {
+                    localStorage.setItem('dimknit.sidecarUrl', sidecarUrl.trim())
+                  } catch {
+                    /* storage unavailable */
+                  }
+                }}
+                placeholder="https://charts.example.com"
+                spellCheck={false}
+                data-testid="opt-sidecar-url"
+              />
+            </div>
             <SiblingUrlField />
           </div>
         )}

@@ -35,6 +35,16 @@ changes live in each app's own changelog:
 - Short-link sidecar: `/api/whoami` 404s cleanly when a deployment's dist has
   no baked identity (dev mode).
 
+### Changed
+
+- **Share receive paths are app-id aware.** The fragment-share decoder and
+  the short-link receiver (`fetchShortLink`) used to hard-code the
+  DimCrochet app id; both now validate the envelope against the serving
+  build's own app id via the shared project-envelope parser. Behaviour for
+  DimCrochet is unchanged, and DimKnit gains working share links — a
+  sibling app's link simply fails to parse instead of loading a chart with
+  foreign stitch semantics.
+
 ### Added
 
 - **DimKnit** (`apps/dimknit`) — a sibling app for knitting charts, built on

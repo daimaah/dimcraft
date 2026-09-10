@@ -4,9 +4,12 @@ import { importInterchangeFile } from '@dimcraft/core/export/projectFile'
 import { applyBackup } from '@dimcraft/core/export/backup'
 import { loadProject, saveProject } from '@dimcraft/core/storage/db'
 import { chartHash, GALLERY_HASH, parseRoute } from '@dimcraft/core/route'
+import { decodeShareFragment } from '@dimcraft/core/export/share'
+import { parseShortLinkLocation, fetchShortLink } from '@dimcraft/core/export/secureShare'
 import { Gallery } from './gallery/Gallery'
 import { FollowBar, stepFollow, toggleFollowPlayback } from './panels/FollowBar'
 import { Dialogs } from './panels/Dialogs'
+import { SharedChartDialog } from './panels/SharedChartDialog'
 import { SymbolPalette } from './ui/SymbolPalette'
 import { StatusBar } from './ui/StatusBar'
 import { Toolbar } from './ui/Toolbar'
@@ -42,6 +45,31 @@ export default function App() {
     const t = setTimeout(fitCenter, 60)
     return () => clearTimeout(t)
   }, [projectId])
+
+  // shared charts: either embedded in the fragment (#c=..., never sent to a
+  // server) or fetched encrypted from a self-hosted sidecar (/x/<id>#k=...,
+  // where the server only ever saw ciphertext)
+  useEffect(() => {
+    const short = parseShortLinkLocation(location.pathname, location.hash)
+    if (short) {
+      fetchShortLink(location.origin, short.id, short.key).then((res) => {
+        if (res) {
+          useStore.getState().setSharedChart({
+            ...res,
+            note: 'The chart arrived encrypted — the sidecar stored only ciphertext it cannot read.',
+          })
+        }
+        history.replaceState(null, '', location.pathname.replace(/\/x\/[^/]+$/, '/') + location.search)
+      })
+      return
+    }
+    if (!location.hash.startsWith('#c=')) return
+    decodeShareFragment(location.hash).then((res) => {
+      if (res) useStore.getState().setSharedChart(res)
+      // remove the fragment so reloading doesn't re-import
+      history.replaceState(null, '', location.pathname + location.search)
+    })
+  }, [])
 
   // restore preferences; the URL decides what opens (#/chart/<id> reopens it,
   // anything else is the gallery)
@@ -287,6 +315,7 @@ export default function App() {
       <>
         <Gallery />
         <Dialogs />
+        <SharedChartDialog />
       </>
     )
 
@@ -304,6 +333,7 @@ export default function App() {
       </div>
       <StatusBar />
       <Dialogs />
+      <SharedChartDialog />
     </div>
   )
 }

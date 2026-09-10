@@ -104,7 +104,10 @@ export function parseBackupText(text: string): BackupFile | null {
   }
 }
 
-function parseProjectText(text: string): ProjectFile | null {
+/** Validate + migrate a serialized project envelope. Only envelopes stamped
+ *  with this build's APP_ID parse — the gate that keeps sibling apps from
+ *  reading each other's charts, packs, backups and share links. */
+export function parseProjectText(text: string): ProjectFile | null {
   try {
     const parsed = JSON.parse(text) as Partial<ProjectFile>
     if (!parsed || parsed.app !== APP_ID || !parsed.doc) return null

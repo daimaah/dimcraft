@@ -1,5 +1,4 @@
-import { serializeProject } from './projectFile'
-import { sanitizeDoc } from '../model/doc'
+import { serializeProject, parseProjectText } from './projectFile'
 import type { ChartDoc, ProjectRecord } from '../model/types'
 
 export const SHARE_PREFIX = '#c='
@@ -57,18 +56,17 @@ export function shareLink(fragment: string): string {
   return `${location.origin}${location.pathname}${fragment.startsWith('#') ? '' : '#'}${fragment}`
 }
 
-/** Decode a share fragment back into a chart. Returns null when invalid. */
+/** Decode a share fragment back into a chart. Returns null when invalid or
+ *  stamped by a sibling app — only this build's own envelopes parse. */
 export async function decodeShareFragment(fragment: string): Promise<{ name: string; doc: ChartDoc } | null> {
   let enc = fragment.startsWith(SHARE_PREFIX) ? fragment.slice(SHARE_PREFIX.length) : fragment
   enc = enc.trim()
   if (!enc) return null
   try {
     const json = await inflateFromBase64Url(enc)
-    const parsed = JSON.parse(json) as { app?: string; name?: string; doc?: unknown }
-    if (parsed.app !== 'dimcrochet' || !parsed.doc) return null
-    const doc = sanitizeDoc(parsed.doc)
-    if (!doc) return null
-    return { name: parsed.name ?? doc.title, doc }
+    const file = parseProjectText(json)
+    if (!file) return null
+    return { name: file.name, doc: file.doc }
   } catch {
     return null
   }
