@@ -15,7 +15,9 @@ repository log remains the complete, transparent record.
   reading with RS/WS-aware written instructions, follow mode, stitch-count
   accounting, learn-to-knit starters, SVG/PNG export, its own container image
   (`ghcr.io/daimaah/dimknit`, released with `dimknit-v*` tags) and its own
-  per-app browser storage. DimCrochet is unaffected — same features, same
+  per-app browser storage. The Docker/Portainer stack runs DimCrochet by default and
+  ships a commented dimknit block — uncomment it to serve DimKnit alongside (or
+  instead of) DimCrochet on its own port. DimCrochet is unaffected — same features, same
   formats, same image, and charts never cross between the two apps.
 
 ### Changed
