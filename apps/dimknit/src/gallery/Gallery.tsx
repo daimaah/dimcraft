@@ -112,7 +112,7 @@ export function Gallery() {
 
       <footer className="gallery-foot">
         <p>
-          DimKnit v{__APP_VERSION__} ({__GIT_COMMIT__}) — charts are stored only in this browser. Drop a .dimknit
+          DimKnit v{__APP_VERSION__} ({__GIT_COMMIT__}), core {__CORE_VERSION__} — charts are stored only in this browser. Drop a .dimknit
           export or backup anywhere on this page to import it — purely client-side, nothing is uploaded. DimKnit is
           open source (MIT).
         </p>

@@ -15,7 +15,7 @@ import { createShortLink, sidecarAvailable } from '@dimcraft/core/export/secureS
 import { changelogBlocks, recentChangelog, unreleasedChangelog } from '@dimcraft/core/export/changelog'
 import { DEFAULT_ORDER, PALETTE_BUTTONS } from '../ui/ToolPalette'
 import { Icon } from '@dimcraft/core/ui/icons'
-import changelogRaw from '../../../../CHANGELOG.md?raw'
+import changelogRaw from '../../CHANGELOG.md?raw'
 import type { RotationMode } from '@dimcraft/core/model/types'
 import { buildExportSvg, type SvgExportOptions } from '@dimcraft/core/export/svg'
 import { exportPng } from '@dimcraft/core/export/png'
@@ -994,8 +994,10 @@ export function ChangelogDialog() {
   return (
     <Modal title="Version history" onClose={() => useStore.getState().closeDialog()} wide>
       <p className="hint">
-        Showing the current release and the last five. Older history lives in the repository's
-        CHANGELOG.md.
+        Showing the current release and the last five. The app's history lives in
+        apps/dimcrochet/CHANGELOG.md; the shared kernel and sidecar are versioned separately as
+        the DimCraft core (currently {__CORE_VERSION__}) — see the CHANGELOG.md at the repository
+        root.
       </p>
       {upcoming && (
         <div className="changelog-entry unreleased" data-testid="changelog-unreleased">

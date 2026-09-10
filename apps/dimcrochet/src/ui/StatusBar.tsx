@@ -62,7 +62,7 @@ export function StatusBar() {
       <button
         className="sb-cell version-link"
         data-testid="statusbar-version"
-        title="Version history"
+        title={`Version history — core ${__CORE_VERSION__}`}
         onClick={() => useStore.getState().openDialog('changelog')}
       >
         v{__APP_VERSION__}

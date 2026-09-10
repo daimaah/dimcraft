@@ -6,6 +6,9 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 const pkg = JSON.parse(readFileSync('./package.json', 'utf8'))
+// version of the shared kernel this app embeds (packages/core) — shown in
+// the About/version displays so bug reports can name the platform too
+const corePkg = JSON.parse(readFileSync('../../packages/core/package.json', 'utf8'))
 // short commit hash for the About/version display; empty when .git is not
 // part of the build context (e.g. container builds) — inject GIT_HASH instead
 let gitHash = ''
@@ -25,6 +28,7 @@ export default defineConfig({
     __APP_ID__: JSON.stringify('dimknit'),
     __APP_VERSION__: JSON.stringify(pkg.version),
     __GIT_COMMIT__: JSON.stringify(gitHash),
+    __CORE_VERSION__: JSON.stringify(corePkg.version),
   },
   plugins: [
     react(),

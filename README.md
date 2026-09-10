@@ -8,12 +8,16 @@ chart-editor kernel, two separate products with their own identity, releases and
 | **DimCrochet** | crochet round & motif charts | v0.8.0 | `ghcr.io/daimaah/dimcrochet` |
 | **DimKnit** | knitting charts | v0.1.0 (first release in preparation) | `ghcr.io/daimaah/dimknit` |
 
-DimCraft itself has **no version number** — you always deploy a *specific app* at *its* version
-(see [Versioning](#versioning)). Both apps share the chart-editor kernel in
-[`packages/core`](packages/core) (document model, geometry, canvas, exports, interchange with the
-same format-compatibility guarantees), while everything craft-specific — symbols, reading
-direction, written instructions, animations — is the app's own. One Docker/Portainer stack file
-can run either app or both side by side ([Deploy](#deploy-with-docker--portainer)).
+Both apps embed the **DimCraft core** — the shared chart-editor kernel
+(`packages/core`) plus the short-link sidecar — versioned independently as
+`core-vX.Y.Z` (currently core v0.1.0). DimCraft itself has no version number:
+you deploy an app at *its* version, and the apps pick up core versions on
+their next releases (see [Versioning](#versioning)). Both apps share the
+kernel (document model, geometry, canvas, exports, interchange with the same
+format-compatibility guarantees), while everything craft-specific — symbols,
+reading direction, written instructions, animations — is the app's own. One
+Docker/Portainer stack file can run either app or both side by side
+([Deploy](#deploy-with-docker--portainer)).
 
 ## DimCrochet
 
@@ -197,25 +201,30 @@ GEN_FIXTURES=1 npx vitest run apps/dimcrochet/tests/gen-fixtures.test.ts
 
 ## Versioning
 
-**Each app versions independently; DimCraft itself has no version.** You deploy an app image, not
-"DimCraft", so every version question is answered by the app you run:
+**Each app versions independently, and the shared layer versions on its own; DimCraft as a whole
+has no version.** Every version names a real artifact — the app you deploy, or the kernel it
+embeds:
 
 - **DimCrochet** is versioned `vX.Y.Z` (currently **v0.8.0**, numbering started at v0.5.0 — no
   license dictates a scheme): git tags `v0.8.0`, image `ghcr.io/daimaah/dimcrochet:v0.8.0`,
-  summarized in the root [CHANGELOG.md](CHANGELOG.md).
+  summarized in the [app changelog](apps/dimcrochet/CHANGELOG.md).
 - **DimKnit** is versioned `dimknit-vX.Y.Z` (first release **v0.1.0** in preparation): git tags
   `dimknit-v0.1.0`, image `ghcr.io/daimaah/dimknit:dimknit-v0.1.0`, summarized in
   [its own changelog](apps/dimknit/CHANGELOG.md).
+- **DimCraft core** — the shared chart-editor kernel, the short-link sidecar and the shared
+  build/deploy infra — is versioned `core-vX.Y.Z` (currently **core v0.1.0**): bumped only when
+  something ships to *both* apps, summarized in the root
+  [CHANGELOG.md](CHANGELOG.md). A core release never forces an app release; each app picks it up
+  on its next one.
 
-The two cadences are independent — a DimKnit patch release never moves DimCrochet's number, and
-vice versa. The running version and commit are shown inside each app (gallery footer, status bar,
-About dialog). The root `package.json` and the private core package sit at `0.0.0` on purpose:
-there is deliberately no umbrella version to check.
+The three cadences are independent — a DimKnit patch never moves DimCrochet's number, and
+vice versa. The running versions are shown inside each app (gallery footer and version display
+show `v<app> · core <kernel>`, so a bug report can name both).
 
 Branching: day-to-day work lands on the `develop` branch (published as the `develop` Docker tag
 for both apps); `main` carries released code — every push to `main` is a passing build, tagged
-`main` and `latest` on GHCR, and a formal release adds a `vX.Y.Z` (DimCrochet) or `dimknit-vX.Y.Z`
-(DimKnit) tag.
+`main` and `latest` on GHCR, and a formal release adds a `vX.Y.Z` (DimCrochet), `dimknit-vX.Y.Z`
+(DimKnit) or `core-vX.Y.Z` (shared layer, tests run but no images) tag.
 
 ## Contributing & community packs
 

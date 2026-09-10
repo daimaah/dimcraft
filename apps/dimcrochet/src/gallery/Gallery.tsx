@@ -150,6 +150,7 @@ export function Gallery() {
             >
               v{__APP_VERSION__}
               {__GIT_COMMIT__ ? ` · ${__GIT_COMMIT__}` : ''}
+              {` · core ${__CORE_VERSION__}`}
             </button>
             <p>Crochet round &amp; motif chart composer</p>
           </div>
@@ -326,7 +327,7 @@ export function Gallery() {
       )}
       <footer className="gallery-foot">
         <p className="hint">
-          DimCrochet v{__APP_VERSION__}{__GIT_COMMIT__ ? ` (${__GIT_COMMIT__})` : ''} — charts are stored only in this browser. Drop a .dimcrochet.json export or a symbol pack
+          DimCrochet v{__APP_VERSION__}{__GIT_COMMIT__ ? ` (${__GIT_COMMIT__})` : ''}, core {__CORE_VERSION__} — charts are stored only in this browser. Drop a .dimcrochet.json export or a symbol pack
           anywhere on this page to import it — purely client-side, nothing is uploaded. DimCrochet is
           open source (MIT); symbol packs keep their own licenses.
         </p>

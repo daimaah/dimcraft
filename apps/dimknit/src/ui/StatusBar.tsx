@@ -32,7 +32,9 @@ export function StatusBar() {
           : 'Unsaved'}
       </span>
       <span className="sb-cell muted">Everything stays in this browser — no account, no uploads</span>
-      <span className="sb-cell version-link">v{__APP_VERSION__}</span>
+      <span className="sb-cell version-link" title={`DimKnit v${__APP_VERSION__} · core ${__CORE_VERSION__}`}>
+        v{__APP_VERSION__}
+      </span>
     </footer>
   )
 }

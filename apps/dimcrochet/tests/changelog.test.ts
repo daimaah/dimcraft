@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import changelogRaw from '../../../CHANGELOG.md?raw'
+import changelogRaw from '../CHANGELOG.md?raw'
 import { changelogBlocks, parseChangelog, recentChangelog, unreleasedChangelog } from '@dimcraft/core/export/changelog'
 
 describe('changelog body blocks', () => {

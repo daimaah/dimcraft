@@ -6,11 +6,13 @@ name: Test and publish Docker images
 # the default branch `main` carries released code and refreshes `main` +
 # `latest`. `v*` tags publish DimCrochet releases, `dimknit-v*` tags publish
 # DimKnit releases (each as its own version tag + latest for the app).
+# `core-v*` tags mark shared-kernel/sidecar releases — they run the tests
+# but build no images (the core ships inside the apps).
 
 on:
   push:
     branches: [main, develop]
-    tags: ['v*', 'dimknit-v*']
+    tags: ['v*', 'dimknit-v*', 'core-v*']
   pull_request:
   workflow_dispatch:
 
@@ -32,6 +34,8 @@ jobs:
 
   docker:
     needs: test
+    # core releases carry no images — the core ships inside the app images
+    if: ${{ !startsWith(github.ref, 'refs/tags/core-v') }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
