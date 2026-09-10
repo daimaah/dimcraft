@@ -14,6 +14,8 @@ changes live in each app's own changelog:
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-09-10
+
 ## [0.2.0] — 2026-09-10
 
 ### Added

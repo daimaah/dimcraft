@@ -5,6 +5,8 @@ follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-09-10
+
 ### Fixed
 
 - **Newly created charts save immediately** — a fresh chart (new, written rows, picture import,

@@ -12,6 +12,8 @@ and summarized in the [repository-root CHANGELOG](../../CHANGELOG.md).
 
 ## [Unreleased]
 
+## [0.9.2] — 2026-09-10
+
 ### Fixed
 
 - **Newly created charts save immediately** — a fresh chart (new, written rows, picture import,

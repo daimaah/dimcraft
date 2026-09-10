@@ -87,11 +87,11 @@ describe('unreleased section ("changes coming in next version")', () => {
 
 describe('version history dialog source', () => {
   it('the shipped CHANGELOG.md yields the current entry plus five older, all blockable', () => {
-    const { current, older } = recentChangelog(changelogRaw, '0.9.1', 5)
-    expect(current?.version).toBe('0.9.1')
+    const { current, older } = recentChangelog(changelogRaw, '0.9.2', 5)
+    expect(current?.version).toBe('0.9.2')
     // the dialog shows up to five entries below the current release
     expect(older.length).toBeLessThanOrEqual(5)
-    expect(older[0]?.version).toBe('0.9.0')
+    expect(older[0]?.version).toBe('0.9.1')
     // mid-cycle the shipped [Unreleased] has content, on a release build it's
     // empty — either way whatever is there must block-render for the dialog
     const up = unreleasedChangelog(changelogRaw)
@@ -107,13 +107,13 @@ describe('version history dialog source', () => {
     }
 
     const bullets = changelogBlocks(current!.body).find((b) => b.kind === 'bullets')
-    expect(bullets && 'items' in bullets && bullets.items.join(' ')).toContain('side panels scroll')
+    expect(bullets && 'items' in bullets && bullets.items.join(' ')).toContain('save immediately')
   })
 
   it('parseChangelog keeps entry bodies free of header lines', () => {
     const entries = parseChangelog(changelogRaw)
     expect(entries[0].version).toBe('Unreleased')
-    expect(entries[1].version).toBe('0.9.1')
+    expect(entries[1].version).toBe('0.9.2')
     for (const e of entries) expect(e.body).not.toMatch(/^## \[/m)
   })
 })
