@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { registerCraft, type CraftModule } from '../src/craft'
-import { defaultPaletteOrder, paletteButtons } from '../src/ui/ToolPalette'
+import { defaultPaletteOrder, groupWrapUnits, paletteButtons } from '../src/ui/ToolPalette'
 
 const stub: CraftModule = {
   craft: 'knit',
@@ -32,5 +32,20 @@ describe('paletteButtons', () => {
       expect(ids).toContain(id)
     }
     expect(defaultPaletteOrder()).toEqual(ids)
+  })
+})
+
+describe('groupWrapUnits', () => {
+  it('merges contiguous zoom controls into one unbreakable unit', () => {
+    const units = groupWrapUnits(['select', 'place', 'undo', 'zoom-out', 'zoom', 'zoom-in', 'fit'])
+    expect(units).toEqual([['select'], ['place'], ['undo'], ['zoom-out', 'zoom', 'zoom-in'], ['fit']])
+  })
+
+  it('keeps zoom controls the user dragged apart as separate buttons', () => {
+    expect(groupWrapUnits(['zoom-out', 'select', 'zoom-in'])).toEqual([['zoom-out'], ['select'], ['zoom-in']])
+  })
+
+  it('still groups a partial cluster when the middle button is hidden', () => {
+    expect(groupWrapUnits(['undo', 'zoom-out', 'zoom-in'])).toEqual([['undo'], ['zoom-out', 'zoom-in']])
   })
 })

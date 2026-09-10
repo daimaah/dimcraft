@@ -1758,6 +1758,15 @@ button {
   min-width: 0;
 }
 
+/* the zoom controls (− % +) travel as one block: they all fit on the row or
+   they all wrap to the next one together */
+.tp-cluster {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+
 .tool-palette.two-rows .tp-content {
   flex-direction: column;
   align-items: stretch;

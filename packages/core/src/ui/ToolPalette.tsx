@@ -40,6 +40,23 @@ export function defaultPaletteOrder(): string[] {
 /** group separators render before these ids in the default layout */
 const SEP_BEFORE = new Set(['undo', 'snap', 'zoom-out'])
 
+/** zoom controls travel as one block: either they all fit on the row or they
+ *  all wrap to the next one together */
+const ZOOM_CLUSTER = new Set(['zoom-out', 'zoom', 'zoom-in'])
+
+/** Group visible button ids into wrap units: contiguous zoom controls merge
+ *  into a single unbreakable unit, everything else stands alone. A user who
+ *  deliberately drags a zoom button elsewhere gets separate buttons back. */
+export function groupWrapUnits(visible: string[]): string[][] {
+  const units: string[][] = []
+  for (const id of visible) {
+    const last = units[units.length - 1]
+    if (last && ZOOM_CLUSTER.has(id) && ZOOM_CLUSTER.has(last[last.length - 1])) last.push(id)
+    else units.push([id])
+  }
+  return units
+}
+
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
 
 /** Floating, draggable action bar. Defaults to anchored at the top of the
@@ -326,7 +343,29 @@ export function ToolPalette() {
   const visible = (order ?? defaultPaletteOrder()).filter((id) => !hidden.includes(id))
   const visibleTools = visible.filter((id) => tools.some((t) => t.id === id))
   const toolsSplit = Math.ceil(visibleTools.length / 2)
-  const split = Math.ceil(visible.length / 2)
+  const units = groupWrapUnits(visible)
+  const split = Math.ceil(units.length / 2)
+
+  /** one wrap unit: a lone button, or the zoom cluster in an unbreakable span
+   *  that carries its leading separator along when it wraps (separators are
+   *  otherwise a single-row-mode feature, as before) */
+  const renderUnit = (group: string[], unitIndex: number, withSep: boolean) => {
+    const sep = withSep && SEP_BEFORE.has(group[0]) && unitIndex > 0 ? <div className="tb-sep" /> : null
+    const inner = group.map((id) => renderButton(id))
+    if (group.length === 1)
+      return (
+        <Fragment key={group[0]}>
+          {sep}
+          {inner}
+        </Fragment>
+      )
+    return (
+      <span key={group[0]} className="tp-cluster">
+        {sep}
+        {inner}
+      </span>
+    )
+  }
 
   return (
     <div
@@ -375,16 +414,11 @@ export function ToolPalette() {
           )
         ) : rows === 2 ? (
           <>
-            <div className="tp-row">{visible.slice(0, split).map((id) => renderButton(id))}</div>
-            <div className="tp-row">{visible.slice(split).map((id) => renderButton(id))}</div>
+            <div className="tp-row">{units.slice(0, split).map((g, i) => renderUnit(g, i, false))}</div>
+            <div className="tp-row">{units.slice(split).map((g, i) => renderUnit(g, i, false))}</div>
           </>
         ) : (
-          visible.map((id, i) => (
-            <Fragment key={id}>
-              {SEP_BEFORE.has(id) && i > 0 && <div className="tb-sep" />}
-              {renderButton(id)}
-            </Fragment>
-          ))
+          units.map((g, i) => renderUnit(g, i, true))
         )}
         {!collapsed && (
           <>

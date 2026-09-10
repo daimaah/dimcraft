@@ -32,6 +32,13 @@ changes live in each app's own changelog:
 - Symbol-pack exports write the app-scoped envelope via `APP_ID` (byte-identical output for
   DimCrochet; the pack machinery is now shared).
 
+### Fixed
+
+- **The action bar's zoom controls (− % +) wrap as one block**: when the floating palette runs
+  out of width, the whole zoom cluster moves to the next row together instead of stranding the
+  − button at the end of the row. Buttons the user deliberately dragged apart still render
+  individually.
+
 ## [0.1.0] — 2026-09-10
 
 First release of the DimCraft core: the craft-agnostic chart-editor kernel
