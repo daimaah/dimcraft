@@ -56,6 +56,9 @@ pipeline moves to the Node-24 actions.
   (checkout@v5, setup-node@v7, docker actions v4/v4/v6/v7), clearing the
   Node 20 deprecation warnings, with Dependabot keeping actions and npm
   dependencies current from now on.
+- **Options dialog layout** — the General, Buttons and Danger-zone tabs read
+  as a settings list: roomy rows with separators, sliders and URL fields
+  aligned on a two-column grid, shared with DimKnit's shell (theme aside).
 
 ### Fixed
 

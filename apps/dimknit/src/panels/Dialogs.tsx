@@ -127,7 +127,7 @@ export function OptionsDialog() {
       <div className="options-content">
         {tab === 'general' && (
           <div className="form">
-            <label className="form-row">
+            <label className="check">
               <input
                 type="checkbox"
                 checked={viewAnimations}
@@ -139,7 +139,7 @@ export function OptionsDialog() {
                 <span className="hint">Animate the follow bar and dialogs in the design view.</span>
               </span>
             </label>
-            <label className="form-row">
+            <label className="check">
               <input type="checkbox" checked={clock24h} onChange={(e) => useStore.getState().setClock24h(e.target.checked)} />
               <span>
                 <strong>24-hour clock</strong>
@@ -147,7 +147,7 @@ export function OptionsDialog() {
                 <span className="hint">Show saved times as 13:45 rather than 1:45 pm.</span>
               </span>
             </label>
-            <label className="form-row">
+            <label className="check">
               <input type="checkbox" checked={snapEnabled} onChange={(e) => useStore.getState().setSnap(e.target.checked)} />
               <span>
                 <strong>Snap to stitch grid</strong>
@@ -155,7 +155,7 @@ export function OptionsDialog() {
                 <span className="hint">Placed cells snap to the 24 px stitch grid.</span>
               </span>
             </label>
-            <label className="form-row">
+            <label className="check">
               <input type="checkbox" checked={gridVisible} onChange={(e) => useStore.getState().setGrid(e.target.checked)} />
               <span>
                 <strong>Show grid</strong>
@@ -163,7 +163,7 @@ export function OptionsDialog() {
                 <span className="hint">The faint cell grid behind the chart.</span>
               </span>
             </label>
-            <label className="form-row">
+            <label className="check">
               <input
                 type="checkbox"
                 checked={guidesVisible}

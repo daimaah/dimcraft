@@ -30,4 +30,10 @@ follows [Keep a Changelog](https://keepachangelog.com/).
   follow mode, stitch-count accounting checks, four learn-to-knit starters,
   SVG/PNG export, per-app storage and encrypted short-link sidecar.
 
+### Changed
+
+- **Options dialog layout** — the General and Danger-zone tabs read as a
+  settings list: roomy rows with separators, toggle rows rebuilt on the
+  shared check-row layout, matching DimCrochet's shell (theme aside).
+
 The first numbered release will be **0.1.0**, tagged `dimknit-v0.1.0`.
