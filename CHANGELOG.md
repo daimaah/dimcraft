@@ -14,6 +14,17 @@ changes live in each app's own changelog:
 
 ## [Unreleased]
 
+## [0.1.0] — 2026-09-10
+
+First release of the DimCraft core: the craft-agnostic chart-editor kernel
+extracted from DimCrochet into a monorepo package shared by DimCrochet and
+DimKnit — document model, geometry toolkit, interchange and storage, exports,
+the shared editor shell, and the zero-dependency short-link sidecar. Storage
+keys and interchange envelopes are keyed by an injected app id; sibling-app
+discovery runs through the sidecar's `/api/whoami` handshake with
+deployment-configured pairing (`SIBLING_PORT` / `SIBLING_URL`); share receive
+paths accept only the serving build's own envelopes.
+
 ### Added
 
 - **Sibling-app discovery with a two-brand front page** — the sidecar now serves a baked `/api/whoami`

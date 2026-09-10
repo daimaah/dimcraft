@@ -5,6 +5,15 @@ follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.1.0] — 2026-09-10
+
+First release of DimKnit: the knitting chart composer sharing the DimCraft
+chart-editor kernel with DimCrochet. Stitch-grid charts with a CYC-style
+palette, serpentine row reading with RS/WS-aware written instructions,
+follow mode, stitch-count accounting, four learn-to-knit starters, SVG/PNG
+export and per-chart .json files, encrypted short links and share links via
+the self-hosted sidecar, and automatic sibling discovery with DimCrochet.
+
 ### Added
 
 - **"Open DimCrochet →" companion link** — when a DimCrochet deployment
@@ -55,4 +64,4 @@ follows [Keep a Changelog](https://keepachangelog.com/).
   settings list: roomy rows with separators, toggle rows rebuilt on the
   shared check-row layout, matching DimCrochet's shell (theme aside).
 
-The first numbered release will be **0.1.0**, tagged `dimknit-v0.1.0`.
+This is the first numbered release: **0.1.0**, tagged `dimknit-v0.1.0`.

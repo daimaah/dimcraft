@@ -12,6 +12,16 @@ and summarized in the [repository-root CHANGELOG](../../CHANGELOG.md).
 
 ## [Unreleased]
 
+## [0.9.0] — 2026-09-10
+
+The sibling release: DimKnit (the knitting chart composer) lands beside
+DimCrochet. Each app discovers the other automatically — from the
+deployment's advertised configuration or the default ports on the same host —
+shows it as an identity card on the projects screen, and jumps to it; the
+Options → General companion-URL field covers reverse proxies and separate
+hosts. The Options dialog reads as a roomy settings list with separators in
+both apps, and the legend title no longer crowds the first row.
+
 ### Added
 
 - **"Open DimKnit →" companion link** — when a DimKnit deployment answers on

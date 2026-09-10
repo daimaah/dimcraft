@@ -5,8 +5,8 @@ chart-editor kernel, two separate products with their own identity, releases and
 
 | App | Craft | Version | Container image |
 |---|---|---|---|
-| **DimCrochet** | crochet round & motif charts | v0.8.0 | `ghcr.io/daimaah/dimcrochet` |
-| **DimKnit** | knitting charts | v0.1.0 (first release in preparation) | `ghcr.io/daimaah/dimknit` |
+| **DimCrochet** | crochet round & motif charts | v0.9.0 | `ghcr.io/daimaah/dimcrochet` |
+| **DimKnit** | knitting charts | v0.1.0 | `ghcr.io/daimaah/dimknit` |
 
 Both apps embed the **DimCraft core** — the shared chart-editor kernel
 (`packages/core`) plus the short-link sidecar — versioned independently as
@@ -125,9 +125,7 @@ volumes:
   dimknit-data:
 ```
 
-The volume mapping matters: `/data` holds the sidecar's encrypted short links, and without it every stack update starts from an empty store, breaking previously shared links. Pin `v0.8.0` (DimCrochet) or `dimknit-v0.1.0` (DimKnit) instead of `latest` if you want upgrades to be explicit. The images are public on GHCR — pulling needs no login.
-
-> **Note on DimKnit's `latest` tag:** `latest` (and `main`) are published only from pushes to `main`. DimKnit's first release is still in preparation, so until then only `ghcr.io/daimaah/dimknit:develop` exists — pull that tag (and pair it with `dimcrochet:develop` if you want this week's features, such as the automatic sibling pairing). After the first release, `dimknit:latest` and pinned `dimknit-vX.Y.Z` tags are available like DimCrochet's.
+The volume mapping matters: `/data` holds the sidecar's encrypted short links, and without it every stack update starts from an empty store, breaking previously shared links. Pin `v0.9.0` (DimCrochet) or `dimknit-v0.1.0` (DimKnit) instead of `latest` if you want upgrades to be explicit. The images are public on GHCR — pulling needs no login. `latest` (and `main`) track the newest passing `main` build for each app.
 
 #### Linking the two apps
 
@@ -231,10 +229,10 @@ GEN_FIXTURES=1 npx vitest run apps/dimcrochet/tests/gen-fixtures.test.ts
 has no version.** Every version names a real artifact — the app you deploy, or the kernel it
 embeds:
 
-- **DimCrochet** is versioned `vX.Y.Z` (currently **v0.8.0**, numbering started at v0.5.0 — no
-  license dictates a scheme): git tags `v0.8.0`, image `ghcr.io/daimaah/dimcrochet:v0.8.0`,
+- **DimCrochet** is versioned `vX.Y.Z` (currently **v0.9.0**, numbering started at v0.5.0 — no
+  license dictates a scheme): git tags `v0.9.0`, image `ghcr.io/daimaah/dimcrochet:v0.9.0`,
   summarized in the [app changelog](apps/dimcrochet/CHANGELOG.md).
-- **DimKnit** is versioned `dimknit-vX.Y.Z` (first release **v0.1.0** in preparation): git tags
+- **DimKnit** is versioned `dimknit-vX.Y.Z` (first release **v0.1.0**): git tags
   `dimknit-v0.1.0`, image `ghcr.io/daimaah/dimknit:dimknit-v0.1.0`, summarized in
   [its own changelog](apps/dimknit/CHANGELOG.md).
 - **DimCraft core** — the shared chart-editor kernel, the short-link sidecar and the shared
