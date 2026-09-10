@@ -105,6 +105,16 @@ export async function discoverSibling(): Promise<SiblingInfo | null> {
   return null
 }
 
+/**
+ * Verify one explicit URL (the Options "Verify" button); an empty string
+ * means "check what auto-detection would find". Resolves null when no
+ * sibling app answers there.
+ */
+export async function verifySiblingUrl(url: string): Promise<SiblingInfo | null> {
+  const clean = url.trim().replace(/\/+$/, '')
+  return clean ? probeSibling(clean) : discoverSibling()
+}
+
 // ---- cached result + React hook --------------------------------------------
 
 function cacheKey(): string {

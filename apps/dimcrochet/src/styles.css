@@ -1944,3 +1944,29 @@ button {
   margin-left: auto;
   white-space: nowrap;
 }
+
+/* ---- companion URL field (Options) ---------------------------------------- */
+
+.sibling-field {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.sibling-field input {
+  min-width: 200px;
+}
+
+.sibling-status {
+  display: block;
+  margin-top: 3px;
+}
+
+.sibling-status.ok {
+  color: var(--green);
+}
+
+.sibling-status.fail {
+  color: var(--danger);
+}

@@ -19,7 +19,9 @@ and summarized in the [repository-root CHANGELOG](../../CHANGELOG.md).
   via the sibling's sidecar identity handshake. A manual companion URL can be
   set in Options → General for custom ports or proxies. When detected, the
   sibling appears as an identity card (logo, version, slogan) beside this
-  app's branding, which carries a 'this app' chip. (Underlying
+  app's branding, which carries a "this app" chip. The companion-URL field
+  has a **Verify** button (probes the entered URL, or the default ports when
+  empty) and shows a live status line for auto-detection. (Underlying
   discovery machinery and the `/api/whoami` endpoint are core changes — see
   the root CHANGELOG.)
 - **Legend spacing** — the legend title no longer crowds the first row of

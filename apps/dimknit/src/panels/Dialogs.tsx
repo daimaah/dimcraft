@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { deleteAllLocalData } from '@dimcraft/core/export/backup'
 import { changelogBlocks, recentChangelog, unreleasedChangelog } from '@dimcraft/core/export/changelog'
-import { getManualSiblingUrl, saveManualSiblingUrl, siblingAppName } from '@dimcraft/core/sibling'
+import { SiblingUrlField } from '@dimcraft/core/ui/SiblingUrlField'
 import changelogRaw from '../../CHANGELOG.md?raw'
 import { InstructionsDialog } from './InstructionsDialog'
 import { ExportDialog } from './ExportDialog'
@@ -92,7 +92,6 @@ export function OptionsDialog() {
   const [tab, setTab] = useState<'general' | 'danger'>('general')
   const [confirmText, setConfirmText] = useState('')
   const [wiping, setWiping] = useState(false)
-  const [siblingUrl, setSiblingUrl] = useState(getManualSiblingUrl)
 
   const wipe = async () => {
     setWiping(true)
@@ -176,23 +175,7 @@ export function OptionsDialog() {
                 <span className="hint">Construction guides stay editable but are skipped in exports when hidden.</span>
               </span>
             </label>
-            <div className="form-row">
-              <span>
-                <strong>Companion app URL</strong>
-                <br />
-                <span className="hint">
-                  Link to {siblingAppName()} when it runs on another address. Leave empty to
-                  auto-detect it on this host (ports 8080/8081).
-                </span>
-              </span>
-              <input
-                type="url"
-                value={siblingUrl}
-                placeholder="auto-detect"
-                onChange={(e) => setSiblingUrl(e.target.value)}
-                onBlur={() => saveManualSiblingUrl(siblingUrl)}
-              />
-            </div>
+            <SiblingUrlField />
           </div>
         )}
         {tab === 'danger' && (

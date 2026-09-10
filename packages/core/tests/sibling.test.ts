@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { probeSibling, siblingAppName, siblingAppId, siblingCandidates } from '../src/sibling'
+import { probeSibling, siblingAppName, siblingAppId, siblingCandidates, verifySiblingUrl } from '../src/sibling'
 import { registerCraft } from '../src/craft'
 import type { CraftModule } from '../src/craft'
 
@@ -26,6 +26,24 @@ describe('siblingCandidates', () => {
   it('is empty outside a browser (no location)', () => {
     // node env: no location, no manual URL (no localStorage)
     expect(siblingCandidates()).toEqual([])
+  })
+})
+
+describe('verifySiblingUrl (the Options Verify button)', () => {
+  it('probes the exact URL given, trimming slashes', async () => {
+    const seen: string[] = []
+    globalThis.fetch = (async (input: unknown) => {
+      seen.push(String(input))
+      return new Response(JSON.stringify({ app: 'dimknit', version: '0.2.0' }), { status: 200 })
+    }) as typeof fetch
+    const info = await verifySiblingUrl('http://host:9000///')
+    expect(info?.version).toBe('0.2.0')
+    expect(seen).toEqual(['http://host:9000/api/whoami'])
+  })
+
+  it('with an empty URL it checks what auto-detection would find', async () => {
+    // node env: no candidates, so nothing to probe — resolves null without throwing
+    expect(await verifySiblingUrl('   ')).toBeNull()
   })
 })
 

@@ -13,8 +13,10 @@ follows [Keep a Changelog](https://keepachangelog.com/).
   URL can be set in Options → General for custom ports or proxies. When
   detected, the sibling appears as an identity card (its logo, version from
   the handshake and slogan) beside this app's branding, which now carries a
-  "this app" chip. (Underlying discovery machinery and the `/api/whoami`
-  endpoint are core changes — see the root CHANGELOG.)
+  "this app" chip. The companion-URL field has a **Verify** button (probes
+  the entered URL, or the default ports when empty) and shows a live status
+  line for auto-detection. (Underlying discovery machinery and the
+  `/api/whoami` endpoint are core changes — see the root CHANGELOG.)
 - **Legend spacing** — the legend title no longer crowds the first row of
   entries (shared-rendering fix, also in DimCrochet).
 

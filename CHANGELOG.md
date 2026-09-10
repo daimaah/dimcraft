@@ -25,7 +25,10 @@ changes live in each app's own changelog:
   tab takes a manual companion URL. On the projects screen the detected
   sibling appears as an identity card (its logo, version from the handshake
   and slogan) beside the active app's own branding, which now carries a
-  "this app" chip.
+  "this app" chip. The Options companion-URL field gains a **Verify**
+  button (probes the entered URL, or the default ports when empty) and a
+  live status line that always states whether and where the sibling app is
+  currently detected.
 
 ### Fixed
 
