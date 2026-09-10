@@ -1,9 +1,34 @@
 import { LINE_LEGEND_ID, type ChartDoc, type SymbolDef } from '../model/types'
+import { yarnName } from '../model/yarns'
 
 export interface LegendItem {
   symbolId: string
   label: string
   count: number
+}
+
+export interface YarnLegendItem {
+  id: string
+  colour: string
+  name: string
+  count: number
+}
+
+/**
+ * The chart's used yarns for the legend's colourwork section, in palette
+ * order, with how many stitches wear each colour.
+ */
+export function yarnLegendItems(doc: ChartDoc): YarnLegendItem[] {
+  const yarns = doc.yarns ?? []
+  if (yarns.length === 0) return []
+  const counts = new Map<string, number>()
+  for (const p of doc.placements) {
+    if (p.visible === false || !p.colour) continue
+    counts.set(p.colour, (counts.get(p.colour) ?? 0) + 1)
+  }
+  return yarns
+    .map((y, i) => ({ id: y.id, colour: y.colour, name: yarnName(y, i), count: counts.get(y.colour) ?? 0 }))
+    .filter((y) => y.count > 0)
 }
 
 /**

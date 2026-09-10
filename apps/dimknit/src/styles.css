@@ -1767,6 +1767,46 @@ button {
   flex: none;
 }
 
+/* colourwork swatches: selection painting + legend preview */
+.swatch-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.swatch-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  padding: 0;
+}
+
+.swatch-btn.active {
+  border-color: var(--accent, #d96f4e);
+  box-shadow: 0 0 0 2px rgba(217, 111, 78, 0.35);
+}
+
+.swatch-btn.add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-style: dashed;
+  color: var(--text-dim);
+  font-size: 15px;
+  line-height: 1;
+}
+
+.yarn-swatch {
+  display: inline-block;
+  width: 18px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1px solid rgba(128, 128, 128, 0.6);
+}
+
 .tool-palette.two-rows .tp-content {
   flex-direction: column;
   align-items: stretch;

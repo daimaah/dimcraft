@@ -1,6 +1,6 @@
 import type { ChartDoc, RepeatBracket, StitchLine, SymbolDef, TextElement } from '../model/types'
 import { LINE_LEGEND_ID } from '../model/types'
-import { legendItems } from '../geometry/legend'
+import { legendItems, yarnLegendItems } from '../geometry/legend'
 import { LEGEND_HEAD, LEGEND_ROW_H, LEGEND_W } from '../geometry/bounds'
 import { symbolInner } from '../symbols/registry'
 
@@ -109,6 +109,31 @@ export function legendSvg(doc: ChartDoc, defMap: Map<string, SymbolDef>, ink: st
       )
     }
   })
+
+  // colourwork section: one swatch row per used yarn
+  const yarns = yarnLegendItems(doc)
+  if (yarns.length > 0) {
+    const headY = LEGEND_HEAD + items.length * LEGEND_ROW_H
+    parts.push(
+      `<text x="2" y="${headY + 3}" fill="${ink}" fill-opacity="0.65" font-family="${FONT}" font-size="11" font-weight="700" letter-spacing="1" stroke="none">YARNS</text>`,
+    )
+    yarns.forEach((y, i) => {
+      const rowY = headY + 10 + i * LEGEND_ROW_H
+      parts.push(
+        `<g transform="translate(2 ${rowY})"><rect x="0" y="-8" width="20" height="14" rx="3.5" fill="${y.colour}" stroke="${ink}" stroke-width="1" fill-opacity="0.85"/></g>`,
+      )
+      parts.push(
+        `<text x="28" y="${rowY + 5}" fill="${ink}" font-family="${FONT}" font-size="13" stroke="none">${escapeXml(
+          y.name,
+        )}</text>`,
+      )
+      if (doc.legend.showCounts) {
+        parts.push(
+          `<text x="${LEGEND_W - 6}" y="${rowY + 5}" fill="${ink}" font-family="${FONT}" font-size="13" text-anchor="end" stroke="none">× ${y.count}</text>`,
+        )
+      }
+    })
+  }
   return `<g>${parts.join('')}</g>`
 }
 

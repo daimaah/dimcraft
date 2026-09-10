@@ -72,6 +72,12 @@ export interface CraftModule {
     label: string
     hint(set: boolean, sizeHint: string | null): string
   }
+  /** Whether the shell exposes the colourwork palette (yarn picking, per-stitch
+   *  colour inspector, yarn legend). */
+  colourwork: boolean
+  /** Grid crafts: stamping on an occupied cell re-works that cell (symbol +
+   *  colour) instead of stacking a second stitch on top of it. */
+  replaceOnStamp: boolean
 }
 
 let craft: CraftModule | null = null

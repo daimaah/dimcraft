@@ -8,6 +8,7 @@ import type {
   SymbolDef,
   Tool,
   Vec,
+  Yarn,
 } from '../model/types'
 import { createEmptyDoc, sanitizeDoc, uid } from '../model/doc'
 import { guideCenter, guideSample } from '../geometry/guides'
@@ -59,6 +60,8 @@ interface EditorState {
 
   tool: Tool
   armedSymbolId: string | null
+  /** colourwork: colour armed in the palette; null = the chart ink */
+  armedColour: string | null
   placingRotation: number
   placingScale: number
   polygonSides: number
@@ -108,6 +111,7 @@ interface EditorState {
 
   setTool: (t: Tool) => void
   armSymbol: (symbolId: string) => void
+  armColour: (colour: string | null) => void
   setPlacingRotation: (deg: number) => void
   setPlacingScale: (s: number) => void
   setPolygonSides: (n: number) => void
@@ -118,7 +122,7 @@ interface EditorState {
   setBracketStart: (p: Vec | null) => void
 
   stampPlacement: (x: number, y: number) => void
-  updatePlacements: (ids: string[], patch: Partial<{ symbolId: string; rotation: number; scale: number; flip: boolean; x: number; y: number }>) => void
+  updatePlacements: (ids: string[], patch: Partial<{ symbolId: string; rotation: number; scale: number; flip: boolean; x: number; y: number; colour: string | undefined }>) => void
 
   beginDrag: () => void
   applyDragPositions: (payload: DragPositions) => void
@@ -181,6 +185,10 @@ interface EditorState {
   applyTerminology: (presetId: string) => void
   setLegendLive: (patch: Partial<ChartDoc['legend']>) => void
   setGauge: (unitsPer10cm: number | null) => void
+  /** replace the whole colourwork yarn palette (one call = one undo step) */
+  setYarns: (yarns: Yarn[]) => void
+  /** recolour/rename one yarn; existing stitches wearing its colour repaint with it */
+  updateYarn: (id: string, patch: Partial<{ colour: string; name: string | undefined }>) => void
 
   addTextAt: (x: number, y: number) => void
   updateText: (id: string, patch: Partial<{ content: string; size: number; rotation: number }>) => void
@@ -283,6 +291,7 @@ export const createStore = (craft: CraftModule): EditorStore => {
 
     tool: 'select',
     armedSymbolId: craft.defaultSymbolId,
+    armedColour: null,
     placingRotation: 0,
     placingScale: 1,
     polygonSides: 4,
@@ -314,6 +323,7 @@ export const createStore = (craft: CraftModule): EditorStore => {
 
     setTool: (t) => set({ tool: t }),
     armSymbol: (symbolId) => set({ armedSymbolId: symbolId, tool: 'place' }),
+    armColour: (colour) => set(colour ? { armedColour: colour, tool: 'place' } : { armedColour: null }),
     setPlacingRotation: (deg) => set({ placingRotation: ((deg % 360) + 360) % 360 }),
     setPlacingScale: (s) => set({ placingScale: clamp(s, 0.2, 8) }),
     setPolygonSides: (n) => set({ polygonSides: clamp(Math.round(n), 3, 24) }),
@@ -325,6 +335,35 @@ export const createStore = (craft: CraftModule): EditorStore => {
       set((st) => {
         const symbolId = st.armedSymbolId
         if (!symbolId) return {}
+        const colour = st.armedColour ?? undefined
+        // grid crafts re-work the cell under the click: same spot, fresh
+        // stitch — keeps the placement id so selection/follow stay stable
+        if (getCraft().replaceOnStamp) {
+          const existing = st.doc.placements.find((q) => q.x === x && q.y === y)
+          if (existing) {
+            const next = {
+              ...existing,
+              symbolId,
+              colour,
+              rotation: st.placingRotation,
+              scale: st.placingScale,
+              flip: false,
+            }
+            if (
+              next.symbolId === existing.symbolId &&
+              next.colour === existing.colour &&
+              next.rotation === existing.rotation &&
+              next.scale === existing.scale &&
+              next.flip === existing.flip
+            ) {
+              return { selPlacements: [existing.id] }
+            }
+            return mutateDoc(st, {
+              doc: { ...st.doc, placements: st.doc.placements.map((p) => (p.id === existing.id ? next : p)) },
+              selPlacements: [existing.id],
+            })
+          }
+        }
         const placement = {
           id: uid('p'),
           symbolId,
@@ -333,6 +372,7 @@ export const createStore = (craft: CraftModule): EditorStore => {
           rotation: st.placingRotation,
           scale: st.placingScale,
           flip: false,
+          ...(colour ? { colour } : {}),
         }
         return mutateDoc(st, {
           doc: { ...st.doc, placements: [...st.doc.placements, placement] },
@@ -879,6 +919,24 @@ export const createStore = (craft: CraftModule): EditorStore => {
     setGauge: (unitsPer10cm) =>
       commit((d) => {
         d.unitsPer10cm = unitsPer10cm && unitsPer10cm > 0 ? unitsPer10cm : null
+      }),
+
+    setYarns: (yarns) =>
+      commit((d) => {
+        d.yarns = yarns.length ? yarns : undefined
+      }),
+
+    updateYarn: (id, patch) =>
+      set((st) => {
+        const old = (st.doc.yarns ?? []).find((y) => y.id === id)
+        if (!old) return {}
+        const doc = structuredClone(st.doc)
+        doc.yarns = (doc.yarns ?? []).map((y) => (y.id === id ? { ...y, ...patch } : y))
+        // stitches store the colour by value — recolouring the yarn repaints them
+        if (patch.colour && patch.colour !== old.colour) {
+          doc.placements = doc.placements.map((p) => (p.colour === old.colour ? { ...p, colour: patch.colour } : p))
+        }
+        return mutateDoc(st, { doc })
       }),
 
     setSymbolSet: (id) =>

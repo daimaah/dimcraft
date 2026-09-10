@@ -558,7 +558,7 @@ export function ChartCanvas() {
                       : undefined
                 }
               >
-                <g dangerouslySetInnerHTML={{ __html: symbolInner(def, ink) }} />
+                <g dangerouslySetInnerHTML={{ __html: symbolInner(def, p.colour ?? ink) }} />
                 {followView?.currentId === p.id && (
                   <circle
                     className="follow-cursor-ring"

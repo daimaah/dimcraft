@@ -7,6 +7,18 @@ follows [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- **Colourwork** — the chart's yarn palette lives in the inspector (add yarns, recolour, name
+  them MC/CC1/CC2…); under the symbols, a **Yarns** row lets you arm a yarn (or the ink) and
+  paint cells by clicking, and armed-yarn colours ride along when you place. Coloured stitches
+  render in the editor, gallery previews and every export; the legend grows a **Yarns** section
+  (swatch, name, stitch count); written instructions and follow mode carry the yarn abbreviation
+  the way patterns write them (`k3 CC1, p2, k2tog MC`) with the RS/WS duality applied per cell.
+  Recolouring a yarn repaints its stitches in the same undo step, and knit-aware mirroring keeps
+  colours. Stamping on an occupied cell now re-works that cell (new symbol + colour) instead of
+  stacking stitches.
+
+### Added
+
 - **Action bar** — the floating, draggable tool palette from DimCrochet, restyled for the knit
   shell: select/pan/place tools plus undo/redo, snapping, grid, guides, the zoom cluster
   (in/out/editable %/fit), fullscreen, licenses and options. Drag anywhere, collapse to a

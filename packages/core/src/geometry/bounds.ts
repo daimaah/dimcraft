@@ -1,6 +1,6 @@
 import type { ChartDoc, SymbolDef } from '../model/types'
 import { guidePoints } from './guides'
-import { legendItems } from './legend'
+import { legendItems, yarnLegendItems } from './legend'
 import { cornersBBox, placementCorners, textCorners, unionBBox, type BBox } from './transform'
 
 export const LEGEND_W = 190
@@ -11,7 +11,7 @@ export const LEGEND_ROW_H = 26
 export const LEGEND_HEAD = 34
 
 export function legendSize(doc: ChartDoc, defMap: Map<string, SymbolDef>): { w: number; h: number } {
-  const rows = legendItems(doc, defMap).length
+  const rows = legendItems(doc, defMap).length + yarnLegendItems(doc).length
   return { w: LEGEND_W * doc.legend.scale, h: (LEGEND_HEAD + rows * LEGEND_ROW_H + 8) * doc.legend.scale }
 }
 

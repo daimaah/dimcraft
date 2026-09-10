@@ -38,6 +38,8 @@ export interface Placement {
   rotation: number
   scale: number
   flip: boolean
+  /** colourwork: this stitch's yarn colour (hex); undefined = the chart ink */
+  colour?: string
   /** set when the stitch was created by "place evenly along guide" */
   guideTag?: string
   groupId?: string
@@ -155,6 +157,14 @@ export interface CustomSet {
   notes?: string
 }
 
+/** One yarn of the chart's colourwork palette. Stitches store their colour
+ *  by value; the palette is the picking/convention layer (MC, CC1, …). */
+export interface Yarn {
+  id: string
+  colour: string
+  name?: string
+}
+
 export interface ChartDoc {
   schemaVersion: number
   title: string
@@ -175,6 +185,8 @@ export interface ChartDoc {
   symbolSet?: string
   /** user-imported symbol packs */
   customSets?: CustomSet[]
+  /** colourwork yarn palette — present once the chart uses more than the ink */
+  yarns?: Yarn[]
 }
 
 /** Legend key under which backstitch lines are listed. */

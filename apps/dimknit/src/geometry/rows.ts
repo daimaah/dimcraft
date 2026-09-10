@@ -1,5 +1,6 @@
 import type { FollowDirection, FollowStep } from '@dimcraft/core/craft'
-import type { ChartDoc, Placement } from '@dimcraft/core/model/types'
+import type { ChartDoc, Placement, Yarn } from '@dimcraft/core/model/types'
+import { yarnName } from '@dimcraft/core/model/yarns'
 
 /**
  * Row engine for flat knitting charts.
@@ -58,44 +59,72 @@ export function groupRows(doc: ChartDoc, tolerance = 20): KnitRow[] {
   }))
 }
 
-/** Run-length encode a sequence of stitch words the way knitting patterns
+/** Run-length encode a sequence of stitch tokens the way knitting patterns
  *  write them: plain k/p always carry their count ("k1, p3"), multi-letter
- *  operations stay bare when single ("k2tog, k3, ssk"). */
-function runLength(words: string[]): string {
+ *  operations stay bare when single ("k2tog, k3, ssk"). A colourwork token's
+ *  yarn abbreviation rides after the count ("k3 CC1", "k2tog MC"). */
+interface Tok {
+  word: string
+  suffix: string
+}
+
+function runLength(toks: Tok[]): string {
   const runs: string[] = []
   let i = 0
-  while (i < words.length) {
+  while (i < toks.length) {
     let n = 1
-    while (i + n < words.length && words[i + n] === words[i]) n++
-    const plain = words[i] === 'k' || words[i] === 'p'
-    runs.push(n > 1 || plain ? `${words[i]}${n}` : words[i])
+    while (i + n < toks.length && toks[i + n].word === toks[i].word && toks[i + n].suffix === toks[i].suffix) n++
+    const plain = toks[i].word === 'k' || toks[i].word === 'p'
+    const count = n > 1 || plain ? String(n) : ''
+    runs.push(`${toks[i].word}${count}${toks[i].suffix}`)
     i += n
   }
   return runs.join(', ')
 }
 
+/** How a yarn shows in written instructions; unknown colours (yarn deleted)
+ *  read as uncoloured stitches rather than breaking the row text. */
+function colourSuffix(yarns: Yarn[], hex: string | undefined): string {
+  if (!hex) return ''
+  const i = yarns.findIndex((y) => y.colour === hex)
+  return i < 0 ? '' : ` ${yarnName(yarns[i], i)}`
+}
+
+function rowToks(row: KnitRow, yarns: Yarn[], side: 'rs' | 'ws'): Tok[] {
+  const cells = side === 'ws' ? row.cells : [...row.cells].reverse()
+  return cells.map((c) => ({
+    word: STITCH_WORDS[c.symbolId]?.[side] ?? c.symbolId,
+    suffix: colourSuffix(yarns, c.colour),
+  }))
+}
+
 /** Written instruction text for one row, e.g. "Row 2 (WS): k4, p4". */
-export function rowInstruction(row: KnitRow, allRs = false): string {
+export function rowInstruction(row: KnitRow, allRs = false, yarns: Yarn[] = []): string {
   const side = allRs ? 'RS' : row.side
   // WS rows are read left → right on the chart, RS rows right → left
-  const cells = side === 'WS' ? row.cells : [...row.cells].reverse()
-  const words = cells.map((c) => STITCH_WORDS[c.symbolId]?.[allRs ? 'rs' : side.toLowerCase() as 'rs' | 'ws'] ?? c.symbolId)
-  return `Row ${row.index} (${side}): ${runLength(words)}`
+  const toks = rowToks(row, yarns, allRs ? 'rs' : (side.toLowerCase() as 'rs' | 'ws'))
+  return `Row ${row.index} (${side}): ${runLength(toks)}`
 }
 
 /** All rows as written instructions, ready for a pattern sheet. */
 export function writtenInstructions(doc: ChartDoc, tolerance = 20, allRs = false): string[] {
-  return groupRows(doc, tolerance).map((r) => rowInstruction(r, allRs))
+  const yarns = doc.yarns ?? []
+  return groupRows(doc, tolerance).map((r) => rowInstruction(r, allRs, yarns))
 }
 
 /** Row-serpentine follow steps for the shared follow-mode bar. */
 export function followSteps(doc: ChartDoc, tolerance = 20, _dir: FollowDirection = 'ccw'): FollowStep[] {
+  const yarns = doc.yarns ?? []
   return groupRows(doc, tolerance).map((row) => {
-    const cells = row.side === 'WS' ? row.cells : [...row.cells].reverse()
-    const words = cells.map((c) => STITCH_WORDS[c.symbolId]?.[row.side.toLowerCase() as 'rs' | 'ws'] ?? c.symbolId)
+    const side = row.side.toLowerCase() as 'rs' | 'ws'
+    const cells = side === 'ws' ? row.cells : [...row.cells].reverse()
+    const toks = cells.map((c) => ({
+      word: STITCH_WORDS[c.symbolId]?.[side] ?? c.symbolId,
+      suffix: colourSuffix(yarns, c.colour),
+    }))
     return {
       label: `Row ${row.index}`,
-      text: `Row ${row.index} (${row.side}): ${runLength(words)}`,
+      text: `Row ${row.index} (${row.side}): ${runLength(toks)}`,
       ids: cells.map((c) => c.id),
       order: cells.map((c) => c.id),
       radius: null,

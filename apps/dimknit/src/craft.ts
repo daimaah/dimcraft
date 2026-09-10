@@ -38,6 +38,8 @@ export const knitCraft: CraftModule = {
   // feature consumes it (true-scale PDF, gauge-correct cells) — no dead UI
   terminologyPresets: [],
   symbolPacks: false,
+  colourwork: true,
+  replaceOnStamp: true,
 }
 
 registerCraft(knitCraft)

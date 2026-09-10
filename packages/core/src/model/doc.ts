@@ -1,4 +1,4 @@
-import type { ChartDoc, CustomSet, LegendState } from './types'
+import type { ChartDoc, CustomSet, LegendState, Yarn } from './types'
 
 export const SCHEMA_VERSION = 1
 
@@ -74,5 +74,15 @@ export function sanitizeDoc(input: unknown): ChartDoc | null {
             s.artwork !== null,
         )
       : [],
+    // colourwork palette: absent until the chart uses one; invalid entries dropped
+    yarns: Array.isArray(d.yarns)
+      ? (d.yarns as Yarn[])
+          .filter((y) => !!y && typeof y === 'object' && typeof y.id === 'string' && typeof y.colour === 'string')
+          .map((y) => ({
+            id: y.id,
+            colour: y.colour,
+            ...(typeof y.name === 'string' && y.name.trim() ? { name: y.name.trim() } : {}),
+          }))
+      : undefined,
   }
 }

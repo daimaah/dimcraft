@@ -354,7 +354,7 @@ function MiniChart({ doc }: { doc: ChartDoc }) {
           const def = defMap.get(p.symbolId)
           if (!def) return null
           return (
-            <g key={p.id} transform={placementTransform(p)} dangerouslySetInnerHTML={{ __html: symbolInner(def, ink) }} />
+            <g key={p.id} transform={placementTransform(p)} dangerouslySetInnerHTML={{ __html: symbolInner(def, p.colour ?? ink) }} />
           )
         })}
         {doc.lines.map((l) => (

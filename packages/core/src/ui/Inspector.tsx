@@ -4,10 +4,11 @@ import { getDefMap } from '../symbols/registry'
 import { getCraft } from '../craft'
 import { resolveSet } from '../symbols/sets'
 import { APP_ID } from '../appId'
-import { legendItems } from '../geometry/legend'
+import { legendItems, yarnLegendItems } from '../geometry/legend'
 import { contentBBox } from '../geometry/bounds'
 import { downloadBlob, safeFilename } from '../export/download'
 import { readSymbolPackFile } from '../export/projectFile'
+import { nextYarn, yarnName } from '../model/yarns'
 import type { Guide } from '../model/types'
 
 function NumField(props: {
@@ -45,6 +46,7 @@ function Row({ children }: { children: React.ReactNode }) {
 export function Inspector() {
   const st = activeStore()
   const doc = st((s) => s.doc)
+  const craft = getCraft()
   const selPlacements = st((s) => s.selPlacements)
   const selGuides = st((s) => s.selGuides)
   const selBrackets = st((s) => s.selBrackets)
@@ -52,6 +54,13 @@ export function Inspector() {
   const selLines = st((s) => s.selLines)
 
   const defMap = getDefMap(doc)
+
+  const addYarn = () => {
+    st.getState().setYarns([...(doc.yarns ?? []), nextYarn(doc)])
+  }
+  const removeYarn = (id: string) => {
+    st.getState().setYarns((doc.yarns ?? []).filter((y) => y.id !== id))
+  }
 
   if (selGuides.length === 1) {
     const g = doc.guides.find((x) => x.id === selGuides[0])
@@ -119,6 +128,27 @@ export function Inspector() {
                 onChange={(e) => st.getState().setLabelOverride(single.symbolId, e.target.value)}
               />
             </label>
+          </Row>
+        )}
+        {craft.colourwork && (doc.yarns?.length ?? 0) > 0 && (
+          <Row>
+            <div className="swatch-row" role="group" aria-label="Colour">
+              <button
+                className={`swatch-btn${selected.every((p) => !p.colour) ? ' active' : ''}`}
+                title="Chart ink"
+                style={{ background: doc.ink }}
+                onClick={() => st.getState().updatePlacements(selPlacements, { colour: undefined })}
+              />
+              {doc.yarns!.map((y) => (
+                <button
+                  key={y.id}
+                  className={`swatch-btn${selected.every((p) => p.colour === y.colour) ? ' active' : ''}`}
+                  title={yarnName(y, doc.yarns!.indexOf(y))}
+                  style={{ background: y.colour }}
+                  onClick={() => st.getState().updatePlacements(selPlacements, { colour: y.colour })}
+                />
+              ))}
+            </div>
           </Row>
         )}
 
@@ -313,7 +343,6 @@ export function Inspector() {
   }
 
   // ---- nothing selected: document settings ----
-  const craft = getCraft()
   const items = legendItems(doc, defMap)
   const gauge = doc.unitsPer10cm ?? null
   const sizeHint = gauge
@@ -347,6 +376,44 @@ export function Inspector() {
           />
         )}
       </Row>
+      {craft.colourwork && (
+        <>
+          <div className="panel-title">Yarns</div>
+          {(doc.yarns ?? []).map((y, i) => (
+            <Row key={y.id}>
+              <input
+                type="color"
+                value={y.colour}
+                aria-label={`Yarn ${i + 1} colour`}
+                title={`Yarn ${yarnName(y, i)}`}
+                onChange={(e) => st.getState().updateYarn(y.id, { colour: e.target.value })}
+              />
+              <input
+                type="text"
+                className="grow"
+                value={y.name ?? ''}
+                placeholder={yarnName(y, i)}
+                aria-label={`Yarn ${i + 1} name`}
+                onChange={(e) => st.getState().updateYarn(y.id, { name: e.target.value || undefined })}
+              />
+              <button className="icon-btn" title={`Remove yarn ${yarnName(y, i)}`} onClick={() => removeYarn(y.id)}>
+                ✕
+              </button>
+            </Row>
+          ))}
+          <Row>
+            <button className="btn" onClick={addYarn}>
+              ＋ Add yarn
+            </button>
+          </Row>
+          {(doc.yarns?.length ?? 0) === 0 && (
+            <p className="hint">
+              Add yarns for colourwork, then arm one under the symbols and click cells to paint
+              them. Yarn colours show in the legend, instructions and follow mode.
+            </p>
+          )}
+        </>
+      )}
       {(craft.builtinSets.length > 1 || craft.symbolPacks || craft.terminologyPresets.length > 0) && <SymbolSetSection />}
       {craft.gauge && <p className="hint">{craft.gauge.hint(gauge !== null, sizeHint)}</p>}
       <div className="panel-title">Legend</div>
@@ -391,6 +458,14 @@ export function Inspector() {
               <em>× {i.count}</em>
             </li>
           ))}
+          {craft.colourwork &&
+            yarnLegendItems(doc).map((y) => (
+              <li key={y.id}>
+                <span className="yarn-swatch" style={{ background: y.colour }} aria-hidden />
+                <span>{y.name}</span>
+                <em>× {y.count}</em>
+              </li>
+            ))}
         </ul>
       )}
       <p className="hint">Drag the legend on canvas to reposition it.</p>

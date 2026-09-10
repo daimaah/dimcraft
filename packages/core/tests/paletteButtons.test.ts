@@ -15,6 +15,8 @@ const stub: CraftModule = {
   ],
   terminologyPresets: [],
   symbolPacks: false,
+  colourwork: false,
+  replaceOnStamp: false,
 }
 
 registerCraft(stub)

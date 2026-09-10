@@ -67,7 +67,7 @@ export function buildExportSvg(doc: ChartDoc, options: SvgExportOptions = {}): B
     .map((p) => {
       const def = defMap.get(p.symbolId)
       if (!def) return ''
-      return `<g transform="${placementTransform(p)}">${symbolInner(def, ink)}</g>`
+      return `<g transform="${placementTransform(p)}">${symbolInner(def, p.colour ?? ink)}</g>`
     })
     .join('')
   if (stitches) parts.push(`<g>${stitches}</g>`)

@@ -27,6 +27,13 @@ changes live in each app's own changelog:
   tool" positioning block and an honest status note in DimKnit's README (young app, release-quality
   core, growing craft surface), refreshed feature lists (PDF export, share links, the shared
   editor shell, knit-aware mirroring) and a keyboard-shortcut table.
+- **Colourwork model** — `Placement.colour` (per-stitch yarn colour, undefined = chart ink) and
+  `ChartDoc.yarns` (the chart's yarn palette with MC/CC1… naming conventions) are part of the
+  shared document model, sanitized on import; the legend grows a yarns section (swatch, name,
+  count) in canvas previews and every export, and the shared inspector gains the yarn editor and
+  selection colour swatches for crafts that opt in (`craft.colourwork`). Grid crafts can also opt
+  into `craft.replaceOnStamp`: stamping on an occupied cell re-works that cell instead of stacking
+  a second stitch on it.
 
 ### Changed
 
