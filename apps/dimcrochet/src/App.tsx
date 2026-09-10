@@ -223,6 +223,27 @@ export default function App() {
     }
   }, [projectId])
 
+  // freshly created projects save immediately: the debounced autosave only
+  // reacts to changes made AFTER it subscribed, which the creation transition
+  // itself always precedes — without this, a new chart exists in My designs
+  // only after its first edit. Opening an existing project is unaffected
+  // (its savedAt is the record's own timestamp).
+  useEffect(
+    () =>
+      useStore.subscribe((s, prev) => {
+        if (s.projectId && s.projectId !== prev.projectId && s.savedAt == null) {
+          void saveProject({
+            id: s.projectId,
+            name: s.projectName,
+            createdAt: s.createdAt ?? Date.now(),
+            updatedAt: Date.now(),
+            doc: s.doc,
+          }).then(() => useStore.getState().markSaved(Date.now()))
+        }
+      }),
+    [],
+  )
+
   // keyboard shortcuts
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

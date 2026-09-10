@@ -12,9 +12,16 @@ and summarized in the [repository-root CHANGELOG](../../CHANGELOG.md).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Newly created charts save immediately** — a fresh chart (new, written rows, picture import,
+  paste-as-new) lands in My designs the moment it is created instead of only after the first
+  edit; opening an existing project still never touches its saved timestamp.
+
 ## [0.9.1] — 2026-09-10
 
 ### Fixed
+
 
 - **The side panels scroll when their content outgrows the window** — the symbol palette (90+
   symbols plus custom import) and the inspector/layers column silently clipped their lower
