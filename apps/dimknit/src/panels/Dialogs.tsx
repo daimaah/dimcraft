@@ -3,6 +3,8 @@ import type { ReactNode } from 'react'
 import { deleteAllLocalData } from '@dimcraft/core/export/backup'
 import { changelogBlocks, recentChangelog, unreleasedChangelog } from '@dimcraft/core/export/changelog'
 import { SiblingUrlField } from '@dimcraft/core/ui/SiblingUrlField'
+import { PaletteButtonsTab } from '@dimcraft/core/ui/PaletteButtonsTab'
+import { IslandFullOpacityCheck, ToolbarOpacityField } from '@dimcraft/core/ui/ToolbarOpacityField'
 import changelogRaw from '../../CHANGELOG.md?raw'
 import { InstructionsDialog } from './InstructionsDialog'
 import { ExportDialog } from './ExportDialog'
@@ -89,7 +91,7 @@ export function OptionsDialog() {
   const snapEnabled = useStore((s) => s.snapEnabled)
   const gridVisible = useStore((s) => s.gridVisible)
   const guidesVisible = useStore((s) => s.guidesVisible)
-  const [tab, setTab] = useState<'general' | 'danger'>('general')
+  const [tab, setTab] = useState<'general' | 'buttons' | 'danger'>('general')
   const [confirmText, setConfirmText] = useState('')
   const [wiping, setWiping] = useState(false)
   const [sidecarUrl, setSidecarUrl] = useState(
@@ -116,6 +118,15 @@ export function OptionsDialog() {
         </button>
         <button
           role="tab"
+          aria-selected={tab === 'buttons'}
+          className={tab === 'buttons' ? 'on' : ''}
+          onClick={() => setTab('buttons')}
+          data-testid="options-buttons-tab"
+        >
+          Buttons
+        </button>
+        <button
+          role="tab"
           aria-selected={tab === 'danger'}
           className={`danger${tab === 'danger' ? ' on' : ''}`}
           onClick={() => setTab('danger')}
@@ -130,6 +141,8 @@ export function OptionsDialog() {
       <div className="options-content">
         {tab === 'general' && (
           <div className="form">
+            <ToolbarOpacityField />
+            <IslandFullOpacityCheck />
             <label className="check">
               <input
                 type="checkbox"
@@ -205,6 +218,7 @@ export function OptionsDialog() {
             <SiblingUrlField />
           </div>
         )}
+        {tab === 'buttons' && <PaletteButtonsTab />}
         {tab === 'danger' && (
           <div className="form">
             <div className="form-row" data-testid="opt-wipe">

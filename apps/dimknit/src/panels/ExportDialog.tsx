@@ -2,21 +2,23 @@ import { useState } from 'react'
 import { downloadBlob, safeFilename } from '@dimcraft/core/export/download'
 import { buildExportSvg, type SvgExportOptions } from '@dimcraft/core/export/svg'
 import { exportPng } from '@dimcraft/core/export/png'
+import { exportPdf, type PageOrientation } from '@dimcraft/core/export/pdf'
 import { exportProjectFile } from '@dimcraft/core/export/projectFile'
 import { createShareFragment } from '@dimcraft/core/export/share'
 import { createShortLink, sidecarAvailable } from '@dimcraft/core/export/secureShare'
 import { Modal } from './Dialogs'
 import { useStore } from '../state/store'
 
-/** Export the chart as SVG or PNG, save it as a .dimknit.json file, or hand
- *  it over a link: embedded in the URL fragment, or encrypted on a
+/** Export the chart as SVG, PNG or PDF, save it as a .dimknit.json file, or
+ *  hand it over a link: embedded in the URL fragment, or encrypted on a
  *  self-hosted sidecar (short link) — matching the DimCrochet export dialog. */
 export function ExportDialog() {
   const doc = useStore((s) => s.doc)
   const projectName = useStore((s) => s.projectName)
   const projectId = useStore((s) => s.projectId)
-  const [format, setFormat] = useState<'svg' | 'png'>('svg')
+  const [format, setFormat] = useState<'svg' | 'png' | 'pdf'>('svg')
   const [scale, setScale] = useState(2)
+  const [orientation, setOrientation] = useState<PageOrientation>('portrait')
   const [white, setWhite] = useState(false)
   const [shareLink, setShareLink] = useState<string | null>(null)
   const [shareBusy, setShareBusy] = useState(false)
@@ -75,6 +77,8 @@ export function ExportDialog() {
     if (format === 'svg') {
       const { svg } = buildExportSvg(doc, opts)
       downloadBlob(`${safe}.svg`, new Blob([svg], { type: 'image/svg+xml' }))
+    } else if (format === 'pdf') {
+      await exportPdf(doc, safe, { ...opts, format: 'a4', orientation })
     } else {
       await exportPng(doc, safe, { ...opts, scale })
     }
@@ -90,6 +94,9 @@ export function ExportDialog() {
         <label>
           <input type="radio" checked={format === 'png'} onChange={() => setFormat('png')} /> PNG
         </label>
+        <label>
+          <input type="radio" checked={format === 'pdf'} onChange={() => setFormat('pdf')} /> PDF (A4)
+        </label>
       </div>
       {format === 'png' && (
         <div className="field-row">
@@ -99,6 +106,17 @@ export function ExportDialog() {
               <option value={1}>1×</option>
               <option value={2}>2×</option>
               <option value={4}>4×</option>
+            </select>
+          </label>
+        </div>
+      )}
+      {format === 'pdf' && (
+        <div className="field-row">
+          <label>
+            Orientation
+            <select value={orientation} onChange={(e) => setOrientation(e.target.value as PageOrientation)}>
+              <option value="portrait">Portrait</option>
+              <option value="landscape">Landscape</option>
             </select>
           </label>
         </div>

@@ -1,4 +1,4 @@
-import { Fragment, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useStore } from '../state/store'
 import { SiblingUrlField } from '@dimcraft/core/ui/SiblingUrlField'
 import { getDefMap } from '@dimcraft/core/symbols/registry'
@@ -14,8 +14,8 @@ import { PatternImportDialog } from './PatternImportDialog'
 import { StitchMotionDialog } from './StitchMotionDialog'
 import { createShortLink, sidecarAvailable } from '@dimcraft/core/export/secureShare'
 import { changelogBlocks, recentChangelog, unreleasedChangelog } from '@dimcraft/core/export/changelog'
-import { DEFAULT_ORDER, PALETTE_BUTTONS } from '../ui/ToolPalette'
-import { Icon } from '@dimcraft/core/ui/icons'
+import { PaletteButtonsTab } from '@dimcraft/core/ui/PaletteButtonsTab'
+import { IslandFullOpacityCheck, ToolbarOpacityField } from '@dimcraft/core/ui/ToolbarOpacityField'
 import changelogRaw from '../../CHANGELOG.md?raw'
 import type { RotationMode } from '@dimcraft/core/model/types'
 import { buildExportSvg, type SvgExportOptions } from '@dimcraft/core/export/svg'
@@ -553,28 +553,13 @@ export function FileLoadRow() {
 export function OptionsDialog() {
   const viewAnimations = useStore((s) => s.viewAnimations)
   const lefty = useStore((s) => s.lefty)
-  const palette = useStore((s) => s.palette)
   const clock24h = useStore((s) => s.clock24h)
-  const islandFullOpacity = useStore((s) => s.islandFullOpacity)
-  const toolbarOpacity = useStore((s) => s.toolbarOpacity)
-  const toolbarHoverOpacity = useStore((s) => s.toolbarHoverOpacity)
-  const tool = useStore((s) => s.tool)
-  const snapEnabled = useStore((s) => s.snapEnabled)
-  const gridVisible = useStore((s) => s.gridVisible)
-  const guidesVisible = useStore((s) => s.guidesVisible)
-  const canUndo = useStore((s) => s.past.length > 0)
-  const canRedo = useStore((s) => s.future.length > 0)
-  const zoomPct = Math.round(useStore((s) => s.viewport.zoom) * 100)
   const [tab, setTab] = useState<'general' | 'buttons' | 'danger'>('general')
   const [confirmText, setConfirmText] = useState('')
   const [wiping, setWiping] = useState(false)
   const [sidecarUrl, setSidecarUrl] = useState(
     () => localStorage.getItem('dimcrochet.sidecarUrl') ?? location.origin,
   )
-  const byId = new Map(PALETTE_BUTTONS.map((b) => [b.id, b]))
-  const [items, setItems] = useState(() => (palette.order ?? DEFAULT_ORDER).map((id) => byId.get(id) ?? { id, label: id }))
-  const [hiddenL, setHiddenL] = useState<string[]>(palette.hidden)
-  const [dragId, setDragId] = useState<string | null>(null)
 
   const wipe = async () => {
     setWiping(true)
@@ -587,51 +572,6 @@ export function OptionsDialog() {
   }
 
   const unlock = confirmText.trim().toLowerCase() === 'reset'
-
-  /** same visual state the real toolbar button would have right now */
-  const previewState = (id: string): { active: boolean; disabled: boolean } => {
-    switch (id) {
-      case 'select':
-      case 'pan':
-      case 'place':
-      case 'line':
-      case 'guide-circle':
-      case 'guide-arc':
-      case 'guide-spiral':
-      case 'guide-line':
-      case 'guide-polygon':
-      case 'bracket':
-      case 'text':
-        return { active: tool === id, disabled: false }
-      case 'undo':
-        return { active: false, disabled: !canUndo }
-      case 'redo':
-        return { active: false, disabled: !canRedo }
-      case 'snap':
-        return { active: snapEnabled, disabled: false }
-      case 'grid':
-        return { active: gridVisible, disabled: false }
-      case 'guides':
-        return { active: guidesVisible, disabled: false }
-      case 'fullscreen':
-        return { active: document.fullscreenElement != null, disabled: false }
-      default:
-        return { active: false, disabled: false }
-    }
-  }
-
-  const preview = (id: string) => {
-    const b = byId.get(id)!
-    const { active, disabled } = previewState(id)
-    return (
-      <span
-        className={`tool-btn preview-btn${active ? ' active' : ''}${disabled ? ' dimmed' : ''}`}
-        title={b.label}
-      >
-        {id === 'zoom' ? `${zoomPct}%` : b.icon ? <Icon name={b.icon} /> : b.glyph}
-      </span>
-    )
-  }
 
   return (
     <Modal title="Options" onClose={() => useStore.getState().closeDialog()} wide className="options">
@@ -669,55 +609,7 @@ export function OptionsDialog() {
       <div className="options-content">
       {tab === 'general' && (
         <div className="form">
-          <div className="form-row" data-testid="opt-toolbar-opacity">
-            <span>
-              <strong>Toolbar opacity</strong>
-              <br />
-              <span className="hint">
-                Rest value dims the floating palette; it brightens to the hover value while you
-                point at it. 30% minimum keeps it findable.
-              </span>
-            </span>
-            <div className="dual-wrap" data-testid="opt-toolbar-opacity-slider">
-              <div className="dual-range">
-                {/* visible track ends at the hover thumb — no dangling tail past it */}
-                <div
-                  className="dual-track"
-                  style={{ width: `${((toolbarHoverOpacity - 30) / 70) * 100}%` }}
-                />
-                <div
-                  className="dual-band"
-                  style={{
-                    left: `${((toolbarOpacity - 30) / 70) * 100}%`,
-                    width: `${((toolbarHoverOpacity - toolbarOpacity) / 70) * 100}%`,
-                  }}
-                />
-                <input
-                  type="range"
-                  min={30}
-                  max={100}
-                  step={5}
-                  value={toolbarOpacity}
-                  aria-label="Toolbar opacity at rest"
-                  style={{ zIndex: toolbarOpacity === toolbarHoverOpacity ? 4 : 2 }}
-                  onChange={(e) => useStore.getState().setToolbarOpacity(Number(e.target.value))}
-                />
-                <input
-                  type="range"
-                  min={30}
-                  max={100}
-                  step={5}
-                  value={toolbarHoverOpacity}
-                  aria-label="Toolbar opacity on hover"
-                  style={{ zIndex: 3 }}
-                  onChange={(e) => useStore.getState().setToolbarHoverOpacity(Number(e.target.value))}
-                />
-              </div>
-              <div className="dual-values">
-                At rest {toolbarOpacity}% · On hover {toolbarHoverOpacity}%
-              </div>
-            </div>
-          </div>
+          <ToolbarOpacityField />
           <label className="check" data-testid="opt-animations">
             <input
               type="checkbox"
@@ -733,18 +625,7 @@ export function OptionsDialog() {
               </span>
             </span>
           </label>
-          <label className="check" data-testid="opt-island-full">
-            <input
-              type="checkbox"
-              checked={islandFullOpacity}
-              onChange={(e) => useStore.getState().setIslandFullOpacity(e.target.checked)}
-            />
-            <span>
-              <strong>Keep the drag &amp; collapse island fully visible</strong>
-              <br />
-              <span className="hint">The island ignores the toolbar opacity, so drag and collapse stay easy to find on dimmed palettes.</span>
-            </span>
-          </label>
+          <IslandFullOpacityCheck />
           <label className="check" data-testid="opt-clock24h">
             <input
               type="checkbox"
@@ -799,114 +680,7 @@ export function OptionsDialog() {
         </div>
       )}
 
-      {tab === 'buttons' && (
-        <div className="form">
-          <div className="form-row" data-testid="opt-rows">
-            <span>
-              <strong>Tool palette layout</strong>
-              <br />
-              <span className="hint">Two rows take less horizontal space.</span>
-            </span>
-            <div className="seg">
-              {[1, 2].map((n) => (
-                <button
-                  key={n}
-                  className={palette.rows === n ? 'on' : ''}
-                  data-testid={`opt-rows-${n}`}
-                  onClick={() => useStore.getState().setPalette({ rows: n as 1 | 2 })}
-                >
-                  {n === 1 ? 'One row' : 'Two rows'}
-                </button>
-              ))}
-            </div>
-          </div>
-          <p className="hint">
-            Drag to reorder the buttons exactly as they appear on the palette, and use the checkbox
-            to hide ones you don't use. The tool buttons stay on the palette even when it is
-            collapsed — only the edit/view/zoom cluster hides.
-          </p>
-          <div className="palette-dd-list" data-testid="palette-dd-list">
-            {items.map((b) => {
-              const isHidden = hiddenL.includes(b.id)
-              const visibleIds = items.filter((it) => !hiddenL.includes(it.id)).map((it) => it.id)
-              const splitAfterId =
-                palette.rows === 2 ? visibleIds[Math.ceil(visibleIds.length / 2) - 1] : null
-              return (
-                <Fragment key={b.id}>
-                  <div
-                    className={`palette-dd-row${isHidden ? ' off' : ''}${dragId === b.id ? ' dragging' : ''}`}
-                    draggable
-                    onDragStart={(e) => {
-                      setDragId(b.id)
-                      e.dataTransfer.effectAllowed = 'move'
-                      try {
-                        e.dataTransfer.setData('text/plain', b.id)
-                      } catch {
-                        /* some engines refuse setData */
-                      }
-                    }}
-                    onDragOver={(e) => {
-                      e.preventDefault()
-                      if (!dragId || dragId === b.id) return
-                      const from = items.findIndex((it) => it.id === dragId)
-                      const to = items.findIndex((it) => it.id === b.id)
-                      if (from < 0 || to < 0 || from === to) return
-                      const next = [...items]
-                      next.splice(to, 0, next.splice(from, 1)[0])
-                      setItems(next)
-                      useStore.getState().setPalette({ order: next.map((it) => it.id) })
-                    }}
-                    onDrop={(e) => {
-                      e.preventDefault()
-                      setDragId(null)
-                    }}
-                    onDragEnd={() => setDragId(null)}
-                  >
-                    <span className="dd-handle" title="Drag to reorder">
-                      ⠿
-                    </span>
-                    <label className="check" title="Show or hide this button">
-                      <input
-                        type="checkbox"
-                        checked={!isHidden}
-                        onChange={(e) => {
-                          const nextHidden = e.target.checked
-                            ? hiddenL.filter((h) => h !== b.id)
-                            : [...hiddenL, b.id]
-                          setHiddenL(nextHidden)
-                          useStore.getState().setPalette({ hidden: nextHidden })
-                        }}
-                      />
-                    </label>
-                    {preview(b.id)}
-                    <span className="btnrow-label">{b.label}</span>
-                  </div>
-                  {splitAfterId === b.id && (
-                    <div className="dd-row-divider" title="Second row starts here" data-testid="dd-row-divider" />
-                  )}
-                </Fragment>
-              )
-            })}
-          </div>
-          <button
-            className="btn"
-            data-testid="reset-buttons-positions"
-            onClick={() => {
-              if (
-                window.confirm(
-                  'Reset buttons and positions? Your customizations on the action bar (visibility and order), the one/two-row layout, and the palette position return to defaults.',
-                )
-              ) {
-                useStore.getState().resetPalette()
-                setItems(PALETTE_BUTTONS.map((b) => ({ ...b })))
-                setHiddenL([])
-              }
-            }}
-          >
-            ⟲ Reset buttons and positions
-          </button>
-        </div>
-      )}
+      {tab === 'buttons' && <PaletteButtonsTab />}
 
       {tab === 'danger' && (
         <div className="danger-zone">

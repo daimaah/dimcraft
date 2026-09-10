@@ -10,9 +10,11 @@ import { Gallery } from './gallery/Gallery'
 import { FollowBar, stepFollow, toggleFollowPlayback } from './panels/FollowBar'
 import { Dialogs } from './panels/Dialogs'
 import { SharedChartDialog } from './panels/SharedChartDialog'
+import { Inspector } from '@dimcraft/core/ui/Inspector'
 import { SymbolPalette } from './ui/SymbolPalette'
 import { StatusBar } from './ui/StatusBar'
 import { Toolbar } from './ui/Toolbar'
+import { ToolPalette } from '@dimcraft/core/ui/ToolPalette'
 import { useStore } from './state/store'
 
 const PREFS_KEY = 'dimknit.prefs'
@@ -32,6 +34,9 @@ function fitCenter() {
 export default function App() {
   const projectId = useStore((s) => s.projectId)
   const followActive = useStore((s) => s.followActive)
+  const leftCollapsed = useStore((s) => s.leftCollapsed)
+  const rightCollapsed = useStore((s) => s.rightCollapsed)
+  const sharedChart = useStore((s) => s.sharedChart)
   const viewAnimations = useStore((s) => s.viewAnimations)
 
   // collapsible-bar / zoom animations read this off the root element
@@ -79,8 +84,25 @@ export default function App() {
       if (typeof prefs.snapEnabled === 'boolean') useStore.setState({ snapEnabled: prefs.snapEnabled })
       if (typeof prefs.gridVisible === 'boolean') useStore.setState({ gridVisible: prefs.gridVisible })
       if (typeof prefs.guidesVisible === 'boolean') useStore.setState({ guidesVisible: prefs.guidesVisible })
+      if (typeof prefs.leftCollapsed === 'boolean') useStore.setState({ leftCollapsed: prefs.leftCollapsed })
+      if (typeof prefs.rightCollapsed === 'boolean') useStore.setState({ rightCollapsed: prefs.rightCollapsed })
       if (typeof prefs.viewAnimations === 'boolean') useStore.setState({ viewAnimations: prefs.viewAnimations })
       if (typeof prefs.clock24h === 'boolean') useStore.setState({ clock24h: prefs.clock24h })
+      if (typeof prefs.islandFullOpacity === 'boolean') useStore.setState({ islandFullOpacity: prefs.islandFullOpacity })
+      if (typeof prefs.toolbarOpacity === 'number') useStore.getState().setToolbarOpacity(prefs.toolbarOpacity)
+      if (typeof prefs.toolbarHoverOpacity === 'number') useStore.getState().setToolbarHoverOpacity(prefs.toolbarHoverOpacity)
+      if (prefs.palette && typeof prefs.palette === 'object') {
+        const pal = prefs.palette as Record<string, unknown>
+        useStore.setState({
+          palette: {
+            rows: pal.rows === 2 ? 2 : 1,
+            pos: (pal.pos as { x: number; y: number } | null) ?? null,
+            collapsed: pal.collapsed === true,
+            order: Array.isArray(pal.order) ? (pal.order as string[]) : null,
+            hidden: Array.isArray(pal.hidden) ? (pal.hidden as string[]) : [],
+          },
+        })
+      }
       document.documentElement.dataset.anim = prefs.viewAnimations === false ? 'off' : 'on'
     } catch {
       /* ignore bad prefs */
@@ -133,8 +155,14 @@ export default function App() {
           s.snapEnabled !== prev.snapEnabled ||
           s.gridVisible !== prev.gridVisible ||
           s.guidesVisible !== prev.guidesVisible ||
+          s.leftCollapsed !== prev.leftCollapsed ||
+          s.rightCollapsed !== prev.rightCollapsed ||
           s.viewAnimations !== prev.viewAnimations ||
-          s.clock24h !== prev.clock24h
+          s.palette !== prev.palette ||
+          s.clock24h !== prev.clock24h ||
+          s.toolbarOpacity !== prev.toolbarOpacity ||
+          s.islandFullOpacity !== prev.islandFullOpacity ||
+          s.toolbarHoverOpacity !== prev.toolbarHoverOpacity
         ) {
           localStorage.setItem(
             PREFS_KEY,
@@ -142,8 +170,14 @@ export default function App() {
               snapEnabled: s.snapEnabled,
               gridVisible: s.gridVisible,
               guidesVisible: s.guidesVisible,
+              leftCollapsed: s.leftCollapsed,
+              rightCollapsed: s.rightCollapsed,
               viewAnimations: s.viewAnimations,
+              palette: s.palette,
               clock24h: s.clock24h,
+              toolbarOpacity: s.toolbarOpacity,
+              islandFullOpacity: s.islandFullOpacity,
+              toolbarHoverOpacity: s.toolbarHoverOpacity,
             }),
           )
         }
@@ -315,7 +349,7 @@ export default function App() {
       <>
         <Gallery />
         <Dialogs />
-        <SharedChartDialog />
+        {sharedChart && <SharedChartDialog />}
       </>
     )
 
@@ -323,17 +357,44 @@ export default function App() {
     <div className="app">
       <Toolbar />
       <div className="main">
-        <div className="side-wrap left">
+        {/* panels stay mounted so collapse/expand can animate (see .side-wrap) */}
+        <div className={`side-wrap left${leftCollapsed ? ' closed' : ''}`}>
           <SymbolPalette />
         </div>
         <div className="canvas-wrap">
           <ChartCanvas />
+          <ToolPalette />
+          {leftCollapsed && (
+            <button
+              className="edge-tab left"
+              title="Show stitches"
+              onClick={() => useStore.getState().setLeftCollapsed(false)}
+            >
+              ›
+            </button>
+          )}
+          {rightCollapsed && (
+            <button
+              className="edge-tab right"
+              title="Show inspector"
+              onClick={() => useStore.getState().setRightCollapsed(false)}
+            >
+              ‹
+            </button>
+          )}
           {followActive && <FollowBar />}
+        </div>
+        <div className={`side-wrap right${rightCollapsed ? ' closed' : ''}`}>
+          <div className="right-col">
+            <section className="panel inspector-panel">
+              <Inspector />
+            </section>
+          </div>
         </div>
       </div>
       <StatusBar />
       <Dialogs />
-      <SharedChartDialog />
+      {sharedChart && <SharedChartDialog />}
     </div>
   )
 }

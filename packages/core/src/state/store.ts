@@ -28,6 +28,7 @@ import {
 import { longestSegment } from '../geometry/handles'
 import { getDefMap } from '../symbols/registry'
 import type { CraftModule } from '../craft'
+import { getCraft } from '../craft'
 
 export interface Viewport {
   x: number
@@ -509,12 +510,18 @@ export const createStore = (craft: CraftModule): EditorStore => {
           })
           .filter((b): b is NonNullable<typeof b> => b !== null)
         const center = bboxCenter(unionBBox(boxes) ?? { x: sel[0].x, y: sel[0].y, w: 0, h: 0 })
+        // crafts with directional stitches swap them for their mirror image
+        // (ssk ↔ k2tog) instead of flipping the artwork
+        const swap = axis === 'v' ? getCraft().mirrorSymbol : undefined
         return mutateDoc(st, {
           doc: {
             ...st.doc,
-            placements: st.doc.placements.map((p) =>
-              st.selPlacements.includes(p.id) ? { ...p, ...mirrorPlacement(p, axis, center) } : p,
-            ),
+            placements: st.doc.placements.map((p) => {
+              if (!st.selPlacements.includes(p.id)) return p
+              const m = mirrorPlacement(p, axis, center)
+              if (!swap) return { ...p, ...m }
+              return { ...p, x: m.x, y: m.y, rotation: m.rotation, flip: false, symbolId: swap(p.symbolId) }
+            }),
           },
         })
       }),

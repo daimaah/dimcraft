@@ -18,7 +18,16 @@ export function SymbolPalette() {
 
   return (
     <section className="panel symbols-panel">
-      <h2>Symbols</h2>
+      <div className="panel-head">
+        <div className="panel-title">Symbols</div>
+        <button
+          className="icon-btn collapse-btn"
+          title="Hide symbols"
+          onClick={() => useStore.getState().setLeftCollapsed(true)}
+        >
+          «
+        </button>
+      </div>
       <input
         className="search"
         type="search"

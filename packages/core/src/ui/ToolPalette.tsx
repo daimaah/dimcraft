@@ -1,65 +1,68 @@
 import { Fragment, useEffect, useRef, useState } from 'react'
-import { useStore } from '../state/store'
-import { Icon, type IconName } from '@dimcraft/core/ui/icons'
+import { activeStore } from '../state/store'
+import { getCraft } from '../craft'
+import { Icon, type IconName } from './icons'
 
-const TOOLS: { id: string; icon: IconName; label: string; key: string }[] = [
-  { id: 'select', icon: 'select', label: 'Select & move', key: 'V' },
-  { id: 'pan', icon: 'hand', label: 'Pan view', key: 'H' },
-  { id: 'place', icon: 'place', label: 'Place symbol', key: 'P' },
-  { id: 'line', icon: 'guide-line', label: 'Backstitch line', key: 'L' },
-  { id: 'guide-circle', icon: 'guide-circle', label: 'Circle guide', key: '1' },
-  { id: 'guide-arc', icon: 'guide-arc', label: 'Arc guide', key: '2' },
-  { id: 'guide-spiral', icon: 'guide-spiral', label: 'Spiral guide', key: '3' },
-  { id: 'guide-line', icon: 'guide-line', label: 'Line guide', key: '4' },
-  { id: 'guide-polygon', icon: 'guide-polygon', label: 'Polygon guide', key: '5' },
-  { id: 'bracket', icon: 'bracket', label: 'Repeat bracket', key: 'B' },
-  { id: 'text', icon: 'text', label: 'Text label', key: 'T' },
-]
+/** customizable buttons in default display order (tool section from the craft) */
+export interface PaletteButtonDef {
+  id: string
+  label: string
+  icon?: IconName
+  glyph?: string
+}
 
-/** customizable buttons in default display order */
-export const PALETTE_BUTTONS: { id: string; label: string; icon?: IconName; glyph?: string }[] = [
-  ...TOOLS.map((t) => ({ id: t.id, label: t.label, icon: t.icon })),
-  { id: 'undo', label: 'Undo', icon: 'undo' },
-  { id: 'redo', label: 'Redo', icon: 'redo' },
-  { id: 'snap', label: 'Snapping', icon: 'snap' },
-  { id: 'grid', label: 'Grid', icon: 'grid' },
-  { id: 'guides', label: 'Show guides', icon: 'guides' },
-  { id: 'zoom-out', label: 'Zoom out', glyph: '−' },
-  { id: 'zoom', label: 'Zoom percentage', glyph: '%' },
-  { id: 'zoom-in', label: 'Zoom in', glyph: '+' },
-  { id: 'fit', label: 'Fit chart', icon: 'fit' },
-  { id: 'fullscreen', label: 'Full screen', icon: 'expand' },
-  { id: 'info', label: 'Licenses', icon: 'info' },
-  { id: 'options', label: 'Options', icon: 'gear' },
-]
+/** The full button list for the app's action bar: the craft's tools plus the
+ *  generic edit/view/zoom cluster. Lazy so it is only asked for once the app
+ *  has registered its craft. */
+export function paletteButtons(): PaletteButtonDef[] {
+  return [
+    ...getCraft().paletteTools.map((t) => ({ id: t.id, label: t.label, icon: t.icon })),
+    { id: 'undo', label: 'Undo', icon: 'undo' },
+    { id: 'redo', label: 'Redo', icon: 'redo' },
+    { id: 'snap', label: 'Snapping', icon: 'snap' },
+    { id: 'grid', label: 'Grid', icon: 'grid' },
+    { id: 'guides', label: 'Show guides', icon: 'guides' },
+    { id: 'zoom-out', label: 'Zoom out', glyph: '−' },
+    { id: 'zoom', label: 'Zoom percentage', glyph: '%' },
+    { id: 'zoom-in', label: 'Zoom in', glyph: '+' },
+    { id: 'fit', label: 'Fit chart', icon: 'fit' },
+    { id: 'fullscreen', label: 'Full screen', icon: 'expand' },
+    { id: 'info', label: 'Licenses', icon: 'info' },
+    { id: 'options', label: 'Options', icon: 'gear' },
+  ]
+}
 
-export const DEFAULT_ORDER = PALETTE_BUTTONS.map((b) => b.id)
+/** Default button order for the app's craft. */
+export function defaultPaletteOrder(): string[] {
+  return paletteButtons().map((b) => b.id)
+}
 
 /** group separators render before these ids in the default layout */
 const SEP_BEFORE = new Set(['undo', 'snap', 'zoom-out'])
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
 
-/** Floating, draggable tool palette. Defaults to anchored at the top of the
+/** Floating, draggable action bar. Defaults to anchored at the top of the
  *  canvas; buttons can be hidden/reordered from Options; can be collapsed to
  *  a pill that always keeps the essential tools visible; layout, position,
  *  and customization live in the store and persist with preferences. */
 export function ToolPalette() {
-  const tool = useStore((s) => s.tool)
-  const canUndo = useStore((s) => s.past.length > 0)
-  const canRedo = useStore((s) => s.future.length > 0)
-  const snapEnabled = useStore((s) => s.snapEnabled)
-  const gridVisible = useStore((s) => s.gridVisible)
-  const guidesVisible = useStore((s) => s.guidesVisible)
-  const viewport = useStore((s) => s.viewport)
-  const palette = useStore((s) => s.palette)
+  const st = activeStore()
+  const tool = st((s) => s.tool)
+  const canUndo = st((s) => s.past.length > 0)
+  const canRedo = st((s) => s.future.length > 0)
+  const snapEnabled = st((s) => s.snapEnabled)
+  const gridVisible = st((s) => s.gridVisible)
+  const guidesVisible = st((s) => s.guidesVisible)
+  const viewport = st((s) => s.viewport)
+  const palette = st((s) => s.palette)
   const { rows, pos, collapsed, order, hidden } = palette
   const [isFullscreen, setIsFullscreen] = useState(false)
 
   const barRef = useRef<HTMLDivElement>(null)
   const [dragging, setDragging] = useState(false)
 
-  const setPalette = (patch: Partial<typeof palette>) => useStore.getState().setPalette(patch)
+  const setPalette = (patch: Partial<typeof palette>) => st.getState().setPalette(patch)
 
   // default: anchored top-left, aligned with the sidebar buttons below
   useEffect(() => {
@@ -130,7 +133,7 @@ export function ToolPalette() {
   useEffect(() => {
     const h = () => setIsFullscreen(document.fullscreenElement != null)
     document.addEventListener('fullscreenchange', h)
-    return () => document.removeEventListener('fullscreenchange', h)
+    return () => window.removeEventListener('fullscreenchange', h)
   }, [])
 
   const toggleFullscreen = () => {
@@ -144,12 +147,11 @@ export function ToolPalette() {
     }
   }
 
-  const st = useStore
   const zoomPct = Math.round(viewport.zoom * 100)
-  const viewAnimationsOn = useStore((s) => s.viewAnimations)
-  const toolbarOpacity = useStore((s) => s.toolbarOpacity)
-  const toolbarHoverOpacity = useStore((s) => s.toolbarHoverOpacity)
-  const islandFullOpacity = useStore((s) => s.islandFullOpacity)
+  const viewAnimationsOn = st((s) => s.viewAnimations)
+  const toolbarOpacity = st((s) => s.toolbarOpacity)
+  const toolbarHoverOpacity = st((s) => s.toolbarHoverOpacity)
+  const islandFullOpacity = st((s) => s.islandFullOpacity)
   const fit = () => {
     const el = document.querySelector('.canvas-wrap')
     if (el) {
@@ -175,16 +177,18 @@ export function ToolPalette() {
     }
   }
 
+  const tools = getCraft().paletteTools
+
   /** Render one customizable button by id. */
   const renderButton = (id: string) => {
-    const toolDef = TOOLS.find((t) => t.id === id)
+    const toolDef = tools.find((t) => t.id === id)
     if (toolDef) {
       return (
         <button
           key={id}
           className={`tool-btn${tool === id ? ' active' : ''}`}
           title={`${toolDef.label} (${toolDef.key})`}
-          onClick={() => st.getState().setTool(id as never)}
+          onClick={() => st.getState().setTool(toolDef.id)}
         >
           <Icon name={toolDef.icon} />
         </button>
@@ -307,7 +311,7 @@ export function ToolPalette() {
           <button
             key={id}
             className="tool-btn"
-            title="Options — animations, left-handed view, sidecar"
+            title="Options"
             data-testid="open-options"
             onClick={() => st.getState().openDialog('options')}
           >
@@ -319,8 +323,8 @@ export function ToolPalette() {
     }
   }
 
-  const visible = (order ?? DEFAULT_ORDER).filter((id) => !hidden.includes(id))
-  const visibleTools = visible.filter((id) => TOOLS.some((t) => t.id === id))
+  const visible = (order ?? defaultPaletteOrder()).filter((id) => !hidden.includes(id))
+  const visibleTools = visible.filter((id) => tools.some((t) => t.id === id))
   const toolsSplit = Math.ceil(visibleTools.length / 2)
   const split = Math.ceil(visible.length / 2)
 
@@ -339,7 +343,7 @@ export function ToolPalette() {
           '--o-hover': Math.max(toolbarOpacity, toolbarHoverOpacity) / 100,
           '--island-rest': islandFullOpacity ? 1 : toolbarOpacity / 100,
           '--island-bg': islandFullOpacity
-            ? 'rgb(63, 58, 69)' // solid equivalent of the translucent tile over a solid bar
+            ? 'var(--island-bg-solid, rgb(63, 58, 69))' // solid equivalent of the translucent tile over a solid bar
             : 'rgba(255, 255, 255, 0.08)',
           '--island-hover': islandFullOpacity ? 1 : Math.max(toolbarOpacity, toolbarHoverOpacity) / 100,
         } as React.CSSProperties

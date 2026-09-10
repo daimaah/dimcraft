@@ -1,14 +1,14 @@
 import { useRef } from 'react'
-import { useStore } from '../state/store'
-import { getDefMap } from '@dimcraft/core/symbols/registry'
-import { BUILTIN_SETS } from '../symbols/sets'
-import { resolveSet } from '@dimcraft/core/symbols/sets'
-import { TERMINOLOGY_PRESETS } from '../symbols/terminology'
-import { legendItems } from '@dimcraft/core/geometry/legend'
-import { contentBBox } from '@dimcraft/core/geometry/bounds'
-import { downloadBlob, safeFilename } from '@dimcraft/core/export/download'
-import { readSymbolPackFile } from '@dimcraft/core/export/projectFile'
-import type { Guide } from '@dimcraft/core/model/types'
+import { activeStore } from '../state/store'
+import { getDefMap } from '../symbols/registry'
+import { getCraft } from '../craft'
+import { resolveSet } from '../symbols/sets'
+import { APP_ID } from '../appId'
+import { legendItems } from '../geometry/legend'
+import { contentBBox } from '../geometry/bounds'
+import { downloadBlob, safeFilename } from '../export/download'
+import { readSymbolPackFile } from '../export/projectFile'
+import type { Guide } from '../model/types'
 
 function NumField(props: {
   label: string
@@ -38,16 +38,20 @@ function Row({ children }: { children: React.ReactNode }) {
   return <div className="insp-row">{children}</div>
 }
 
+/** Context-sensitive right sidebar: the selection's properties, or — when
+ *  nothing is selected — the chart's. Sections whose backing feature a craft
+ *  lacks (symbol packs, terminology presets, gauge) stay hidden there; the
+ *  craft module gates them. */
 export function Inspector() {
-  const doc = useStore((s) => s.doc)
-  const selPlacements = useStore((s) => s.selPlacements)
-  const selGuides = useStore((s) => s.selGuides)
-  const selBrackets = useStore((s) => s.selBrackets)
-  const selTexts = useStore((s) => s.selTexts)
-  const selLines = useStore((s) => s.selLines)
+  const st = activeStore()
+  const doc = st((s) => s.doc)
+  const selPlacements = st((s) => s.selPlacements)
+  const selGuides = st((s) => s.selGuides)
+  const selBrackets = st((s) => s.selBrackets)
+  const selTexts = st((s) => s.selTexts)
+  const selLines = st((s) => s.selLines)
 
   const defMap = getDefMap(doc)
-  const st = useStore
 
   if (selGuides.length === 1) {
     const g = doc.guides.find((x) => x.id === selGuides[0])
@@ -309,6 +313,7 @@ export function Inspector() {
   }
 
   // ---- nothing selected: document settings ----
+  const craft = getCraft()
   const items = legendItems(doc, defMap)
   const gauge = doc.unitsPer10cm ?? null
   const sizeHint = gauge
@@ -323,8 +328,8 @@ export function Inspector() {
         <div className="panel-title">Chart</div>
         <button
           className="icon-btn collapse-btn"
-          title="Hide inspector & layers"
-          onClick={() => useStore.getState().setRightCollapsed(true)}
+          title="Hide inspector"
+          onClick={() => st.getState().setRightCollapsed(true)}
         >
           »
         </button>
@@ -334,18 +339,16 @@ export function Inspector() {
           <span>Ink colour</span>
           <input type="color" value={doc.ink} onChange={(e) => st.getState().setInk(e.target.value)} />
         </label>
-        <NumField
-          label="Units / 10 cm"
-          value={doc.unitsPer10cm ?? 0}
-          onChange={(v) => st.getState().setGauge(v > 0 ? v : null)}
-        />
+        {craft.gauge && (
+          <NumField
+            label={craft.gauge.label}
+            value={doc.unitsPer10cm ?? 0}
+            onChange={(v) => st.getState().setGauge(v > 0 ? v : null)}
+          />
+        )}
       </Row>
-      <SymbolSetSection />
-      <p className="hint">
-        {gauge
-          ? `Gauge set — chart${sizeHint ? ` ${sizeHint}` : ''}. Enable “True scale” in the PDF export to print at this size.`
-          : 'Optional gauge: how many chart units span 10 cm. Enables true-scale PDF printing.'}
-      </p>
+      {(craft.builtinSets.length > 1 || craft.symbolPacks || craft.terminologyPresets.length > 0) && <SymbolSetSection />}
+      {craft.gauge && <p className="hint">{craft.gauge.hint(gauge !== null, sizeHint)}</p>}
       <div className="panel-title">Legend</div>
       <Row>
         <label className="check">
@@ -395,10 +398,12 @@ export function Inspector() {
   )
 }
 
-/** Symbol set + regional terminology controls (shown when nothing is selected). */
+/** Symbol set + regional terminology controls (shown when nothing is selected
+ *  and the craft offers at least one of them). */
 function SymbolSetSection() {
-  const doc = useStore((s) => s.doc)
-  const st = useStore
+  const st = activeStore()
+  const doc = st((s) => s.doc)
+  const craft = getCraft()
   const fileRef = useRef<HTMLInputElement>(null)
   const currentId = doc.symbolSet ?? 'standard'
   const current = resolveSet(doc)
@@ -406,7 +411,7 @@ function SymbolSetSection() {
   const importPack = async (file: File) => {
     const set = await readSymbolPackFile(file)
     if (!set) {
-      window.alert('That symbol pack could not be read. Expected a DimCrochet symbol pack with @INK@ artwork.')
+      window.alert('That symbol pack could not be read. Expected a symbol pack with @INK@ artwork.')
       return
     }
     st.getState().addCustomSet(set)
@@ -414,7 +419,7 @@ function SymbolSetSection() {
 
   const exportPack = () => {
     const pack = {
-      app: 'dimcrochet-symbol-pack',
+      app: `${APP_ID}-symbol-pack`,
       version: 1,
       name: current.name,
       artwork: current.artwork,
@@ -436,7 +441,7 @@ function SymbolSetSection() {
         <label className="field grow">
           <span>Symbol set</span>
           <select value={currentId} onChange={(e) => st.getState().setSymbolSet(e.target.value)}>
-            {BUILTIN_SETS.map((s) => (
+            {craft.builtinSets.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name}
               </option>
@@ -449,38 +454,42 @@ function SymbolSetSection() {
           </select>
         </label>
       </Row>
-      <Row>
-        <button className="btn" onClick={() => fileRef.current?.click()}>
-          Import pack…
-        </button>
-        <button className="btn" disabled={Object.keys(current.artwork).length === 0} onClick={exportPack}>
-          Export pack
-        </button>
-        <input
-          ref={fileRef}
-          type="file"
-          accept=".json,application/json"
-          hidden
-          onChange={(e) => {
-            const f = e.target.files?.[0]
-            if (f) void importPack(f)
-            e.target.value = ''
-          }}
-        />
-      </Row>
-      <Row>
-        <label className="field grow">
-          <span>Terminology</span>
-          <select defaultValue="" onChange={(e) => e.target.value && st.getState().applyTerminology(e.target.value)}>
-            <option value="">Apply a preset…</option>
-            {TERMINOLOGY_PRESETS.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-        </label>
-      </Row>
+      {craft.symbolPacks && (
+        <Row>
+          <button className="btn" onClick={() => fileRef.current?.click()}>
+            Import pack…
+          </button>
+          <button className="btn" disabled={Object.keys(current.artwork).length === 0} onClick={exportPack}>
+            Export pack
+          </button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".json,application/json"
+            hidden
+            onChange={(e) => {
+              const f = e.target.files?.[0]
+              if (f) void importPack(f)
+              e.target.value = ''
+            }}
+          />
+        </Row>
+      )}
+      {craft.terminologyPresets.length > 0 && (
+        <Row>
+          <label className="field grow">
+            <span>Terminology</span>
+            <select defaultValue="" onChange={(e) => e.target.value && st.getState().applyTerminology(e.target.value)}>
+              <option value="">Apply a preset…</option>
+              {craft.terminologyPresets.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </Row>
+      )}
       <p className="hint">
         Sets redraw the symbols on every stitch instantly. Terminology presets relabel the basic stitch
         ladder (legend + instructions) — e.g. UK dc = US sc.
@@ -489,7 +498,7 @@ function SymbolSetSection() {
   )
 }
 
-function GuideInspector({ g }: { g: Guide }) {  const st = useStore
+function GuideInspector({ g }: { g: Guide }) {  const st = activeStore()
   const up = (patch: Partial<Guide>) => st.getState().updateGuide(g.id, patch)
   return (
     <>

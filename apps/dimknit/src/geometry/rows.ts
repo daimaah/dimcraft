@@ -103,6 +103,21 @@ export function followSteps(doc: ChartDoc, tolerance = 20, _dir: FollowDirection
   })
 }
 
+/** Horizontal mirror image of each stitch: a right-leaning decrease mirrors
+ *  to its left-leaning twin and vice versa; symmetric stitches (k, p, yo,
+ *  s2kp2, ns) map to themselves. Mirroring is a drawing operation — unlike
+ *  the RS/WS duality above it changes the chart, not how a cell is read. */
+const MIRROR: Record<string, string> = {
+  k2tog: 'ssk',
+  ssk: 'k2tog',
+  p2tog: 'ssp',
+  ssp: 'p2tog',
+}
+
+export function mirrorSymbol(symbolId: string): string {
+  return MIRROR[symbolId] ?? symbolId
+}
+
 /** Stitch-count accounting: the stitches row N works must equal the stitches
  *  row N-1 leaves. A row leaves one live stitch per cell plus one per yarn
  *  over; decrease cells absorb extra stitches from the row below (k2tog/ssk

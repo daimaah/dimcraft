@@ -14,6 +14,24 @@ changes live in each app's own changelog:
 
 ## [Unreleased]
 
+### Added
+
+- **The editor shell is now part of the core** — the floating action bar (`ui/ToolPalette`), the
+  context-sensitive inspector sidebar (`ui/Inspector`), the Options "Buttons" customization tab,
+  and the toolbar-opacity controls moved from DimCrochet into the kernel so both apps render the
+  same shell from one implementation. Apps flavour them through the craft seam.
+- **Craft seam capabilities** — `paletteTools` (each app lists its own action-bar tools),
+  `mirrorSymbol` (stitch-aware horizontal mirroring), and gating flags (`terminologyPresets`,
+  `symbolPacks`, `gauge`) so panels only render what a craft can actually use.
+
+### Changed
+
+- `mirrorSelection` consults `craft.mirrorSymbol` when present: on a horizontal mirror the craft
+  swaps directional stitches for their mirror image (knitting's k2tog ↔ ssk) instead of flipping
+  the artwork. Crafts without the hook keep the pure-geometry behaviour.
+- Symbol-pack exports write the app-scoped envelope via `APP_ID` (byte-identical output for
+  DimCrochet; the pack machinery is now shared).
+
 ## [0.1.0] — 2026-09-10
 
 First release of the DimCraft core: the craft-agnostic chart-editor kernel

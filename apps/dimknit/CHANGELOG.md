@@ -5,6 +5,23 @@ follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- **Action bar** — the floating, draggable tool palette from DimCrochet, restyled for the knit
+  shell: select/pan/place tools plus undo/redo, snapping, grid, guides, the zoom cluster
+  (in/out/editable %/fit), fullscreen, licenses and options. Drag anywhere, collapse to a
+  tools-only pill, one or two rows — all persisted. Customize per-button (order + visibility) in
+  Options → Buttons.
+- **Right sidebar inspector** — when a stitch is selected: symbol, position, mirror, distribute,
+  rotate, duplicate, z-order, delete; when nothing is selected: chart properties (ink colour) and
+  legend controls with a live preview. Collapses to an edge tab like the symbols panel.
+- **Knit-aware mirroring** — mirroring a selection horizontally swaps leaning decreases for their
+  mirror image (k2tog ↔ ssk, p2tog ↔ ssp) rather than mirroring the glyph, the way the fabric
+  would actually reverse. Symmetric stitches (k, p, yo, s2kp2, ns) are unaffected.
+- **PDF export** — vector A4 (portrait or landscape) joins SVG and PNG in the export dialog.
+- **Toolbar opacity options** — rest/hover dual-slider dimming for the action bar, with a
+  keep-the-island-visible toggle.
+
 ## [0.1.0] — 2026-09-10
 
 First release of DimKnit: the knitting chart composer sharing the DimCraft
