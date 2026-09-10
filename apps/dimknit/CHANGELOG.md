@@ -5,6 +5,15 @@ follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- **Finnish terminology preset (Suomi)** — following the symbol definitions published with Drops
+  (Garnstudio) Finnish patterns: "os" = oikea silmukka, "ns" = nurja silmukka, "ly" = langankierto,
+  with decreases named by their construction ("2 oik. yht.", "nosta 1, neulo 1, vedä yli", "2 nurj.
+  yht."). Terminology presets relabel the legend, the written instructions and follow mode,
+  two-sided per the chart-symbol conventions (a knit cell reads "os" on right-side rows and
+  "ns" on wrong-side rows). Options → General → Terminology.
+
 ## [0.3.0] — 2026-09-10
 
 ### Fixed

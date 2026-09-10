@@ -41,7 +41,6 @@ describe('knit mirror map', () => {
   })
 
   it('gates inspector sections whose backing features knit lacks', () => {
-    expect(getCraft().terminologyPresets).toEqual([])
     expect(getCraft().symbolPacks).toBe(false)
   })
 

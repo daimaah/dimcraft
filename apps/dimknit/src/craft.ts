@@ -1,6 +1,6 @@
 import { registerCraft, type CraftModule, type PaletteToolDef } from '@dimcraft/core/craft'
 import { FABRIC_ARTWORK, KNIT_SYMBOLS } from './symbols/definitions'
-import { applyTerminologyToDoc } from './symbols/terminology'
+import { applyTerminologyToDoc, TERMINOLOGY_PRESETS } from './symbols/terminology'
 import { followSteps, gridInfo, mirrorSymbol } from './geometry/rows'
 
 /** Tools of the floating action bar. Knitting charts are cell grids — the
@@ -44,7 +44,7 @@ export const knitCraft: CraftModule = {
   mirrorSymbol,
   // one bundled set, no packs and no terminology presets, and the gauge stays
   // hidden until set — no dead UI
-  terminologyPresets: [],
+  terminologyPresets: TERMINOLOGY_PRESETS,
   symbolPacks: false,
   colourwork: true,
   replaceOnStamp: true,

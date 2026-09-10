@@ -35,6 +35,18 @@ export const STITCH_WORDS: Record<string, { rs: string; ws: string }> = {
   m1l: { rs: 'M1L', ws: 'M1R' },
 }
 
+/** The word a cell shows in written instructions, honouring the terminology
+ *  preset (doc.labelOverrides) with the RS/WS duality: the override names
+ *  the cell's RIGHT-SIDE appearance (symbol 1 of a Drops legend: "oikea
+ *  silmukka oikealta puolelta, nurja silmukka nurjalta puolelta"), so on
+ *  wrong-side rows the override of the reversed symbol applies. */
+function displayWord(doc: ChartDoc, symbolId: string, side: 'rs' | 'ws'): string {
+  const override = doc.labelOverrides[symbolId]
+  if (side === 'rs') return override ?? STITCH_WORDS[symbolId]?.rs ?? symbolId
+  const base = STITCH_WORDS[symbolId]?.ws ?? symbolId
+  return doc.labelOverrides[base] ?? base
+}
+
 export interface KnitRow {
   /** 1-based; row 1 is the bottom row and is a right-side row */
   index: number
@@ -101,27 +113,29 @@ function colourSuffix(yarns: Yarn[], hex: string | undefined): string {
   return i < 0 ? '' : ` ${yarnName(yarns[i], i)}`
 }
 
-function rowToks(row: KnitRow, yarns: Yarn[], side: 'rs' | 'ws'): Tok[] {
+function rowToks(doc: ChartDoc, row: KnitRow, yarns: Yarn[], side: 'rs' | 'ws'): Tok[] {
   const cells = side === 'ws' ? row.cells : [...row.cells].reverse()
   return cells.map((c) => ({
-    word: STITCH_WORDS[c.symbolId]?.[side] ?? c.symbolId,
+    word: displayWord(doc, c.symbolId, side),
     suffix: colourSuffix(yarns, c.colour),
   }))
 }
 
 /** Written instruction text for one row, e.g. "Row 2 (WS): k4, p4". */
-export function rowInstruction(row: KnitRow, allRs = false, yarns: Yarn[] = []): string {
+export function rowInstruction(row: KnitRow, allRs = false, yarns: Yarn[] = [], doc?: ChartDoc): string {
   const side = allRs ? 'RS' : row.side
   // WS rows are read left → right on the chart, RS rows right → left
-  const toks = rowToks(row, yarns, allRs ? 'rs' : (side.toLowerCase() as 'rs' | 'ws'))
+  const toks = rowToks(doc ?? emptyDoc(), row, yarns, allRs ? 'rs' : (side.toLowerCase() as 'rs' | 'ws'))
   return `Row ${row.index} (${side}): ${runLength(toks)}`
 }
+
+const emptyDoc = () => ({ labelOverrides: {} } as unknown as ChartDoc)
 
 /** All rows as written instructions, ready for a pattern sheet. Charts
  *  worked in the round read every row as a right-side row. */
 export function writtenInstructions(doc: ChartDoc, tolerance = 20, allRs = false): string[] {
   const yarns = doc.yarns ?? []
-  return groupRows(doc, tolerance).map((r) => rowInstruction(r, allRs || doc.inTheRound === true, yarns))
+  return groupRows(doc, tolerance).map((r) => rowInstruction(r, allRs || doc.inTheRound === true, yarns, doc))
 }
 
 /** Row-serpentine follow steps for the shared follow-mode bar. In the round,
@@ -133,7 +147,7 @@ export function followSteps(doc: ChartDoc, tolerance = 20, _dir: FollowDirection
     const side: 'rs' | 'ws' = allRs ? 'rs' : (row.side.toLowerCase() as 'rs' | 'ws')
     const cells = side === 'ws' ? row.cells : [...row.cells].reverse()
     const toks = cells.map((c) => ({
-      word: STITCH_WORDS[c.symbolId]?.[side] ?? c.symbolId,
+      word: displayWord(doc, c.symbolId, side),
       suffix: colourSuffix(yarns, c.colour),
     }))
     return {
