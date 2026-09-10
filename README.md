@@ -76,7 +76,7 @@ npm run preview
 
 A single container serves everything: the app's static build and the self-hosted short-link sidecar are baked into the same image (one Node process — no second service, no nginx). Charts live in each visitor's browser (IndexedDB); the only server-side state is the sidecar's short-link store in `/data`, which the volume mapping below preserves across redeploys.
 
-The same repository builds **both apps**: DimCrochet (this chart composer) and DimKnit (the knitting sibling, `apps/dimknit`). The example stack below runs DimCrochet; the repository's `docker-compose.yml` contains a ready-made, commented DimKnit block — uncomment it to run DimKnit alongside (or instead of) DimCrochet, each on its own port and data volume.
+The same repository builds **both apps**: DimCrochet (this chart composer) and DimKnit (the knitting sibling, `apps/dimknit`). Both run by default from the repository's `docker-compose.yml` — DimCrochet on `8080`, DimKnit on `8081`, each with its own data volume, and they detect each other automatically. Only need one of them? Comment the other service block out — that's the whole switch.
 
 ### Portainer — Repository method (builds the image for you)
 
@@ -88,7 +88,7 @@ The same repository builds **both apps**: DimCrochet (this chart composer) and D
 
 The repository is public — Portainer can clone it without credentials.
 
-To change the port, add an environment variable in the stack editor: `DIMCROCHET_PORT = 3000`. To run DimKnit too, uncomment the `dimknit` block in the compose file (or paste it from the commented example) — it serves on `8081` by default, customizable via `DIMKNIT_PORT`. With both enabled, the apps detect each other automatically (see **Linking the two apps** below).
+Ports are environment variables in the stack editor: `DIMCROCHET_PORT = 3000`, `DIMKNIT_PORT = 9090` (defaults: `8080` / `8081`). To drop one app, comment its service block out. With both enabled, the apps detect each other automatically — the `SIBLING_PORT` wiring in the compose file follows your port variables (see **Linking the two apps** below).
 
 ### Portainer — Web editor method (pre-built image)
 
@@ -108,22 +108,21 @@ services:
     volumes:
       - dimcrochet-data:/data   # encrypted short-link store
 
-  # uncomment to also run DimKnit (https://github.com/daimaah/dimcraft/tree/develop/apps/dimknit)
-  # dimknit:
-  #   image: ghcr.io/daimaah/dimknit:latest
-  #   container_name: dimknit
-  #   restart: unless-stopped
-  #   ports:
-  #     - "8081:80"
-  #   environment:
-  #     # tells the browser where DimCrochet lives (follows the port above)
-  #     - SIBLING_PORT=8080
-  #   volumes:
-  #     - dimknit-data:/data   # encrypted short-link store
+  dimknit:   # comment this block out to run DimCrochet only
+    image: ghcr.io/daimaah/dimknit:latest
+    container_name: dimknit
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      # tells the browser where DimCrochet lives (follows the port above)
+      - SIBLING_PORT=8080
+    volumes:
+      - dimknit-data:/data   # encrypted short-link store
 
 volumes:
   dimcrochet-data:
-  # dimknit-data:
+  dimknit-data:
 ```
 
 The volume mapping matters: `/data` holds the sidecar's encrypted short links, and without it every stack update starts from an empty store, breaking previously shared links. Pin `v0.8.0` (DimCrochet) or `dimknit-v0.1.0` (DimKnit) instead of `latest` if you want upgrades to be explicit. The images are public on GHCR — pulling needs no login.
@@ -132,16 +131,15 @@ The volume mapping matters: `/data` holds the sidecar's encrypted short links, a
 
 When both apps run, they find each other automatically and show an **Open DimKnit / DimCrochet →** button on their projects screens — a wrong app on a probed port is ignored. Detection needs no manual setup:
 
-- **Repository stack / compose file** — each service carries a `SIBLING_PORT` environment variable pointing at the other app's host port (it follows `DIMKNIT_PORT` / `DIMCROCHET_PORT` automatically). The sidecar advertises it on `/api/whoami`, so the frontends pair up even on fully custom ports.
+- **Repository stack / compose file** — each service carries a `SIBLING_PORT` environment variable pointing at the other app's host port (it follows `DIMKNIT_PORT` / `DIMCROCHET_PORT` automatically), so the default two-app stack pairs out of the box. The sidecar advertises the port on `/api/whoami`, and the frontends pair up even on fully custom ports.
 - **Same host, default ports** — even without the env wiring, the frontends probe `8080`/`8081` as a fallback.
 - **Reverse-proxy paths, separate hosts** — set `SIBLING_URL` (a full base URL) on a service instead of `SIBLING_PORT`, or leave it to each user's manual **Companion app URL** in Options → General. Serving both under one origin with path routing (`/crochet/`, `/knit/`) needs no detection at all — relative links just work.
 
 ### Plain Docker / docker compose
 
 ```bash
-docker compose up -d --build   # build & run DimCrochet on http://localhost:8080
-# uncomment the dimknit block in docker-compose.yml first to also serve
-# DimKnit on http://localhost:8081
+docker compose up -d --build   # build & run both apps: 8080 + 8081
+# comment out one of the service blocks in docker-compose.yml to run just one
 ```
 
 ### Reverse proxy & HTTPS notes

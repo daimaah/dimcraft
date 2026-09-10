@@ -46,7 +46,9 @@ changes live in each app's own changelog:
   and separate hosts) and advertises the hint on `/api/whoami`; the shipped
   `docker-compose.yml` wires it to follow `DIMKNIT_PORT` /
   `DIMCROCHET_PORT`, so a stack with both apps enabled needs no manual
-  companion-URL entry — even on custom ports. Discovery order in both
+  companion-URL entry — even on custom ports. The stack runs **both apps by
+  default** (DimCrochet 8080, DimKnit 8081); to drop one, comment its service
+  block out. Discovery order in both
   frontends: the user's manual URL, then the deployment's advertisement,
   then the default-port probe (8080/8081), and the Options status line now
   states which path found the sibling ("via this deployment's

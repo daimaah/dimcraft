@@ -27,13 +27,13 @@ in this repository) while keeping their own craft, identity and data.
 
 Same delivery model as DimCrochet: one container serves the app plus the
 self-hosted encrypted short-link sidecar. The repository's root
-`docker-compose.yml` ships with DimCrochet enabled and a ready-made commented
-**dimknit** block — uncomment that block (and comment the DimCrochet service
-out if you only want knitting) and deploy:
+`docker-compose.yml` runs **both apps by default** — DimCrochet on 8080,
+DimKnit on 8081, each with its own data volume, detecting each other
+automatically. Only want knitting? Comment the DimCrochet service block out
+(and vice versa) and deploy:
 
 ```bash
-# from the repository root, after uncommenting the dimknit block
-docker compose up -d --build   # DimKnit on http://localhost:8081
+docker compose up -d --build   # both apps: 8080 + 8081
 ```
 
 As a Portainer stack, point the stack at the `dimcraft` repository with the

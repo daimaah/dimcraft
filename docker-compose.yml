@@ -1,16 +1,11 @@
-# DimCraft stack — DimCrochet and/or DimKnit, deployable as a Portainer stack
+# DimCraft stack — DimCrochet + DimKnit, deployable as a Portainer stack
 # (Stacks → Add stack → Repository, pointing at this repo) or locally with:
 #   docker compose up -d --build
 #
-# Only DimCrochet runs by default. To also run DimKnit (the knitting chart
-# composer), uncomment the dimknit service block below — that's it. Only need
-# one of them? Comment the other service block out; each app builds from this
-# repository, keeps its own data volume, and serves on its own port.
-#
-# When both apps run, they find each other automatically: each sidecar
-# advertises the sibling's port (SIBLING_PORT below) on its /api/whoami
-# endpoint, and the frontends pick that up — even on custom ports, so no
-# manual URL entry is needed in either app's Options.
+# BOTH apps run by default — DimCrochet on 8080, DimKnit on 8081 — each with
+# its own data volume, and they detect each other automatically. Only want
+# one of them? Comment the other service block out; its volume declaration
+# below can stay (compose just leaves it unused).
 #
 # The named volumes keep the self-hosted encrypted short links; charts live in
 # each user's browser (IndexedDB), so upgrading is just a redeploy.
@@ -35,25 +30,24 @@ services:
     volumes:
       - dimcrochet-data:/data
 
-  # ---- DimKnit: uncomment this block to enable it --------------------------
-  # dimknit:
-  #   build:
-  #     context: .
-  #     args:
-  #       APP: dimknit
-  #   image: dimknit:latest
-  #   container_name: dimknit
-  #   restart: unless-stopped
-  #   ports:
-  #     # change the host port in Portainer's environment editor (DIMKNIT_PORT)
-  #     - "${DIMKNIT_PORT:-8081}:80"
-  #   environment:
-  #     # where the browser should look for DimCrochet — follows DIMCROCHET_PORT
-  #     - SIBLING_PORT=${DIMCROCHET_PORT:-8080}
-  #   volumes:
-  #     - dimknit-data:/data
+  dimknit:
+    build:
+      context: .
+      args:
+        APP: dimknit
+    image: dimknit:latest
+    container_name: dimknit
+    restart: unless-stopped
+    ports:
+      # change the host port in Portainer's environment editor (DIMKNIT_PORT)
+      - "${DIMKNIT_PORT:-8081}:80"
+    environment:
+      # where the browser should look for DimCrochet — follows DIMCROCHET_PORT
+      - SIBLING_PORT=${DIMCROCHET_PORT:-8080}
+    volumes:
+      - dimknit-data:/data
 
 volumes:
   dimcrochet-data:
-  # declared for when DimKnit is enabled; compose only creates used volumes
+  # commenting out the dimknit service above leaves this unused but harmless
   dimknit-data:
