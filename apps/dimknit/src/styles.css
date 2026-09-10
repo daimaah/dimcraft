@@ -1904,8 +1904,8 @@ button {
 .mine-sort select {
   min-width: 210px;
 }
-
-/* ---- DimKnit shell ------------------------------------------------------- */
+/* ---- DimKnit-specific additions (base shell classes come from the shared
+   stylesheet copied from DimCrochet) ------------------------------- */
 
 .toolbar-actions {
   display: flex;
@@ -1965,66 +1965,4 @@ button {
   align-items: center;
   gap: 14px;
   margin: 10px 0;
-}
-
-.tabs {
-  display: flex;
-  gap: 4px;
-  margin: 14px 0 10px;
-}
-
-.tabs button {
-  border: 1px solid transparent;
-  background: none;
-  color: var(--text-dim);
-  padding: 6px 12px;
-  border-radius: var(--radius);
-  cursor: pointer;
-}
-
-.tabs button.selected {
-  border-color: var(--line);
-  background: var(--bg-raised);
-  color: var(--text);
-}
-
-.card {
-  position: relative;
-}
-
-.level {
-  display: inline-block;
-  font-size: 12px;
-  color: var(--accent-soft);
-  margin: 2px 0 6px;
-}
-
-.open-hint {
-  display: block;
-  margin-top: 8px;
-  color: var(--accent);
-  font-size: 13px;
-}
-
-.card-delete {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  background: none;
-  color: var(--text-dim);
-  cursor: pointer;
-}
-
-.card-delete:hover {
-  color: var(--danger);
-}
-
-.file-label {
-  display: inline-block;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 6px 10px;
-  cursor: pointer;
-  color: var(--text);
 }

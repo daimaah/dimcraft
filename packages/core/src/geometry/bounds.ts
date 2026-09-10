@@ -5,7 +5,10 @@ import { cornersBBox, placementCorners, textCorners, unionBBox, type BBox } from
 
 export const LEGEND_W = 190
 export const LEGEND_ROW_H = 26
-export const LEGEND_HEAD = 26
+// headroom below the legend title: the title's 15px text (baseline y=16,
+// descenders to ~20) must clear the first row's symbol which scales up to
+// rowY-9 — 26 collided, this adds the missing air
+export const LEGEND_HEAD = 34
 
 export function legendSize(doc: ChartDoc, defMap: Map<string, SymbolDef>): { w: number; h: number } {
   const rows = legendItems(doc, defMap).length

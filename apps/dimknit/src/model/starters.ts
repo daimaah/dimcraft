@@ -12,6 +12,8 @@ export interface KnitStarter {
   name: string
   level: string
   blurb: string
+  /** 1–5, drives the coloured difficulty chip */
+  levelNum: 1 | 2 | 3 | 4 | 5
   make: () => ChartDoc
 }
 
@@ -46,6 +48,7 @@ export const KNIT_STARTERS: KnitStarter[] = [
     id: 'stockinette',
     name: 'Stockinette swatch',
     level: 'First steps',
+    levelNum: 1,
     blurb:
       'The fabric knitting makes by default: knit the right-side rows, purl the wrong-side rows. On the chart both look like empty cells — the written instructions apply the RS/WS duality for you.',
     make: () => swatch('Stockinette swatch', 8, 8, () => 'k'),
@@ -54,6 +57,7 @@ export const KNIT_STARTERS: KnitStarter[] = [
     id: 'rib',
     name: '2×2 rib',
     level: 'Beginner',
+    levelNum: 2,
     blurb:
       'The stretchy brim stitch: columns of knit and purl. The chart stripes stay aligned on every row — each wrong-side row works the same columns in reverse, which the instructions spell out.',
     make: () => swatch('2×2 rib swatch', 8, 12, (_r, c) => (c % 4 < 2 ? 'k' : 'p')),
@@ -62,6 +66,7 @@ export const KNIT_STARTERS: KnitStarter[] = [
     id: 'seed',
     name: 'Seed stitch',
     level: 'Beginner',
+    levelNum: 2,
     blurb:
       'Knits and purls alternating in a checkerboard — the chart’s dots hop one cell every row, which is exactly what your hands do: knit the purls, purl the knits.',
     make: () => swatch('Seed stitch swatch', 8, 10, (r, c) => ((r + c) % 2 === 0 ? 'k' : 'p')),
@@ -70,6 +75,7 @@ export const KNIT_STARTERS: KnitStarter[] = [
     id: 'lace',
     name: 'Eyelet lace panel',
     level: 'Confident beginner',
+    levelNum: 4,
     blurb:
       'Yarn overs folded into right-slanting decreases — every yarn over adds a stitch and a k2tog takes one away in the same row, so the stitch count never drifts. The app checks that accounting row by row.',
     make: () =>

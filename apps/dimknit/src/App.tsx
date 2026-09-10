@@ -29,6 +29,12 @@ function fitCenter() {
 export default function App() {
   const projectId = useStore((s) => s.projectId)
   const followActive = useStore((s) => s.followActive)
+  const viewAnimations = useStore((s) => s.viewAnimations)
+
+  // collapsible-bar / zoom animations read this off the root element
+  useEffect(() => {
+    document.documentElement.dataset.anim = viewAnimations ? 'on' : 'off'
+  }, [viewAnimations])
 
   // centre the view on the chart whenever a project opens
   useEffect(() => {
@@ -44,6 +50,10 @@ export default function App() {
       const prefs = JSON.parse(localStorage.getItem(PREFS_KEY) ?? '{}')
       if (typeof prefs.snapEnabled === 'boolean') useStore.setState({ snapEnabled: prefs.snapEnabled })
       if (typeof prefs.gridVisible === 'boolean') useStore.setState({ gridVisible: prefs.gridVisible })
+      if (typeof prefs.guidesVisible === 'boolean') useStore.setState({ guidesVisible: prefs.guidesVisible })
+      if (typeof prefs.viewAnimations === 'boolean') useStore.setState({ viewAnimations: prefs.viewAnimations })
+      if (typeof prefs.clock24h === 'boolean') useStore.setState({ clock24h: prefs.clock24h })
+      document.documentElement.dataset.anim = prefs.viewAnimations === false ? 'off' : 'on'
     } catch {
       /* ignore bad prefs */
     }
@@ -91,10 +101,22 @@ export default function App() {
   useEffect(
     () =>
       useStore.subscribe((s, prev) => {
-        if (s.snapEnabled !== prev.snapEnabled || s.gridVisible !== prev.gridVisible) {
+        if (
+          s.snapEnabled !== prev.snapEnabled ||
+          s.gridVisible !== prev.gridVisible ||
+          s.guidesVisible !== prev.guidesVisible ||
+          s.viewAnimations !== prev.viewAnimations ||
+          s.clock24h !== prev.clock24h
+        ) {
           localStorage.setItem(
             PREFS_KEY,
-            JSON.stringify({ snapEnabled: s.snapEnabled, gridVisible: s.gridVisible }),
+            JSON.stringify({
+              snapEnabled: s.snapEnabled,
+              gridVisible: s.gridVisible,
+              guidesVisible: s.guidesVisible,
+              viewAnimations: s.viewAnimations,
+              clock24h: s.clock24h,
+            }),
           )
         }
       }),
