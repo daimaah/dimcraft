@@ -7,6 +7,7 @@ import { TERMINOLOGY_PRESETS } from '../symbols/terminology'
 import { legendItems } from '@dimcraft/core/geometry/legend'
 import { contentBBox } from '@dimcraft/core/geometry/bounds'
 import { downloadBlob, safeFilename } from '@dimcraft/core/export/download'
+import { readSymbolPackFile } from '@dimcraft/core/export/projectFile'
 import type { Guide } from '@dimcraft/core/model/types'
 
 function NumField(props: {
@@ -403,7 +404,6 @@ function SymbolSetSection() {
   const current = resolveSet(doc)
 
   const importPack = async (file: File) => {
-    const { readSymbolPackFile } = await import('@dimcraft/core/export/projectFile')
     const set = await readSymbolPackFile(file)
     if (!set) {
       window.alert('That symbol pack could not be read. Expected a DimCrochet symbol pack with @INK@ artwork.')

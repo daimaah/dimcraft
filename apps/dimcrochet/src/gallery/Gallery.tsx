@@ -4,6 +4,7 @@ import { STARTERS } from '../model/starters'
 import { docFromClipboard, hasClipboard } from '@dimcraft/core/model/clipboard'
 import { sortProjects, DESIGNS_SORTS, type DesignsSort } from '@dimcraft/core/model/projectSort'
 import { applyBackup, downloadBackup } from '@dimcraft/core/export/backup'
+import { importInterchangeFile } from '@dimcraft/core/export/projectFile'
 import { deleteProject, listProjects, saveProject } from '@dimcraft/core/storage/db'
 import { useStore } from '../state/store'
 import { FileLoadRow } from '../panels/dialogs'
@@ -59,7 +60,6 @@ export function Gallery() {
 
   /** purely client-side import: dropped files are read into memory, never uploaded */
   const importFiles = async (files: File[]) => {
-    const { importInterchangeFile } = await import('@dimcraft/core/export/projectFile')
     for (const f of files) {
       const parsed = await importInterchangeFile(f)
       if (!parsed) {

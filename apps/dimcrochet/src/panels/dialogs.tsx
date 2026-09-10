@@ -3,7 +3,9 @@ import { useStore } from '../state/store'
 import { getDefMap } from '@dimcraft/core/symbols/registry'
 import { guideSample } from '@dimcraft/core/geometry/guides'
 import { contentBBox } from '@dimcraft/core/geometry/bounds'
-import { exportProjectFile } from '@dimcraft/core/export/projectFile'
+import { exportProjectFile, importInterchangeFile } from '@dimcraft/core/export/projectFile'
+import { downloadBlob, safeFilename } from '@dimcraft/core/export/download'
+import { applyBackup, deleteAllLocalData } from '@dimcraft/core/export/backup'
 import { PreviewDialog } from './PreviewDialog'
 import { InstructionsDialog } from './InstructionsDialog'
 import { LicensesDialog } from './LicensesDialog'
@@ -15,7 +17,9 @@ import { DEFAULT_ORDER, PALETTE_BUTTONS } from '../ui/ToolPalette'
 import { Icon } from '@dimcraft/core/ui/icons'
 import changelogRaw from '../../../../CHANGELOG.md?raw'
 import type { RotationMode } from '@dimcraft/core/model/types'
-import type { SvgExportOptions } from '@dimcraft/core/export/svg'
+import { buildExportSvg, type SvgExportOptions } from '@dimcraft/core/export/svg'
+import { exportPng } from '@dimcraft/core/export/png'
+import { createShareFragment } from '@dimcraft/core/export/share'
 import type { PaperFormat, PageOrientation } from '@dimcraft/core/export/pdf'
 
 export function Modal({
@@ -261,8 +265,7 @@ export function ExportDialog() {
   const createShareLink = async () => {
     setShareBusy(true)
     try {
-      const { createShareFragment } = await import('@dimcraft/core/export/share')
-      const fragment = await createShareFragment({
+        const fragment = await createShareFragment({
         id: projectId ?? 'proj-share',
         name: projectName,
         createdAt: Date.now(),
@@ -285,13 +288,10 @@ export function ExportDialog() {
         background: background === 'white' ? '#ffffff' : null,
       }
       if (format === 'svg') {
-        const { buildExportSvg } = await import('@dimcraft/core/export/svg')
-        const { downloadBlob, safeFilename } = await import('@dimcraft/core/export/download')
         const { svg } = buildExportSvg(doc, opts)
         downloadBlob(`${safeFilename(projectName)}.svg`, new Blob([svg], { type: 'image/svg+xml' }))
       } else if (format === 'png') {
-        const { exportPng } = await import('@dimcraft/core/export/png')
-        await exportPng(doc, projectName, { ...opts, scale: pngScale })
+          await exportPng(doc, projectName, { ...opts, scale: pngScale })
       } else {
         const { exportPdf } = await import('@dimcraft/core/export/pdf')
         await exportPdf(doc, projectName, { ...opts, format: pdfFormat, orientation, trueScale, unitsPer10cm: gauge })
@@ -516,8 +516,6 @@ export function FileLoadRow() {
           const f = e.target.files?.[0]
           e.target.value = ''
           if (!f) return
-          const { importInterchangeFile } = await import('@dimcraft/core/export/projectFile')
-          const { applyBackup } = await import('@dimcraft/core/export/backup')
           const parsed = await importInterchangeFile(f)
           if (!parsed) {
             window.alert(`Could not read ${f.name}. Expected a DimCrochet chart, pack or backup export.`)
@@ -580,7 +578,6 @@ export function OptionsDialog() {
   const wipe = async () => {
     setWiping(true)
     try {
-      const { deleteAllLocalData } = await import('@dimcraft/core/export/backup')
       await deleteAllLocalData()
       location.reload()
     } finally {

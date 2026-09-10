@@ -37,7 +37,9 @@ export async function inflateFromBase64Url(encoded: string): Promise<string> {
 }
 
 export async function inflateBytes(bytes: Uint8Array): Promise<string> {
-  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate'))
+  // every producer here hands us a view over a real ArrayBuffer; the cast
+  // bridges the lib's Uint8Array<ArrayBufferLike> → BlobPart narrowing
+  const stream = new Blob([bytes as BlobPart]).stream().pipeThrough(new DecompressionStream('deflate'))
   return await new Response(stream).text()
 }
 

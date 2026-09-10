@@ -10,6 +10,10 @@ repository log remains the complete, transparent record.
 
 ### Changed
 
+- **Toolchain majors:** TypeScript 7 (native compiler), Vite 8 (native
+  rolldown build — noticeably faster builds) and vitest 5. Also cleans up a
+  handful of lazy imports that Vite 8 flags as ineffective (they never
+  actually split a chunk). No runtime behaviour changes.
 - **Shared chart editor is now craft-agnostic.** The crochet palette, bundled
   symbol sets, regional terminology and the round-reading follow logic are
   injected into the shared shell (canvas, symbol registry, exports, editor
