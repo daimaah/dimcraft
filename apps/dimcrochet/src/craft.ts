@@ -40,6 +40,11 @@ export const crochetCraft: CraftModule = {
         ? `Gauge set — chart${sizeHint ? ` ${sizeHint}` : ''}. Enable “True scale” in the PDF export to print at this size.`
         : 'Optional gauge: how many chart units span 10 cm. Enables true-scale PDF printing.',
   },
+  // freeform diagrams: overlapping stitches are legitimate, and the colourwork
+  // palette waits until crochet has a use for it (fabric colourways live in
+  // the fabric preview, not on placements)
+  colourwork: false,
+  replaceOnStamp: false,
 }
 
 registerCraft(crochetCraft)
